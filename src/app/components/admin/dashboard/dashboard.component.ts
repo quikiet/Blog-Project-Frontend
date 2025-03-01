@@ -3,6 +3,7 @@ import { AfterViewInit, Component, Renderer2 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -11,8 +12,11 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements AfterViewInit {
-  constructor(private renderer: Renderer2) { }
+  constructor(private renderer: Renderer2, private toastr: ToastrService) { }
 
+  showSuccess() {
+    this.toastr.success('Hello world!', 'Toastr fun!');
+  }
   ngAfterViewInit(): void {
     const mobileMenuButton = this.renderer.selectRootElement('.mobile-menu-button', true);
     const sidebar = this.renderer.selectRootElement('.sidebar', true);

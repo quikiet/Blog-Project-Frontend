@@ -5,6 +5,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Category, CategoryService } from '../../../services/category/category.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-category',
   standalone: true,
@@ -14,14 +15,23 @@ import { FormsModule } from '@angular/forms';
 })
 export class CategoryComponent implements AfterViewInit, OnInit {
 
-  constructor(private categoryService: CategoryService) { }
+  constructor(private categoryService: CategoryService, private toastr: ToastrService) { }
   private _liveAnnouncer = inject(LiveAnnouncer);
 
-  displayedColumns: string[] = ['id', 'name'];
+  displayedColumns: string[] = ['id', 'name', 'actions'];
   categories = new MatTableDataSource<Category>;
   isLoading = true;
-  newCategory: Category = { name: '' };
+  newCategory: Category = {
+    id: 0,
+    name: ''
+  };
+  currentCategory: Category = {
+    id: 0,
+    name: ''
+  };
   isSubmit = false;
+  isEditting: Category | null = null;
+  editting = false;
 
   @ViewChild('cateModal') cateModal!: ElementRef;
   @ViewChild(MatSort) sort!: MatSort;
@@ -29,9 +39,60 @@ export class CategoryComponent implements AfterViewInit, OnInit {
     this.loadCategories();
   }
 
+  resetForm() {
+    this.currentCategory.name = '';
+    this.newCategory.name = '';
+    this.isSubmit = false;
+    this.editting = false;
+    this.isLoading = false;
+  }
+
+  deleteCategory(id: number) {
+    if (!id) {
+      this.toastr.error("Không có danh mục này", "Lỗi");
+    }
+    this.categoryService.delete(id).subscribe({
+      next: () => {
+        this.loadCategories();
+        this.toastr.success("Xoá danh mục thành công", "Thành công");
+      }, error: () => {
+        this.toastr.error("Không xoá được danh mục này", "Lỗi");
+      }
+    });
+
+  }
+
+  updateCategory(): void {
+    if (!this.isEditting || !this.isEditting.name.trim() || this.isEditting.id === undefined) {
+      this.toastr.error("Không sửa được danh mục này", "Lỗi");
+    }
+    this.isSubmit = true;
+    this.categoryService.update(this.currentCategory.id!, this.currentCategory).subscribe({
+      next: () => {
+        this.loadCategories(); // Load lại danh mục sau khi cập nhật
+        this.toastr.success('Cập nhật danh mục thành công!', 'Thành công!');
+        this.resetForm();
+        this.cateModal.nativeElement.close(); // Đóng modal
+      },
+      error: (err) => {
+        this.toastr.error('Đã có danh mục này!', 'Cảnh báo');
+        console.error("Lỗi khi cập nhật danh mục", err);
+      },
+      complete: () => this.isSubmit = false
+    });
+
+  }
+
+  editCategory(category: Category) {
+    this.editting = true;
+    this.isEditting = { ...category }; // Copy object tránh thay đổi trực tiếp
+    this.currentCategory = this.isEditting; // Trỏ đến category đang sửa
+    this.cateModal.nativeElement.showModal();
+  }
+
   createCategory() {
     if (!this.newCategory.name.trim()) {
-      console.log("k de trong");
+      this.toastr.warning('Tên danh mục không được để trống!', 'Cảnh báo');
       return;
     }
     this.isSubmit = true;
@@ -39,10 +100,13 @@ export class CategoryComponent implements AfterViewInit, OnInit {
       next: (data) => {
         this.loadCategories();
         this.newCategory.name = '';
+        this.showSuccess();
         this.cateModal.nativeElement.close();
+        this.resetForm();
       },
       error: () => {
-        console.error("error");
+        this.toastr.error('Đã có danh mục này!', 'Cảnh báo');
+
       },
       complete: () => this.isSubmit = false
     });
@@ -62,6 +126,10 @@ export class CategoryComponent implements AfterViewInit, OnInit {
 
   ngAfterViewInit() {
     this.categories.sort = this.sort;
+  }
+
+  showSuccess() {
+    this.toastr.success('Thêm danh mục thành công!', 'Thành công!');
   }
 
   /** Announce the change in sort state for assistive technology. */

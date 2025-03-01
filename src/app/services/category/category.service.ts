@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 
 export interface Category {
+  id?: number,
   name: string;
 }
 

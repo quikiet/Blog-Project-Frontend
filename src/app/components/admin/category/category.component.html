@@ -4,6 +4,7 @@
   <span class="text-primary text-2xl font-bold">Danh sách danh mục</span>
   <button
     class="btn btn-xs sm:btn-sm md:btn-md bg-primary hover:bg-secondary text-black font-normal"
+    (click)="resetForm()"
     onclick="cateModal.showModal()"
   >
     Thêm
@@ -15,24 +16,47 @@
           ✕
         </button>
       </form>
-      <h5 class="font-bold">Thêm danh mục</h5>
+      <h5 class="font-bold">
+        {{ editting ? "Sửa danh mục" : "Thêm danh mục" }}
+      </h5>
       <label class="form-control w-full">
         <div class="label">
           <span class="label-text text-lg">Tên danh mục</span>
         </div>
-        <input
-          [(ngModel)]="newCategory.name"
-          type="text"
-          placeholder="Nhập tên danh mục"
-          class="input input-bordered w-full"
-        />
+        <span *ngIf="editting">
+          <input
+            [(ngModel)]="currentCategory.name"
+            type="text"
+            placeholder="Sửa"
+            class="input input-bordered w-full"
+          />
+        </span>
+        <span *ngIf="!editting">
+          <input
+            [(ngModel)]="newCategory.name"
+            type="text"
+            placeholder="Thêm"
+            class="input input-bordered w-full"
+          />
+        </span>
       </label>
       <div class="flex w-full justify-end gap-5 mt-3">
         <form method="dialog">
-          <button class="btn">Huỷ bỏ</button>
+          <button class="btn" (click)="resetForm()">Huỷ bỏ</button>
         </form>
-        <button class="btn btn-outline btn-primary" (click)="createCategory()">
-          Xác nhận
+        <button
+          class="btn btn-outline btn-primary"
+          *ngIf="!editting"
+          (click)="createCategory()"
+        >
+          Thêm
+        </button>
+        <button
+          class="btn btn-outline btn-warning"
+          (click)="updateCategory()"
+          *ngIf="editting"
+        >
+          Cập nhật
         </button>
       </div>
     </div>
@@ -71,7 +95,20 @@
     </th>
     <td mat-cell *matCellDef="let element">{{ element.name }}</td>
   </ng-container>
-
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef>Hành động</th>
+    <td mat-cell *matCellDef="let element">
+      <button class="btn btn-sm btn-warning" (click)="editCategory(element)">
+        Sửa
+      </button>
+      <button
+        class="btn btn-sm btn-warning ml-2"
+        (click)="deleteCategory(element.id)"
+      >
+        Xoá
+      </button>
+    </td>
+  </ng-container>
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>

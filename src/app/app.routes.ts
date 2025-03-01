@@ -3,6 +3,7 @@ import { DashboardComponent } from './components/admin/dashboard/dashboard.compo
 import { RegisterComponent } from './components/both/register/register.component';
 import { CategoryComponent } from './components/admin/category/category.component';
 import { SettingComponent } from './components/admin/setting/setting.component';
+import { PostsComponent } from './components/admin/posts/posts.component';
 
 export const routes: Routes = [
     { path: 'register', component: RegisterComponent },
@@ -11,6 +12,7 @@ export const routes: Routes = [
             { path: '', redirectTo: 'settings', pathMatch: 'full' },
             { path: 'settings', component: SettingComponent },
             { path: 'category', component: CategoryComponent },
+            { path: 'posts', component: PostsComponent },
         ]
     },
 ];
