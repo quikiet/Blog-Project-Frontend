@@ -63,52 +63,71 @@
   </dialog>
 </div>
 <div *ngIf="isLoading">Đang tải dữ liệu</div>
-<table
-  mat-table
-  [dataSource]="categories"
-  matSort
-  (matSortChange)="announceSortChange($event)"
-  class="mat-elevation-z8 my-4"
->
-  <!-- Position Column -->
-  <ng-container matColumnDef="id">
-    <th
-      mat-header-cell
-      *matHeaderCellDef
-      mat-sort-header
-      sortActionDescription="Sort by number"
-    >
-      No.
-    </th>
-    <td mat-cell *matCellDef="let element">{{ element.id }}</td>
-  </ng-container>
-
-  <!-- Name Column -->
-  <ng-container matColumnDef="name">
-    <th
-      mat-header-cell
-      *matHeaderCellDef
-      mat-sort-header
-      sortActionDescription="Sort by name"
-    >
-      Name
-    </th>
-    <td mat-cell *matCellDef="let element">{{ element.name }}</td>
-  </ng-container>
-  <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef>Hành động</th>
-    <td mat-cell *matCellDef="let element">
-      <button class="btn btn-sm btn-warning" (click)="editCategory(element)">
-        Sửa
-      </button>
-      <button
-        class="btn btn-sm btn-warning ml-2"
-        (click)="deleteCategory(element.id)"
+<div>
+  <mat-form-field class="w-full">
+    <mat-label>Bộ lọc</mat-label>
+    <input
+      matInput
+      (keyup)="applyFilter()"
+      [(ngModel)]="filterValue"
+      placeholder="Tìm kiếm"
+      #input
+    />
+  </mat-form-field>
+  <table
+    mat-table
+    [dataSource]="categories"
+    matSort
+    (matSortChange)="announceSortChange($event)"
+    class="mat-elevation-z8 my-4 shadow"
+  >
+    <!-- Position Column -->
+    <ng-container matColumnDef="id">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        sortActionDescription="Sort by number"
       >
-        Xoá
-      </button>
-    </td>
-  </ng-container>
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-</table>
+        No.
+      </th>
+      <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        sortActionDescription="Sort by name"
+      >
+        Name
+      </th>
+      <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Hành động</th>
+      <td mat-cell *matCellDef="let element">
+        <button class="btn btn-sm btn-warning" (click)="editCategory(element)">
+          Sửa
+        </button>
+        <button
+          class="btn btn-sm btn-warning ml-2"
+          (click)="deleteCategory(element.id)"
+        >
+          Xoá
+        </button>
+      </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+  <mat-paginator
+    class="shadow"
+    [pageSizeOptions]="[5, 10, 20]"
+    showFirstLastButtons
+    aria-label="Select page of categories"
+  >
+  </mat-paginator>
+</div>

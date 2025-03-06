@@ -21,26 +21,16 @@
     >
       <!-- Right Side -->
       <div class="lg:w-full p-8 min-w-96">
-        <h2 class="text-xl font-semibold text-gray-200">
+        <h3 class="text-xl font-semibold text-gray-200">
           LET'S GET YOU STARTED
-        </h2>
-        <h1 class="text-3xl font-bold text-gray-200 mt-2">Create an Account</h1>
+        </h3>
+        <h3 class="text-xl font-bold text-gray-200 mt-2">Đăng nhập</h3>
 
         <div class="mt-6">
-          <div>
-            <label class="block text-gray-200 font-medium mb-1">Username</label>
-            <input
-              [(ngModel)]="userData.name"
-              type="text"
-              placeholder="Enter your username"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
           <div class="mt-4">
             <label class="block text-gray-200 font-medium mb-1">Email</label>
             <input
-              [(ngModel)]="userData.email"
+              [(ngModel)]="loginFields.email"
               type="email"
               placeholder="Enter your email"
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -48,34 +38,22 @@
           </div>
 
           <div class="mt-4">
-            <label class="block text-gray-200 font-medium mb-1">Password</label>
+            <label class="block text-gray-200 font-medium mb-1">Mật khẩu</label>
             <input
-              [(ngModel)]="userData.password"
-              type="password"
-              placeholder="Enter your password"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div class="mt-4">
-            <label class="block text-gray-200 font-medium mb-1"
-              >Nhập lại mật khẩu</label
-            >
-            <input
-              [(ngModel)]="userData.password_confirmation"
+              [(ngModel)]="loginFields.password"
               type="password"
               placeholder="Enter your password"
               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <button
+            (click)="login()"
             class="w-full mt-6 bg-black text-white font-semibold py-3 rounded-lg hover:bg-gray-900"
-            (click)="register()"
           >
-            GET STARTED
+            Đăng nhập
           </button>
 
-          <div class="text-center my-4 text-gray-200">Or</div>
+          <div class="text-center my-4 text-gray-200">Hoặc</div>
 
           <div class="space-y-3">
             <button

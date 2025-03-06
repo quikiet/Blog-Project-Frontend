@@ -1,1 +1,5 @@
 <p>home works!</p>
+<span *ngIf="token">
+  <h4>Username: {{ username }}</h4>
+  <a (click)="logout()" class="link">Logout</a>
+</span>

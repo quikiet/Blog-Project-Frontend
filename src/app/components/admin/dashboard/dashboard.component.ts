@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, Renderer2 } from '@angular/core';
+import { AfterViewInit, Component, OnInit, Renderer2 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { LoginService } from '../../../services/Auth/login.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -11,12 +12,26 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent implements AfterViewInit {
-  constructor(private renderer: Renderer2, private toastr: ToastrService) { }
-
+export class DashboardComponent implements AfterViewInit, OnInit {
+  constructor(private renderer: Renderer2, private toastr: ToastrService, private loginService: LoginService) { }
+  token = localStorage.getItem('token');
+  username: string = '';
   showSuccess() {
     this.toastr.success('Hello world!', 'Toastr fun!');
   }
+
+  ngOnInit(): void {
+    this.loginService.getUser().subscribe({
+      next: (res) => {
+        this.username = res.user.name;
+      },
+      error: (error) => {
+        console.log(error);
+        return;
+      }
+    });
+  }
+
   ngAfterViewInit(): void {
     const mobileMenuButton = this.renderer.selectRootElement('.mobile-menu-button', true);
     const sidebar = this.renderer.selectRootElement('.sidebar', true);

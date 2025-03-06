@@ -8,16 +8,44 @@ import { ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 import { Category, CategoryService } from '../../../services/category/category.service';
 import { CommonModule } from '@angular/common';
+import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
+
+import 'froala-editor/js/plugins.pkgd.min.js';
+import { LoginService } from '../../../services/Auth/login.service';
+import { RouterOutlet } from '@angular/router';
+
+// Import plugins one by one
+
+// import 'froala-editor/js/plugins/align.min.js';
+
+// import 'froala-editor/js/plugins/image.min.js';
+
+
 @Component({
   selector: 'app-posts',
   standalone: true,
   providers: [provideNativeDateAdapter()],
-  imports: [MatFormFieldModule, MatInputModule, MatDatepickerModule, FormsModule, CommonModule],
+  imports: [MatFormFieldModule, MatInputModule, MatDatepickerModule, FormsModule, CommonModule, FroalaEditorModule, FroalaViewModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './posts.component.html',
   styleUrl: './posts.component.css'
 })
 export class PostsComponent implements OnInit {
+
+  categories: any[] = [];
+  constructor(private postService: PostService, private toastr: ToastrService, private cateServices: CategoryService, private loginService: LoginService) { }
+  author: number = 0;
+  ngOnInit(): void {
+    this.loadCategory();
+    this.loginService.getUser().subscribe({
+      next: (res) => {
+        this.author = res.user.id;
+        if (this.author && this.author != 0) {
+          this.newPost.user_id = this.author;
+        }
+      }
+    });
+  }
 
   newPost: Post = {
     id: 0,
@@ -40,13 +68,14 @@ export class PostsComponent implements OnInit {
     user_id: 0
   };
 
-  categories: any[] = [];
-  constructor(private postService: PostService, private toastr: ToastrService, private cateServices: CategoryService) { }
-
-  ngOnInit(): void {
-    this.cateServices.getAll().subscribe((data) => {
-      this.categories = data;
-    });
+  loadCategory() {
+    this.cateServices.getAll().subscribe({
+      next: (data) => {
+        this.categories = data;
+      }, error: (error) => {
+        console.error("Lỗi tải danh mục", error);
+      }
+    })
   }
 
   resetFields() {
@@ -69,9 +98,16 @@ export class PostsComponent implements OnInit {
       return;
     }
 
-    this.postService.create(this.newPost).subscribe({
+    const formattedDate = this.newPost.published_at
+      ? new Date(this.newPost.published_at).toISOString().split('T')[0]
+      : null;
+
+    const postData = {
+      ...this.newPost,
+      published_at: formattedDate as unknown as Date
+    };
+    this.postService.create(postData).subscribe({
       next: (data) => {
-        this.resetFields();
         this.toastr.success("Thêm bài báo thành công", "Thành công");
       }, error: (error) => {
         this.toastr.error("Lỗi: " + error, "Thất bại");

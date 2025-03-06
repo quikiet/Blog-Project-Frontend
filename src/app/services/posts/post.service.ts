@@ -8,7 +8,7 @@ export interface Post {
   content: string,
   summary?: string,
   thumbnail: string,
-  published_at?: Date,
+  published_at?: string | Date,
   category_id: number,
   user_id: number
 }
@@ -29,11 +29,20 @@ export class PostService {
     );
   }
 
+  show(id: number): Observable<Post> {
+    return this.http.get<Post>(`${this.apiUrl}/${id}`).pipe(
+      catchError(error => {
+        console.error("error to fetch Post", error);
+        return throwError(() => new Error("Failed to fetching"));
+      })
+    );
+  }
+
   create(post: Post): Observable<Post> {
     return this.http.post<Post>(this.apiUrl, post).pipe(
       catchError(error => {
-        console.error("error create Post", error);
-        return throwError(() => new Error("Failure Create"));
+        console.error("Lỗi tạo bài báo", error);
+        return throwError(() => new Error("Tạo thất bại"));
       })
     );
   }

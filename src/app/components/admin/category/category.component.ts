@@ -6,10 +6,16 @@ import { Category, CategoryService } from '../../../services/category/category.s
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
+
+
 @Component({
   selector: 'app-category',
   standalone: true,
-  imports: [MatTableModule, MatSortModule, CommonModule, FormsModule],
+  imports: [FormsModule, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, CommonModule, FormsModule, MatPaginatorModule],
   templateUrl: './category.component.html',
   styleUrl: './category.component.css'
 })
@@ -17,7 +23,6 @@ export class CategoryComponent implements AfterViewInit, OnInit {
 
   constructor(private categoryService: CategoryService, private toastr: ToastrService) { }
   private _liveAnnouncer = inject(LiveAnnouncer);
-
   displayedColumns: string[] = ['id', 'name', 'actions'];
   categories = new MatTableDataSource<Category>;
   isLoading = true;
@@ -32,11 +37,26 @@ export class CategoryComponent implements AfterViewInit, OnInit {
   isSubmit = false;
   isEditting: Category | null = null;
   editting = false;
+  filterValue = '';
 
   @ViewChild('cateModal') cateModal!: ElementRef;
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+
   ngOnInit(): void {
     this.loadCategories();
+  }
+
+
+  ngAfterViewInit() {
+    this.categories.sort = this.sort;
+    this.categories.paginator = this.paginator;
+  }
+
+
+  applyFilter() {
+    this.categories.filter = this.filterValue.toLowerCase().trim();
   }
 
   resetForm() {
@@ -122,10 +142,6 @@ export class CategoryComponent implements AfterViewInit, OnInit {
         this.isLoading = false;
       }
     });
-  }
-
-  ngAfterViewInit() {
-    this.categories.sort = this.sort;
   }
 
   showSuccess() {

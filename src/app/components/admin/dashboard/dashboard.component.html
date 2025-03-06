@@ -30,33 +30,25 @@
         Qkit<span class="text-indigo-800">Tran</span>
       </div>
       <div class="flex items-center space-x-2">
-        <span
-          class="p-2 cursor-pointer hover:text-indigo-800 transition-transform duration-300 hover:scale-110 hidden md:block"
-        >
-          <svg
-            width="25"
-            height="25"
-            fill="none"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
+        <div class="dropdown dropdown-end dropdown-hover">
+          <div class="flex gap-2 items-center">
+            <div tabindex="0" role="button" class="btn m-1">
+              <img
+                class="w-10 h-10 rounded-full transition-transform duration-300 hover:scale-110 object-cover"
+                src="https://i.pinimg.com/564x/de/0f/3d/de0f3d06d2c6dbf29a888cf78e4c0323.jpg"
+                alt="Profile"
+              />
+            </div>
+            <span *ngIf="username">{{ username }}</span>
+          </div>
+          <ul
+            tabindex="0"
+            class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
           >
-            <path d="M10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14Z"></path>
-            <path d="m21 21-6-6"></path>
-          </svg>
-        </span>
-        <!-- <span
-          class=" p-2 text-2xl cursor-pointer hover:text-indigo-800 transition-transform duration-300 hover:scale-110 hidden md:block"
-          >notifications</span
-        > -->
-        <img
-          class="w-10 h-10 rounded-full transition-transform duration-300 hover:scale-110 object-cover"
-          src="https://i.pinimg.com/564x/de/0f/3d/de0f3d06d2c6dbf29a888cf78e4c0323.jpg"
-          alt="Profile"
-        />
+            <li><a>Item 1</a></li>
+            <li><a>Item 2</a></li>
+          </ul>
+        </div>
       </div>
     </div>
   </header>
@@ -70,6 +62,7 @@
       >
         <a
           routerLink="settings"
+          routerLinkActive="text-primary"
           class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1"
         >
           <span class="mr-2">
@@ -91,6 +84,7 @@
         </a>
         <a
           routerLink="category"
+          routerLinkActive="text-primary"
           class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1"
         >
           <span class="mr-2">
@@ -114,6 +108,7 @@
 
         <a
           routerLink="posts"
+          routerLinkActive="text-primary"
           class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1"
         >
           <span class="mr-2">
@@ -150,7 +145,8 @@
         class="bg-white rounded-xl shadow-lg p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
       >
         <a
-          href="#"
+          routerLink="list-post"
+          routerLinkActive="text-primary"
           class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1"
         >
           <span class="mr-2">
@@ -166,7 +162,7 @@
               ></path>
             </svg>
           </span>
-          Profile
+          Danh sách bài báo
           <span class="ml-auto"
             ><svg
               width="46"

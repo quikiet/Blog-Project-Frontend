@@ -1,0 +1,19 @@
+<div *ngIf="post" class="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg">
+  <h1 class="text-2xl font-bold">{{ post.title }}</h1>
+  <p class="text-gray-500 mb-2">
+    Ngày đăng: {{ post.published_at | date : "dd/MM/yyyy" }}
+  </p>
+
+  <img
+    *ngIf="post.thumbnail"
+    [src]="post.thumbnail"
+    alt="Thumbnail"
+    class="w-full h-64 object-cover rounded-lg mb-4"
+  />
+
+  <div class="text-gray-700" [innerHTML]="post.content"></div>
+
+  <a routerLink="/admin/posts/list" class="text-blue-500 mt-4 inline-block"
+    >⬅ Quay lại danh sách</a
+  >
+</div>
