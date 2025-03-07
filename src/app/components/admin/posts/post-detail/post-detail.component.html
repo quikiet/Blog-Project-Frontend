@@ -11,7 +11,9 @@
     class="w-full h-64 object-cover rounded-lg mb-4"
   />
 
-  <div class="text-gray-700" [innerHTML]="post.content"></div>
+  <div class="fr-view">
+    <div [innerHTML]="sanitizedContent"></div>
+  </div>
 
   <a routerLink="/admin/posts/list" class="text-blue-500 mt-4 inline-block"
     >⬅ Quay lại danh sách</a

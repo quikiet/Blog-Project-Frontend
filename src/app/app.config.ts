@@ -17,3 +17,9 @@ export const appConfig: ApplicationConfig = {
     provideToastr(),
   ]
 };
+
+export const cloudinaryConfig = {
+  cloudName: 'djk2ys41m',
+  uploadPreset: 'newsproject'
+};
+

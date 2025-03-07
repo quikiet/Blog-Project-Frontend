@@ -1,100 +1,67 @@
-<div class="grid grid-cols-1 gap-2">
+<form [formGroup]="postForm" (ngSubmit)="createPost()">
   <h6>Thêm bài báo</h6>
-  <label class="form-control w-full">
-    <div class="label">
-      <span class="label-text">Ảnh Thumbnail</span>
-    </div>
-    <div
-      class="flex-1 items-center max-w-screen-sm mx-auto mb-3 space-y-4 sm:flex sm:space-y-0"
-    >
-      <div class="relative">
-        <div class="items-center justify-center mx-auto">
-          <label
-            class="flex justify-center h-32 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none"
-            id="drop"
-          >
-            <span class="flex items-center space-x-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-6 h-6 text-gray-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                ></path>
-              </svg>
-              <span class="font-medium text-gray-600">
-                Kéo ảnh vào để đăng tải, hoặc
-                <span class="text-blue-600 underline ml-[4px]">từ máy</span>
-              </span>
-            </span>
-            <input
-              type="file"
-              name="file_upload"
-              class="hidden"
-              accept="image/png,image/jpeg"
-              id="input"
-            />
-          </label>
-        </div>
-      </div>
-    </div>
-  </label>
+
+  <!-- Upload ảnh thumbnail -->
+  <!-- Upload ảnh thumbnail -->
+  <input type="file" (change)="onFileSelected($event)" />
+  <img
+    *ngIf="postForm.get('thumbnail')?.value"
+    [src]="postForm.get('thumbnail')?.value"
+    alt="Ảnh đã chọn"
+    style="
+      max-width: 300px;
+      border: 1px solid #ddd;
+      padding: 5px;
+      margin-top: 10px;
+    "
+  />
+
+  <!-- Tiêu đề -->
   <label class="form-control w-full">
     <div class="label">
       <span class="label-text">Tiêu đề</span>
     </div>
     <input
-      [(ngModel)]="newPost.title"
+      formControlName="title"
       type="text"
       placeholder="Tiêu đề bài báo"
       class="input input-bordered min-w-full"
     />
   </label>
+
+  <!-- Nội dung -->
   <div>
     <span class="label-text pb-2">Nội dung</span>
-    <div [froalaEditor] [(ngModel)]="newPost.content">Nội dung</div>
+    <div formControlName="content" [froalaEditor]="options"></div>
   </div>
 
+  <!-- Tóm tắt nội dung -->
   <label class="form-control">
     <div class="label">
       <span class="label-text">Tóm tắt nội dung chính</span>
     </div>
     <textarea
-      [(ngModel)]="newPost.summary"
+      formControlName="summary"
       class="textarea textarea-bordered h-24"
       placeholder="Tóm tắt"
     ></textarea>
   </label>
 
   <div class="grid grid-cols-2 gap-2">
+    <!-- Danh mục -->
     <label class="form-control w-full max-w-xs">
       <div class="label">
         <span class="label-text">Danh mục</span>
       </div>
-      <!-- <input type="text" list="category_list" />
-      <datalist id="category_list" name="category">
-        <option>haha</option>
-        <option>hihi</option>
-        <option>hehe</option>
-      </datalist> -->
-
-      <select
-        class="select select-bordered"
-        [(ngModel)]="newPost.category_id"
-        name="category"
-      >
+      <select class="select select-bordered" formControlName="category_id">
         <option disabled selected value="0">Chọn danh mục chính</option>
         <option *ngFor="let category of categories" [value]="category.id">
           {{ category.name }}
         </option>
       </select>
     </label>
+
+    <!-- Ngày đăng -->
     <label class="form-control w-full max-w-xs">
       <div class="label">
         <span class="label-text">Ngày đăng tải</span>
@@ -104,7 +71,7 @@
           matInput
           [matDatepicker]="picker3"
           placeholder="Value binding"
-          [(ngModel)]="newPost.published_at"
+          formControlName="published_at"
         />
         <mat-datepicker-toggle
           matSuffix
@@ -114,5 +81,7 @@
       </mat-form-field>
     </label>
   </div>
-  <button class="btn btn-primary" (click)="createPost()">Đăng tải</button>
-</div>
+
+  <!-- Nút đăng bài -->
+  <button class="btn btn-primary" type="submit">Đăng tải</button>
+</form>

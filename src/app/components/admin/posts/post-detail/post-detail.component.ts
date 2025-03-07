@@ -14,7 +14,9 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 export class PostDetailComponent {
   constructor(private route: ActivatedRoute, private postService: PostService, private sanitizer: DomSanitizer) { }
   post: Post | null = null;
-  sanitizedContent!: SafeHtml;
+  sanitizedContent: SafeHtml = '';
+
+
   ngOnInit(): void {
     this.loadPosts();
   }
@@ -22,19 +24,18 @@ export class PostDetailComponent {
   loadPosts() {
     const id = this.route.snapshot.paramMap.get('id');
     console.log(id);
-
     if (id && !isNaN(+id)) {  // Kiểm tra ID có hợp lệ không
       this.postService.show(+id).subscribe({
         next: (data) => {
-          this.post = data,
-            this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(this.post.content);
+          this.post = data
+          console.log(this.post);
+          this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(this.post.content);
         },
         error: (err) => console.error("Lỗi tải chi tiết bài viết", err)
       });
     } else {
       console.error("ID bài viết không hợp lệ!");
     }
-    console.log(this.post);
 
   }
 }
