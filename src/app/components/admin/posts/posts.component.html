@@ -1,20 +1,9 @@
 <form [formGroup]="postForm" (ngSubmit)="createPost()">
   <h6>Thêm bài báo</h6>
-
-  <!-- Upload ảnh thumbnail -->
+  <div *ngIf="isLoading" class="overlay"></div>
+  <mat-progress-bar mode="query" *ngIf="isLoading"></mat-progress-bar>
   <!-- Upload ảnh thumbnail -->
   <input type="file" (change)="onFileSelected($event)" />
-  <img
-    *ngIf="postForm.get('thumbnail')?.value"
-    [src]="postForm.get('thumbnail')?.value"
-    alt="Ảnh đã chọn"
-    style="
-      max-width: 300px;
-      border: 1px solid #ddd;
-      padding: 5px;
-      margin-top: 10px;
-    "
-  />
 
   <!-- Tiêu đề -->
   <label class="form-control w-full">

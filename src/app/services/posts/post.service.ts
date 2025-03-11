@@ -29,6 +29,15 @@ export class PostService {
     );
   }
 
+  update(id: number, post: Post): Observable<Post> {
+    return this.http.put<Post>(`${this.apiUrl}/${id}`, post).pipe(
+      catchError(error => {
+        console.error("Lỗi khi sửa bài báo", error);
+        return throwError(() => new Error("Sửa không thành công"));
+      })
+    );
+  }
+
   show(id: number): Observable<Post> {
     return this.http.get<Post>(`${this.apiUrl}/${id}`).pipe(
       catchError(error => {
@@ -47,12 +56,8 @@ export class PostService {
     );
   }
 
-  update(id: number, post: Post): Observable<Post> {
-    return this.http.put<Post>(`${this.apiUrl}\${id}`, post);
-  }
-
   delete(id: number): Observable<Post> {
-    return this.http.delete<Post>(`${this.apiUrl}\${id}`);
+    return this.http.delete<Post>(`${this.apiUrl}/${id}`);
   }
 
 }

@@ -3,12 +3,17 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-    height: 100%;
-}
-
 body {
     margin: 0;
+    min-height: 100vh;
     font-family: Roboto, "Helvetica Neue", sans-serif;
+    background-color: #F2F2EB;
+}
+
+mat-progress-bar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 50;
 }

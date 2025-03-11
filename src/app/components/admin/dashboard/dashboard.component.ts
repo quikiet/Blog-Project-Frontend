@@ -5,10 +5,11 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { LoginService } from '../../../services/Auth/login.service';
+import { MatIconModule } from '@angular/material/icon'
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, FormsModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, FormsModule, MatIconModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })

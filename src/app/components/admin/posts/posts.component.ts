@@ -22,12 +22,13 @@ import 'froala-editor/js/plugins/align.min.js';
 
 import 'froala-editor/js/plugins/image.min.js';
 
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-posts',
   standalone: true,
   providers: [provideNativeDateAdapter()],
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, FormsModule, CommonModule, FroalaEditorModule, FroalaViewModule],
+  imports: [MatProgressBarModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, FormsModule, CommonModule, FroalaEditorModule, FroalaViewModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './posts.component.html',
   styleUrl: './posts.component.css'
@@ -57,7 +58,7 @@ export class PostsComponent implements OnInit {
   author: number = 0;
   selectedFile: File | null = null;
   postForm: FormGroup;
-
+  isLoading = false;
 
 
   onFileSelected(event: any) {
@@ -73,11 +74,11 @@ export class PostsComponent implements OnInit {
     this.selectedFile = file;
 
     // Hiển thị ảnh tạm thời trước khi upload
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      this.postForm.patchValue({ thumbnail: e.target.result });
-    };
-    reader.readAsDataURL(file);
+    // const reader = new FileReader();
+    // reader.onload = (e: any) => {
+    //   this.postForm.patchValue({ thumbnail: e.target.result });
+    // };
+    // reader.readAsDataURL(file);
   }
 
 
@@ -114,71 +115,27 @@ export class PostsComponent implements OnInit {
   }
 
   options: Object = {
-    imageUploadParam: 'file',
-    imageUploadURL: `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/image/upload`,
-    imageUploadParams: {
-      upload_preset: cloudinaryConfig.uploadPreset, // Bắt buộc (Cloudinary cần để upload)
-      folder: "froala_uploads" // Tuỳ chọn: Lưu ảnh vào thư mục "froala_uploads"
-    },
+    imageUploadURL: 'http://127.0.0.1:8000/api/upload-image',
+    imageUploadParams: { file: 'file' }, // Đặt đúng tên tham số
     imageUploadMethod: 'POST',
     imageAllowedTypes: ['jpeg', 'jpg', 'png'],
     events: {
       'image.uploaded': function (response: any) {
-        console.log("📥 Response từ Cloudinary:", response);
-
-        try {
-          let jsonResponse = typeof response === "string" ? JSON.parse(response) : response;
-          const imageUrl = jsonResponse?.secure_url; // Lấy link ảnh
-
-          if (imageUrl) {
-            console.log("✅ Ảnh đã upload thành công:", imageUrl);
-
-            // Lấy instance của Froala Editor
-            const editorInstance = this as any;
-
-            if (editorInstance?.image?.insert) {
-              setTimeout(() => {
-                const imgNode = editorInstance.image.insert(imageUrl, true, null, editorInstance.image.get(), null);
-
-                if (imgNode) {
-                  console.log("🖼️ Ảnh đã chèn thành công:", imageUrl);
-                  imgNode.classList.remove("fr-error"); // Xóa class báo lỗi nếu có
-                } else {
-                  console.error("❌ Không thể chèn ảnh vào Froala!");
-                }
-              }, 100);
-            } else {
-              console.error("❌ Không tìm thấy phương thức insert của Froala Editor!");
-            }
-          } else {
-            console.error("❌ Không tìm thấy link ảnh trong phản hồi!", jsonResponse);
-          }
-        } catch (error) {
-          console.error("❌ Lỗi parse JSON response:", error);
+        let jsonResponse = JSON.parse(response);
+        if (jsonResponse.link) {
+          console.log("✅ Ảnh đã upload:", jsonResponse.link);
+          const editorInstance = this as any;
+          editorInstance.image.insert(jsonResponse.link, true, null, editorInstance.image.get(), null);
+        } else {
+          console.error("❌ Không tìm thấy link ảnh!", jsonResponse);
         }
       },
-      'image.inserted': function ($img: any, response: any) {
-        console.log("🖼️ Xác nhận ảnh đã chèn:", $img, response);
-
-        setTimeout(() => {
-          if ($img?.length && $img.hasClass("fr-error")) {
-            console.warn("⚠️ Ảnh bị đánh dấu lỗi! Đang thử sửa...");
-            $img.removeClass("fr-error"); // Xóa class báo lỗi
-            $img.removeAttr("draggable"); // Tránh lỗi kéo thả ảnh
-          }
-        }, 100);
-      },
-
-
-      'image.error': function (error: any, response: any) {
-        console.error("❌ Lỗi upload ảnh:", error, response);
-      }
     }
   };
 
+
   createPost() {
     console.log("Dữ liệu form trước khi submit:", this.postForm.value);
-
     if (this.postForm.invalid) {
       this.toastr.warning("Vui lòng điền đầy đủ thông tin", "Cảnh báo");
       return;
@@ -187,13 +144,10 @@ export class PostsComponent implements OnInit {
     if (this.selectedFile) {
       this.uploadService.uploadImage(this.selectedFile).subscribe({
         next: (response: any) => {
-          console.log("Ảnh upload thành công:", response.secure_url);
 
           this.postForm.patchValue({ thumbnail: response.secure_url });
 
           setTimeout(() => {
-            console.log("Dữ liệu form sau khi cập nhật thumbnail:", this.postForm.value);
-            console.log("⚠️ Kiểm tra content trước khi gửi:", this.postForm.get('content')?.value);
             this.submitCreate(this.postForm.value);
           }, 100);
         },
@@ -205,6 +159,7 @@ export class PostsComponent implements OnInit {
       console.log("⚠️ Kiểm tra content trước khi gửi:", this.postForm.get('content')?.value);
       this.submitCreate(this.postForm.value);
     }
+
   }
 
 
@@ -212,7 +167,7 @@ export class PostsComponent implements OnInit {
 
 
   submitCreate(postData: any) {
-
+    this.isLoading = true;
     postData.published_at = postData.published_at ? new Date(postData.published_at).toISOString().split('T')[0] : undefined;
 
     this.postService.create(postData).subscribe({
@@ -222,9 +177,12 @@ export class PostsComponent implements OnInit {
         this.router.navigate(['admin/list-post']);
       }, error: (error) => {
         this.toastr.error("Lỗi: " + error, "Thất bại");
+      },
+      complete: () => {
+        this.isLoading = false;
       }
     })
-
+    this.isLoading = false;
   }
 
 
