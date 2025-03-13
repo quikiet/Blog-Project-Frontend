@@ -1,1 +1,10 @@
 <p>setting works!</p>
+<app-button (click)="isDeleted = true">Xem thêm</app-button> <br />
+<app-button (click)="isDeleted = true" variant="secondary">Xem thêm</app-button>
+<br />
+<app-button (click)="isDeleted = true" variant="black">Xem thêm</app-button>
+<br />
+<br />
+<button class="btn bg-gray-200 hover:bg-gray-300">Xem Thêm</button>
+<button class="btn btn-sm btn-warning ml-2">Xoá</button>
+<app-modal-submit-delete [isOpen]="isDeleted"></app-modal-submit-delete>

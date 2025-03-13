@@ -1,0 +1,19 @@
+<dialog id="delete_Modal" class="modal overlay" *ngIf="isOpen" open>
+  <div class="modal-box max-w-fit border-secondary border-2 bg-white">
+    <p class="font-bold text-black text-lg text-left pb-2">Xác nhận xoá</p>
+    <p class="text-md text-gray-500 font-light">
+      <ng-content></ng-content>
+    </p>
+    <div class="modal-action">
+      <form
+        method="dialog"
+        class="flex text-center items-center w-full justify-center"
+      >
+        <app-button variant="none" class="mr-2" (clicked)="close()"
+          >Không</app-button
+        >
+        <app-button variant="secondary" (clicked)="confirm()">Có</app-button>
+      </form>
+    </div>
+  </div>
+</dialog>

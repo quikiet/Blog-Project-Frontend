@@ -22,15 +22,22 @@
         >
           <mat-icon>delete</mat-icon>
           <dialog id="delete_Modal" class="modal">
-            <div class="modal-box">
-              <h6 class="font-bold text-red-400">Xoá bài báo</h6>
-              <p class="text-lg text-red-400">Bạn có chắc chắn muốn xoá!</p>
+            <div class="modal-box max-w-fit border-secondary border-2 bg-white">
+              <p class="font-bold text-black text-lg text-left pb-2">
+                Xác nhận xoá
+              </p>
+              <p class="text-md text-gray-500 font-light">
+                Bạn có chắc chắn muốn xoá không?
+              </p>
               <div class="modal-action">
-                <form method="dialog">
-                  <button class="btn">Không</button>
-                  <button class="btn ml-3 bg-red-400" (click)="deletePost()">
-                    Có
-                  </button>
+                <form
+                  method="dialog"
+                  class="flex text-center items-center w-full justify-center"
+                >
+                  <app-button variant="none" class="mr-2">Không</app-button>
+                  <app-button variant="secondary" (clicked)="deletePost()"
+                    >Có</app-button
+                  >
                 </form>
               </div>
             </div>
@@ -82,12 +89,9 @@
           />
           <div class="flex gap-5 flex-col p-6">
             <input type="file" (change)="onFileSelected($event)" />
-            <button
-              class="btn bg-primary hover:bg-secondary hover:text-white"
-              (click)="deleteThumbmail()"
-            >
+            <app-button (clicked)="deleteThumbmail()">
               Xoá thumbnail
-            </button>
+            </app-button>
           </div>
         </div>
         <div *ngIf="!post.thumbnail">
@@ -145,10 +149,10 @@
 
       <!-- Nút đăng bài -->
       <div class="flex justify-end gap-5">
-        <button class="btn" (click)="editPost()">Quay lại</button>
-        <button class="btn btn-primary" type="submit" (click)="updatePost()">
+        <app-button variant="none" (clicked)="editPost()">Quay lại</app-button>
+        <app-button variant="warning" type="submit" (clicked)="updatePost()">
           Chỉnh sửa
-        </button>
+        </app-button>
       </div>
     </div>
   </div>

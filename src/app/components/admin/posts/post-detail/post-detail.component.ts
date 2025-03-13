@@ -14,10 +14,11 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
 @Component({
   selector: 'app-post-detail',
   standalone: true,
-  imports: [MatProgressBarModule, FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, CommonModule, RouterLink, MatIconModule, FroalaEditorModule, FroalaViewModule],
+  imports: [MatProgressBarModule, FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, CommonModule, RouterLink, MatIconModule, FroalaEditorModule, FroalaViewModule, ButtonComponent],
   templateUrl: './post-detail.component.html',
   styleUrl: './post-detail.component.css'
 })

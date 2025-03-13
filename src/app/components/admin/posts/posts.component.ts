@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -23,12 +23,14 @@ import 'froala-editor/js/plugins/align.min.js';
 import 'froala-editor/js/plugins/image.min.js';
 
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-
+import { merge } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 @Component({
   selector: 'app-posts',
   standalone: true,
   providers: [provideNativeDateAdapter()],
-  imports: [MatProgressBarModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, FormsModule, CommonModule, FroalaEditorModule, FroalaViewModule],
+  imports: [MatProgressBarModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, FormsModule, CommonModule, FroalaEditorModule, FroalaViewModule, ButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './posts.component.html',
   styleUrl: './posts.component.css'
@@ -45,16 +47,34 @@ export class PostsComponent implements OnInit {
     private cateServices: CategoryService,
     private loginService: LoginService
   ) {
-    this.postForm = fb.group({
-      title: ['', Validators.required],
+    this.postForm = this.fb.group({
+      title: ['', Validators.required, Validators.minLength(5)],
       content: ['', Validators.required],
       summary: ['', Validators.required],
       thumbnail: [''],
       published_at: [''],
       category_id: [0, Validators.required],
       user_id: [0]
-    })
+    });
+
+    merge(this.postForm.get('title')!.statusChanges, this.postForm.get('title')!.valueChanges)
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.updateErrorMessage());
+
   }
+
+  updateErrorMessage() {
+    const titleControl = this.postForm.get('title');
+    if (titleControl!.hasError('required')) {
+      this.errorMessage.set('Tiêu đề không được để trống');
+    } else if (titleControl!.hasError('minlength')) {
+      this.errorMessage.set('Tiêu đề không được ngắn hơn 5 ký tự');
+    } else {
+      this.errorMessage.set('');
+    }
+  }
+
+  errorMessage = signal('');
   author: number = 0;
   selectedFile: File | null = null;
   postForm: FormGroup;

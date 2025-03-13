@@ -9,13 +9,13 @@ import { ToastrService } from 'ngx-toastr';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-
-
+import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { ModalSubmitDeleteComponent } from "../../../shared/components/modal-submit-delete/modal-submit-delete.component";
 
 @Component({
   selector: 'app-category',
   standalone: true,
-  imports: [FormsModule, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, CommonModule, FormsModule, MatPaginatorModule],
+  imports: [FormsModule, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, CommonModule, FormsModule, MatPaginatorModule, ButtonComponent, ModalSubmitDeleteComponent],
   templateUrl: './category.component.html',
   styleUrl: './category.component.css'
 })
@@ -37,12 +37,14 @@ export class CategoryComponent implements AfterViewInit, OnInit {
   isSubmit = false;
   isEditting: Category | null = null;
   editting = false;
+  isDeleted = false;
   filterValue = '';
-
+  idSelected: number | null = null;
   @ViewChild('cateModal') cateModal!: ElementRef;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  validateCategoryName = false;
 
   ngOnInit(): void {
     this.loadCategories();
@@ -59,34 +61,46 @@ export class CategoryComponent implements AfterViewInit, OnInit {
     this.categories.filter = this.filterValue.toLowerCase().trim();
   }
 
+  deleteModal(id: number) {
+    this.idSelected = id;
+    this.isDeleted = true;
+  }
+
   resetForm() {
     this.currentCategory.name = '';
     this.newCategory.name = '';
-    this.isSubmit = false;
     this.editting = false;
     this.isLoading = false;
+    this.validateCategoryName = false;
+    this.isDeleted = false;
   }
 
-  deleteCategory(id: number) {
-    if (!id) {
+  deleteCategory() {
+    if (!this.idSelected) {
       this.toastr.error("Không có danh mục này", "Lỗi");
     }
-    this.categoryService.delete(id).subscribe({
+    this.categoryService.delete(this.idSelected!).subscribe({
       next: () => {
         this.loadCategories();
         this.toastr.success("Xoá danh mục thành công", "Thành công");
+        this.isDeleted = false;
       }, error: () => {
-        this.toastr.error("Không xoá được danh mục này", "Lỗi");
+        this.toastr.error("Danh mục này hiện đang được sử dụng", "Lỗi xoá");
       }
     });
-
+    this.isDeleted = false;
   }
 
   updateCategory(): void {
+    if (!this.currentCategory.name.trim()) {
+      this.validateCategoryName = true;
+      return;
+    }
+    this.validateCategoryName = false;
+
     if (!this.isEditting || !this.isEditting.name.trim() || this.isEditting.id === undefined) {
       this.toastr.error("Không sửa được danh mục này", "Lỗi");
     }
-    this.isSubmit = true;
     this.categoryService.update(this.currentCategory.id!, this.currentCategory).subscribe({
       next: () => {
         this.loadCategories(); // Load lại danh mục sau khi cập nhật
@@ -95,10 +109,11 @@ export class CategoryComponent implements AfterViewInit, OnInit {
         this.cateModal.nativeElement.close(); // Đóng modal
       },
       error: (err) => {
-        this.toastr.error('Đã có danh mục này!', 'Cảnh báo');
+        this.cateModal.nativeElement.close();
         console.error("Lỗi khi cập nhật danh mục", err);
       },
-      complete: () => this.isSubmit = false
+      complete: () => {
+      }
     });
 
   }
@@ -112,15 +127,13 @@ export class CategoryComponent implements AfterViewInit, OnInit {
 
   createCategory() {
     if (!this.newCategory.name.trim()) {
-      this.toastr.warning('Tên danh mục không được để trống!', 'Cảnh báo');
+      this.validateCategoryName = true;
       return;
     }
-    this.isSubmit = true;
     this.categoryService.create(this.newCategory).subscribe({
       next: (data) => {
         this.loadCategories();
-        this.newCategory.name = '';
-        this.showSuccess();
+        this.toastr.success('Thêm danh mục thành công', 'Thành công');
         this.cateModal.nativeElement.close();
         this.resetForm();
       },
@@ -128,7 +141,9 @@ export class CategoryComponent implements AfterViewInit, OnInit {
         this.toastr.error('Đã có danh mục này!', 'Cảnh báo');
 
       },
-      complete: () => this.isSubmit = false
+      complete: () => {
+        this.validateCategoryName = false;
+      }
     });
   }
 
@@ -142,10 +157,6 @@ export class CategoryComponent implements AfterViewInit, OnInit {
         this.isLoading = false;
       }
     });
-  }
-
-  showSuccess() {
-    this.toastr.success('Thêm danh mục thành công!', 'Thành công!');
   }
 
   /** Announce the change in sort state for assistive technology. */

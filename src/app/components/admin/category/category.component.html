@@ -2,13 +2,13 @@
   class="flex w-full justify-between pb-5 border-b border-gray-700 items-center"
 >
   <span class="text-black text-2xl font-bold">Danh sách danh mục</span>
-  <button
-    class="btn btn-xs sm:btn-sm md:btn-md border-secondary bg-primary hover:bg-secondary text-black font-normal hover:text-white hover:border-primary"
-    (click)="resetForm()"
+  <app-button
+    variant="primary"
+    (clicked)="resetForm()"
     onclick="cateModal.showModal()"
   >
     Thêm
-  </button>
+  </app-button>
   <dialog id="cateModal" #cateModal class="modal">
     <div class="modal-box bg-white text-primary">
       <form method="dialog">
@@ -23,6 +23,7 @@
         <div class="label">
           <span class="label-text text-lg">Tên danh mục</span>
         </div>
+
         <span *ngIf="editting">
           <input
             [(ngModel)]="currentCategory.name"
@@ -30,34 +31,43 @@
             placeholder="Sửa"
             class="input input-bordered w-full"
           />
+          <span
+            *ngIf="validateCategoryName && !newCategory.name"
+            class="text-red-500 text-sm font-thin"
+            >Tên danh mục không được để trống</span
+          >
         </span>
         <span *ngIf="!editting">
           <input
             [(ngModel)]="newCategory.name"
             type="text"
             placeholder="Thêm"
-            class="input input-bordered w-full"
+            class="input input-bordered w-full text-black focus:outline-offset-1"
+            [ngClass]="{
+              ' border-red-500 bg-red-50':
+                validateCategoryName && !newCategory.name
+            }"
           />
+          <span
+            *ngIf="validateCategoryName && !newCategory.name"
+            class="text-red-500 text-sm font-thin"
+            >Tên danh mục không được để trống</span
+          >
         </span>
       </label>
       <div class="flex w-full justify-end gap-5 mt-3">
         <form method="dialog">
-          <button class="btn" (click)="resetForm()">Huỷ bỏ</button>
+          <app-button variant="none" (clicked)="resetForm()">Huỷ bỏ</app-button>
         </form>
-        <button
-          class="btn btn-outline btn-primary"
-          *ngIf="!editting"
-          (click)="createCategory()"
-        >
+        <app-button *ngIf="!editting" (clicked)="createCategory()">
           Thêm
-        </button>
-        <button
-          class="btn btn-outline btn-warning"
-          (click)="updateCategory()"
+        </app-button>
+        <app-button
+          variant="warning"
+          (clicked)="updateCategory()"
           *ngIf="editting"
+          >Cập nhật</app-button
         >
-          Cập nhật
-        </button>
       </div>
     </div>
   </dialog>
@@ -109,15 +119,22 @@
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>Hành động</th>
       <td mat-cell *matCellDef="let element">
-        <button class="btn btn-sm btn-warning" (click)="editCategory(element)">
-          Sửa
-        </button>
-        <button
-          class="btn btn-sm btn-warning ml-2"
-          (click)="deleteCategory(element.id)"
+        <app-button
+          variant="warning"
+          class="mr-2"
+          (click)="editCategory(element)"
         >
+          Sửa
+        </app-button>
+        <app-button variant="primary" (clicked)="deleteModal(element.id)">
           Xoá
-        </button>
+        </app-button>
+        <app-modal-submit-delete
+          [isOpen]="isDeleted"
+          (confirmModal)="deleteCategory()"
+          (closeModal)="isDeleted = false"
+          >Bạn có chắc chắn muốn xoá danh mục này?</app-modal-submit-delete
+        >
       </td>
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
