@@ -55,22 +55,20 @@
       <div class="label">
         <span class="label-text">Ngày đăng tải</span>
       </div>
-      <mat-form-field>
-        <input
-          matInput
-          [matDatepicker]="picker3"
-          placeholder="Value binding"
-          formControlName="published_at"
-        />
-        <mat-datepicker-toggle
-          matSuffix
-          [for]="picker3"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #picker3></mat-datepicker>
-      </mat-form-field>
+      <p-datepicker
+        [minDate]="minDate"
+        [maxDate]="maxDate"
+        [readonlyInput]="true"
+        [showIcon]="true"
+        [showOnFocus]="false"
+        inputId="calendar-24h"
+        formControlName="published_at"
+        [showTime]="true"
+      />
     </label>
   </div>
 
-  <!-- Nút đăng bài -->
-  <app-button type="submit">Đăng tải</app-button>
+  <div class="mt-4">
+    <app-button variant="full" type="submit">Đăng tải</app-button>
+  </div>
 </form>

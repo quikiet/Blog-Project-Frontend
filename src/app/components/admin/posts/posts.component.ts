@@ -26,11 +26,16 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { merge } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+
+import { DatePicker } from 'primeng/datepicker';
+import { Fluid } from 'primeng/fluid';
+
+
 @Component({
   selector: 'app-posts',
   standalone: true,
   providers: [provideNativeDateAdapter()],
-  imports: [MatProgressBarModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, FormsModule, CommonModule, FroalaEditorModule, FroalaViewModule, ButtonComponent],
+  imports: [DatePicker, Fluid, MatProgressBarModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, FormsModule, CommonModule, FroalaEditorModule, FroalaViewModule, ButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './posts.component.html',
   styleUrl: './posts.component.css'
@@ -52,7 +57,7 @@ export class PostsComponent implements OnInit {
       content: ['', Validators.required],
       summary: ['', Validators.required],
       thumbnail: [''],
-      published_at: [''],
+      published_at: [new Date(), Validators.required],
       category_id: [0, Validators.required],
       user_id: [0]
     });
@@ -79,8 +84,8 @@ export class PostsComponent implements OnInit {
   selectedFile: File | null = null;
   postForm: FormGroup;
   isLoading = false;
-
-
+  minDate: Date | undefined;
+  maxDate: Date | undefined;
   onFileSelected(event: any) {
     const file: File = event.target.files[0];
 
@@ -119,6 +124,22 @@ export class PostsComponent implements OnInit {
         console.error("Lỗi khi lấy thông tin người dùng:", err);
       }
     });
+
+    // datePicker
+    let today = new Date();
+    let month = today.getMonth();
+    let year = today.getFullYear();
+    let prevMonth = (month === 0) ? 11 : month - 1;
+    let prevYear = (prevMonth === 11) ? year - 1 : year;
+    let nextMonth = (month === 11) ? 0 : month + 1;
+    let nextYear = (nextMonth === 0) ? year + 1 : year;
+    this.minDate = new Date();
+    this.minDate.setSeconds(0, 0);
+    this.maxDate = new Date();
+    this.maxDate.setMonth(nextMonth);
+    this.maxDate.setFullYear(nextYear);
+
+
   }
 
 
@@ -182,13 +203,15 @@ export class PostsComponent implements OnInit {
 
   }
 
-
-
-
-
   submitCreate(postData: any) {
     this.isLoading = true;
-    postData.published_at = postData.published_at ? new Date(postData.published_at).toISOString().split('T')[0] : undefined;
+    postData.published_at = postData.published_at
+      ? new Date(postData.published_at.getTime() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 19)
+        .replace('T', ' ')
+      : undefined;
+
 
     this.postService.create(postData).subscribe({
       next: (data) => {

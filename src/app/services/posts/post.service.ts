@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 
 export interface Post {
   id?: number,
@@ -10,7 +10,14 @@ export interface Post {
   thumbnail: string,
   published_at?: string | Date,
   category_id: number,
-  user_id: number
+  user_id: number,
+  posts_user?: {
+    id: number;
+    name: string;
+    email: string;
+    avatar: string | null;
+    role: string;
+  };
 }
 
 @Injectable({
@@ -19,6 +26,12 @@ export interface Post {
 export class PostService {
   apiUrl = "http://127.0.0.1:8000/api/posts";
   constructor(private http: HttpClient) { }
+
+  countPost(): Observable<number> {
+    return this.http.get<Post[]>(this.apiUrl).pipe(
+      map((post) => post.length)
+    );
+  }
 
   getAllPosts(): Observable<Post[]> {
     return this.http.get<Post[]>(this.apiUrl).pipe(

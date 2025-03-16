@@ -7,14 +7,29 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { provideToastr } from 'ngx-toastr';
+import { providePrimeNG } from 'primeng/config';
+import Lara from '@primeng/themes/lara';
+import { LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeVi from '@angular/common/locales/vi';
+registerLocaleData(localeVi);
 export const appConfig: ApplicationConfig = {
   providers: [
+    { provide: LOCALE_ID, useValue: 'vi-VN' },
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(),
     provideAnimationsAsync(),
     provideAnimations(), // required animations providers
     provideToastr(),
+    providePrimeNG({
+      theme: {
+        preset: Lara,
+        options: {
+          darkModeSelector: false || 'none'
+        }
+      }
+    }), provideAnimationsAsync()
   ]
 };
 

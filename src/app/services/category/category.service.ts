@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 
 export interface Category {
   id?: number,
@@ -13,6 +13,12 @@ export interface Category {
 export class CategoryService {
   apiUrl = "http://127.0.0.1:8000/api/categories";
   constructor(private http: HttpClient) { }
+
+  countCategory(): Observable<number> {
+    return this.http.get<Category[]>(this.apiUrl).pipe(
+      map((category) => category.length)
+    );
+  }
 
   getAll(): Observable<Category[]> {
     return this.http.get<Category[]>(this.apiUrl).pipe(
