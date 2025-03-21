@@ -132,7 +132,10 @@
                     Bài báo không có hình đại diện
                   </div>
                   <div class="absolute top-5 left-5">
-                    <p-tag [value]="getStatusLabel(post.status).label" />
+                    <p-tag
+                      [value]="getStatusLabel(post.status).label"
+                      [severity]="getStatusLabel(post.status).severity"
+                    />
                   </div>
                 </div>
                 <div class="col-span-4">

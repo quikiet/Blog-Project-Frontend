@@ -11,6 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { ModalSubmitDeleteComponent } from "../../../shared/components/modal-submit-delete/modal-submit-delete.component";
+import { throwError } from 'rxjs';
 
 @Component({
   selector: 'app-category',
@@ -84,8 +85,9 @@ export class CategoryComponent implements AfterViewInit, OnInit {
         this.loadCategories();
         this.toastr.success("Xoá danh mục thành công", "Thành công");
         this.isDeleted = false;
-      }, error: () => {
-        this.toastr.error("Danh mục này hiện đang được sử dụng", "Lỗi xoá");
+      }, error: (error) => {
+        this.toastr.error("Không thể xoá", "Lỗi xoá");
+        throwError(error);
       }
     });
     this.isDeleted = false;
@@ -137,8 +139,8 @@ export class CategoryComponent implements AfterViewInit, OnInit {
         this.cateModal.nativeElement.close();
         this.resetForm();
       },
-      error: () => {
-        this.toastr.error('Đã có danh mục này!', 'Cảnh báo');
+      error: (error) => {
+        this.toastr.error(error, 'Cảnh báo');
 
       },
       complete: () => {

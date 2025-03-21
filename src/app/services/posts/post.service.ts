@@ -1,5 +1,5 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable, OnInit } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 
 export interface Post {
@@ -27,23 +27,35 @@ export class PostService {
   apiUrl = "http://127.0.0.1:8000/api/posts";
   constructor(private http: HttpClient) { }
 
+
+
   countPost(): Observable<number> {
-    return this.http.get<Post[]>(this.apiUrl).pipe(
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<Post[]>(this.apiUrl, { headers }).pipe(
       map((post) => post.length)
     );
   }
 
   getAllPosts(): Observable<Post[]> {
-    return this.http.get<Post[]>(this.apiUrl).pipe(
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<Post[]>(this.apiUrl, { headers }).pipe(
       catchError(error => {
         console.error("error to fetch Post", error);
+        if (error.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        }
         return throwError(() => new Error("Failed to fetching"));
       })
     );
   }
 
   update(id: number, post: Post): Observable<Post> {
-    return this.http.put<Post>(`${this.apiUrl}/${id}`, post).pipe(
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.put<Post>(`${this.apiUrl}/${id}`, post, { headers }).pipe(
       catchError(error => {
         console.error("Lỗi khi sửa bài báo", error);
         return throwError(() => new Error("Sửa không thành công"));
@@ -52,7 +64,9 @@ export class PostService {
   }
 
   show(id: number): Observable<Post> {
-    return this.http.get<Post>(`${this.apiUrl}/${id}`).pipe(
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<Post>(`${this.apiUrl}/${id}`, { headers }).pipe(
       catchError(error => {
         console.error("error to fetch Post", error);
         return throwError(() => new Error("Failed to fetching"));
@@ -61,7 +75,10 @@ export class PostService {
   }
 
   create(post: Post): Observable<Post> {
-    return this.http.post<Post>(this.apiUrl, post).pipe(
+
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.post<Post>(this.apiUrl, post, { headers }).pipe(
       catchError(error => {
         console.error("Lỗi tạo bài báo", error);
         return throwError(() => new Error("Tạo thất bại"));
@@ -70,7 +87,9 @@ export class PostService {
   }
 
   delete(id: number): Observable<Post> {
-    return this.http.delete<Post>(`${this.apiUrl}/${id}`);
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.delete<Post>(`${this.apiUrl}/${id}`, { headers });
   }
 
 }

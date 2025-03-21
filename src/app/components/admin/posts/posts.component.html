@@ -1,7 +1,208 @@
-<form [formGroup]="postForm" (ngSubmit)="createPost()">
+<div class="flex justify-between items-center">
   <h6>Thêm bài báo</h6>
+  <div class="card flex justify-center">
+    <p-button (click)="showDialogPreview()" label="Xem trước" />
+    <p-dialog
+      header="Xem trước bài báo"
+      [modal]="true"
+      [(visible)]="visiblePreview"
+      [style]="{ width: '50rem' }"
+      [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+      [maximizable]="true"
+    >
+      <div class="p-6 flex justify-center">
+        <p-stepper [value]="1" class="basis-[50rem]">
+          <p-step-list>
+            <p-step [value]="1">Thẻ bài báo</p-step>
+            <p-step [value]="2">Chi tiết bài báo</p-step>
+          </p-step-list>
+          <p-step-panels>
+            <p-step-panel [value]="1">
+              <ng-template #content let-activateCallback="activateCallback">
+                <div>
+                  <div *ngIf="selectedFile">
+                    <div class="w-96 h-96 m-auto relative image-container">
+                      <div *ngIf="postForm.get('thumbnail')?.value">
+                        <img
+                          class="w-96 h-96 object-cover image-card"
+                          alt="Thumbnail"
+                          [src]="postForm.get('thumbnail')?.value"
+                        />
+                      </div>
+                      <div class="text-overlay">
+                        <p class="text-lg font-medium">
+                          {{
+                            cutText(
+                              postForm.get("title")?.value ||
+                                "Chưa nhập tiêu đề",
+                              20
+                            )
+                          }}
+                        </p>
+                        <p class="text-xs text-primary-content">
+                          Bởi <span class="mr-2">{{ authorName }}</span>
+                          {{
+                            postForm.get("published_at")?.value
+                              | date : "dd MMMM, YYYY"
+                          }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngIf="!selectedFile">
+                    <div class="p-6 shadow-md border">
+                      <div class="text-xl font-bold">
+                        {{
+                          cutText(
+                            postForm.get("title")?.value || "Chưa nhập tiêu đề",
+                            35
+                          )
+                        }}
+                        <div
+                          class="flex justify-between py-2 items-center border-b-2 border-secondary-content"
+                        >
+                          <div>
+                            <span class="font-normal text-primary text-xs">
+                              <span
+                                class="pr-2 border-r border-primary-content"
+                              >
+                                Bởi {{ authorName }}</span
+                              >
+                              <span class="pl-2">
+                                {{
+                                  postForm.get("published_at")?.value
+                                    | date : "dd MMMM, YYYY"
+                                }}
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="pt-5">
+                        <div class="text-primary">
+                          <a class="cursor-pointer hover:link">
+                            {{ cutText(postForm.get("summary")?.value) }}</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex pt-6 justify-end">
+                  <p-button
+                    label="Next"
+                    icon="pi pi-arrow-right"
+                    iconPos="right"
+                    (onClick)="activateCallback(2)"
+                  />
+                </div>
+              </ng-template>
+            </p-step-panel>
+
+            <p-step-panel [value]="2">
+              <ng-template #content let-activateCallback="activateCallback">
+                <div>
+                  <div class="w-full h-full">
+                    <div class="w-full h-full mb-4">
+                      <div
+                        *ngIf="postForm.get('thumbnail')?.value"
+                        class="thumbnail-preview"
+                      >
+                        <img
+                          [src]="postForm.get('thumbnail')?.value"
+                          alt="Thumbnail"
+                          class="object-cover h-48 w-full"
+                        />
+                      </div>
+                    </div>
+                    <div class="max-w-4xl m-auto px-8">
+                      <div class="text-xl font-bold">
+                        <div class="breadcrumbs text-sm text-black">
+                          <ul>
+                            <li><a class="text-primary">Trang chủ</a></li>
+                            <li class="text-secondary">
+                              {{
+                                getCategoryName(
+                                  postForm.get("category_id")?.value
+                                )
+                              }}
+                            </li>
+                          </ul>
+                        </div>
+                        {{
+                          postForm.get("title")?.value || "Chưa nhập tiêu đề"
+                        }}
+                        <div
+                          class="flex justify-between py-2 items-center border-b-2 border-secondary-content"
+                        >
+                          <div>
+                            <span class="font-normal text-primary text-xs"
+                              ><p-avatar
+                                *ngIf="!authorAvatar"
+                                label="{{ authorName[0] }}"
+                                styleClass="mr-2"
+                                shape="circle"
+                              />
+                              <p-avatar
+                                *ngIf="authorAvatar"
+                                image="{{ authorAvatar }}"
+                                shape="circle"
+                              />
+                              <span
+                                class="pr-2 border-r border-primary-content"
+                              >
+                                Bởi {{ authorName }}</span
+                              >
+                              <span class="pl-2">
+                                {{
+                                  postForm.get("published_at")?.value
+                                    | date : "dd MMMM, YYYY HH:mm"
+                                }}
+                              </span>
+                            </span>
+                          </div>
+                          <div class="flex gap-2 items-center">
+                            <i class="pi pi-comment"></i>
+                            <i class="pi pi-share-alt"></i>
+                            <i class="pi pi-bookmark"></i>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="pt-5">
+                        <div
+                          [froalaView]="
+                            postForm.get('content')?.value || 'Chưa nhập'
+                          "
+                        ></div>
+                      </div>
+
+                      <p>
+                        <strong>Status:</strong>
+                        {{ postForm.get("status")?.value || "Chưa xác định" }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex pt-6 justify-between">
+                  <p-button
+                    label="Back"
+                    severity="secondary"
+                    icon="pi pi-arrow-left"
+                    (onClick)="activateCallback(1)"
+                  />
+                </div>
+              </ng-template>
+            </p-step-panel>
+          </p-step-panels>
+        </p-stepper>
+      </div>
+    </p-dialog>
+  </div>
+</div>
+<form [formGroup]="postForm" (ngSubmit)="createPost()">
   <div *ngIf="isLoading" class="overlay"></div>
   <mat-progress-bar mode="query" *ngIf="isLoading"></mat-progress-bar>
+
   <!-- Upload ảnh thumbnail -->
   <input type="file" (change)="onFileSelected($event)" />
 
@@ -9,6 +210,33 @@
   <label class="form-control w-full">
     <div class="label">
       <span class="label-text">Tiêu đề</span>
+      <mat-error
+        class="text-red-400"
+        *ngIf="
+          postForm.get('title')?.hasError('required') &&
+          (postForm.get('title')?.touched || postForm.get('title')?.dirty)
+        "
+      >
+        Tiêu đề không được để trống
+      </mat-error>
+      <mat-error
+        class="text-red-400"
+        *ngIf="
+          postForm.get('title')?.hasError('minlength') &&
+          (postForm.get('title')?.touched || postForm.get('title')?.dirty)
+        "
+      >
+        Tiêu đề phải dài hơn 5 ký tự
+      </mat-error>
+      <mat-error
+        class="text-red-400"
+        *ngIf="
+          postForm.get('title')?.hasError('maxlength') &&
+          (postForm.get('title')?.touched || postForm.get('title')?.dirty)
+        "
+      >
+        Tiêu đề quá dài
+      </mat-error>
     </div>
     <input
       formControlName="title"

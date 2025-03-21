@@ -14,35 +14,17 @@
             <mat-icon>edit</mat-icon></a
           >
           <a
-            onclick="delete_Modal.showModal()"
-            (click)="deleteModal()"
+            (click)="deleteModal(post.id)"
             class="link hover:text-primary transition text-center"
           >
             <mat-icon>delete</mat-icon>
-            <dialog id="delete_Modal" class="modal">
-              <div
-                class="modal-box max-w-fit border-secondary border-2 bg-white"
-              >
-                <p class="font-bold text-black text-lg text-left pb-2">
-                  Xác nhận xoá
-                </p>
-                <p class="text-md text-gray-500 font-light">
-                  Bạn có chắc chắn muốn xoá không?
-                </p>
-                <div class="modal-action">
-                  <form
-                    method="dialog"
-                    class="flex text-center items-center w-full justify-center"
-                  >
-                    <app-button variant="none" class="mr-2">Không</app-button>
-                    <app-button variant="secondary" (clicked)="deletePost()"
-                      >Có</app-button
-                    >
-                  </form>
-                </div>
-              </div>
-            </dialog>
           </a>
+          <app-modal-submit-delete
+            [isOpen]="isDeleted"
+            (confirmModal)="deletePost()"
+            (closeModal)="isDeleted = false"
+            >Bạn có chắc chắn muốn xoá bài viết này?</app-modal-submit-delete
+          >
         </div>
       </div>
       <p class="text-gray-500 mb-2">
@@ -142,10 +124,22 @@
               </option>
             </select>
           </label>
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
+              <span class="label-text">Trạng thái</span>
+            </div>
+            <p-select
+              [(ngModel)]="selectedStatus"
+              (onChange)="updateStatus($event.value)"
+              [options]="statuses"
+              placeholder="Chọn trạng thái"
+              optionLabel="label"
+            />
+          </label>
         </div>
 
         <!-- Nút đăng bài -->
-        <div class="flex justify-end gap-5">
+        <div class="flex justify-end gap-5 mt-2">
           <app-button variant="none" (clicked)="editPost()"
             >Quay lại</app-button
           >

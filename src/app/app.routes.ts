@@ -5,19 +5,23 @@ import { CategoryComponent } from './components/admin/category/category.componen
 import { SettingComponent } from './components/admin/setting/setting.component';
 import { PostsComponent } from './components/admin/posts/posts.component';
 import { LoginComponent } from './components/both/login/login.component';
-import { authGuard } from './guard/auth.guard';
 import { HomeComponent } from './components/customer/home/home.component';
 import { roleGuard } from './guard/role.guard';
 import { isLoggedGuard } from './guard/is-logged.guard';
 import { PostListComponent } from './components/admin/posts/post-list/post-list.component';
 import { PostDetailComponent } from './components/admin/posts/post-detail/post-detail.component';
+import { UsersComponent } from './components/admin/users/users.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
+    { path: 'users', component: UsersComponent },
     { path: 'register', component: RegisterComponent, canActivate: [isLoggedGuard] },
     { path: 'login', component: LoginComponent, canActivate: [isLoggedGuard] },
     {
-        path: 'admin', component: DashboardComponent, children: [
+        path: 'admin', component: DashboardComponent,
+        canActivate: [roleGuard],
+        data: { role: 'admin' },
+        children: [
             { path: '', redirectTo: 'settings', pathMatch: 'full' },
             { path: 'settings', component: SettingComponent },
             { path: 'category', component: CategoryComponent },

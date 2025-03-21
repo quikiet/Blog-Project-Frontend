@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 
@@ -15,13 +15,19 @@ export class CategoryService {
   constructor(private http: HttpClient) { }
 
   countCategory(): Observable<number> {
-    return this.http.get<Category[]>(this.apiUrl).pipe(
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.get<Category[]>(this.apiUrl, { headers }).pipe(
       map((category) => category.length)
     );
   }
 
   getAll(): Observable<Category[]> {
-    return this.http.get<Category[]>(this.apiUrl).pipe(
+
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<Category[]>(this.apiUrl, { headers }).pipe(
       catchError(error => {
         console.error("error fetching category", error);
         return throwError(() => new Error("Failed to fetch category"));
@@ -30,7 +36,11 @@ export class CategoryService {
   }
 
   create(category: Category): Observable<Category> {
-    return this.http.post<Category>(this.apiUrl, category).pipe(
+
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.post<Category>(this.apiUrl, category, { headers }).pipe(
       catchError(error => {
         console.error("error create category", error);
         return throwError(() => new Error("Failed to create category"));
@@ -39,15 +49,21 @@ export class CategoryService {
   }
 
   edit(id: number): Observable<Category> {
-    return this.http.get<Category>(`${this.apiUrl}/${id}`);
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<Category>(`${this.apiUrl}/${id}`, { headers });
   }
 
   update(id: number, category: Category): Observable<Category> {
-    return this.http.put<Category>(`${this.apiUrl}/${id}`, category);
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.put<Category>(`${this.apiUrl}/${id}`, category, { headers });
   }
 
   delete(id: number): Observable<Category> {
-    return this.http.delete<Category>(`${this.apiUrl}/${id}`);
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.delete<Category>(`${this.apiUrl}/${id}`, { headers });
   }
 
 }

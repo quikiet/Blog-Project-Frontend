@@ -1,0 +1,65 @@
+<div class="p-6 max-w-4xl mx-auto">
+  <h2 class="text-xl font-bold mb-4">User Management</h2>
+
+  <!-- Form thêm/sửa User -->
+  <form (ngSubmit)="saveUser()" class="mb-4 flex gap-2">
+    <input
+      type="text"
+      [(ngModel)]="formData.name"
+      name="name"
+      placeholder="Nhập tên"
+      class="border p-2 rounded w-full"
+      required
+    />
+    <input
+      type="text"
+      [(ngModel)]="formData.student_code"
+      name="student_code"
+      placeholder="Nhập mã sv"
+      class="border p-2 rounded w-full"
+      required
+    />
+    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
+      {{ formData.id ? "Sửa" : "Thêm" }} User
+    </button>
+  </form>
+  <button
+    *ngIf="formData.id"
+    (click)="resetForm()"
+    class="bg-blue-500 text-white px-4 py-2 rounded w-full my-2"
+  >
+    Clear
+  </button>
+  <!-- Bảng danh sách User -->
+  <table class="w-full border-collapse border border-gray-200">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="border p-2">ID</th>
+        <th class="border p-2">Tên</th>
+        <th class="border p-2">MSSV</th>
+        <th class="border p-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users" class="text-center">
+        <td class="border p-2">{{ user.id }}</td>
+        <td class="border p-2">{{ user.name }}</td>
+        <td class="border p-2">{{ user.student_code }}</td>
+        <td class="border p-2 flex justify-center gap-2">
+          <button
+            (click)="editUser(user)"
+            class="bg-yellow-500 text-white px-2 py-1 rounded"
+          >
+            Edit
+          </button>
+          <button
+            (click)="deleteUser(user.id)"
+            class="bg-red-500 text-white px-2 py-1 rounded"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

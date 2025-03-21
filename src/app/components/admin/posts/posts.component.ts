@@ -29,13 +29,18 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 
 import { DatePicker } from 'primeng/datepicker';
 import { Fluid } from 'primeng/fluid';
+import { ButtonModule } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
+import { PanelModule } from 'primeng/panel';
+import { StepperModule } from 'primeng/stepper';
+import { AvatarModule } from 'primeng/avatar';
 
 
 @Component({
   selector: 'app-posts',
   standalone: true,
   providers: [provideNativeDateAdapter()],
-  imports: [DatePicker, Fluid, MatProgressBarModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, FormsModule, CommonModule, FroalaEditorModule, FroalaViewModule, ButtonComponent],
+  imports: [FroalaViewModule, AvatarModule, StepperModule, PanelModule, Dialog, ButtonModule, DatePicker, Fluid, MatProgressBarModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, FormsModule, CommonModule, FroalaEditorModule, FroalaViewModule, ButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './posts.component.html',
   styleUrl: './posts.component.css'
@@ -43,6 +48,19 @@ import { Fluid } from 'primeng/fluid';
 export class PostsComponent implements OnInit {
 
   categories: any[] = [];
+  errorMessage = signal('');
+  authorId: number = 0;
+  authorName: string = '';
+  authorAvatar: string = '';
+  selectedFile: File | null = null;
+  postForm: FormGroup;
+  isLoading = false;
+  minDate: Date | undefined;
+  maxDate: Date | undefined;
+  visiblePreview: boolean = false;
+
+
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -53,12 +71,13 @@ export class PostsComponent implements OnInit {
     private loginService: LoginService
   ) {
     this.postForm = this.fb.group({
-      title: ['', Validators.required, Validators.minLength(5)],
+      title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(254)]],
       content: ['', Validators.required],
       summary: ['', Validators.required],
       thumbnail: [''],
       published_at: [new Date(), Validators.required],
       category_id: [0, Validators.required],
+      status: [''],
       user_id: [0]
     });
 
@@ -68,54 +87,18 @@ export class PostsComponent implements OnInit {
 
   }
 
-  updateErrorMessage() {
-    const titleControl = this.postForm.get('title');
-    if (titleControl!.hasError('required')) {
-      this.errorMessage.set('Tiêu đề không được để trống');
-    } else if (titleControl!.hasError('minlength')) {
-      this.errorMessage.set('Tiêu đề không được ngắn hơn 5 ký tự');
-    } else {
-      this.errorMessage.set('');
-    }
-  }
-
-  errorMessage = signal('');
-  author: number = 0;
-  selectedFile: File | null = null;
-  postForm: FormGroup;
-  isLoading = false;
-  minDate: Date | undefined;
-  maxDate: Date | undefined;
-  onFileSelected(event: any) {
-    const file: File = event.target.files[0];
-
-    if (!file) return; // Nếu không có file, thoát ngay
-
-    if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
-      this.toastr.warning("Chỉ chấp nhận ảnh JPEG, JPG, PNG", "Cảnh báo");
-      return;
-    }
-
-    this.selectedFile = file;
-
-    // Hiển thị ảnh tạm thời trước khi upload
-    // const reader = new FileReader();
-    // reader.onload = (e: any) => {
-    //   this.postForm.patchValue({ thumbnail: e.target.result });
-    // };
-    // reader.readAsDataURL(file);
-  }
-
-
   ngOnInit(): void {
     this.loadCategory();
+
     this.loginService.getUser().subscribe({
       next: (res) => {
         console.log("Dữ liệu người dùng:", res);
         if (res?.user?.id) {
-          this.author = res.user.id;
-          this.postForm.controls['user_id'].setValue(this.author); // Cập nhật user_id an toàn
-          console.log("User ID sau khi cập nhật form:", this.postForm.value.user_id);
+          this.authorId = res.user.id;
+          this.authorName = res.user.name;
+          this.authorAvatar = res.user.avatar;
+          this.postForm.controls['user_id'].setValue(this.authorId);
+
         } else {
           console.error("Không tìm thấy user ID trong response");
         }
@@ -138,11 +121,41 @@ export class PostsComponent implements OnInit {
     this.maxDate = new Date();
     this.maxDate.setMonth(nextMonth);
     this.maxDate.setFullYear(nextYear);
+  }
 
-
+  updateErrorMessage() {
+    const titleControl = this.postForm.get('title');
+    if (titleControl!.hasError('required')) {
+      this.errorMessage.set('Tiêu đề không được để trống');
+    } else if (titleControl!.hasError('minlength')) {
+      this.errorMessage.set('Tiêu đề không được ngắn hơn 5 ký tự');
+    } else if (titleControl!.hasError('maxlength')) {
+      this.errorMessage.set('Tiêu đề của bạn quá dài');
+    } else {
+      this.errorMessage.set('');
+    }
   }
 
 
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+
+    if (!file) return; // Nếu không có file, thoát ngay
+
+    if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+      this.toastr.warning("Chỉ chấp nhận ảnh JPEG, JPG, PNG", "Cảnh báo");
+      return;
+    }
+
+    this.selectedFile = file;
+
+    // Hiển thị ảnh tạm thời trước khi upload
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.postForm.patchValue({ thumbnail: e.target.result });
+    };
+    reader.readAsDataURL(file);
+  }
 
 
   loadCategory() {
@@ -176,11 +189,19 @@ export class PostsComponent implements OnInit {
 
 
   createPost() {
-    console.log("Dữ liệu form trước khi submit:", this.postForm.value);
     if (this.postForm.invalid) {
       this.toastr.warning("Vui lòng điền đầy đủ thông tin", "Cảnh báo");
       return;
     }
+
+    const role = this.loginService.getRole();
+    console.log(role);
+
+    if (role !== 'admin' && role !== 'author') {
+      this.toastr.warning("Bạn không có quyền tạo bài viết", "Truy cập bị từ chối");
+      return;
+    }
+    console.log(this.postForm);
 
     if (this.selectedFile) {
       this.uploadService.uploadImage(this.selectedFile).subscribe({
@@ -189,21 +210,23 @@ export class PostsComponent implements OnInit {
           this.postForm.patchValue({ thumbnail: response.secure_url });
 
           setTimeout(() => {
-            this.submitCreate(this.postForm.value);
+            this.submitCreate(this.postForm.value, role);
           }, 100);
         },
         error: (error) => {
           this.toastr.error("Lỗi upload ảnh: " + error, "Thất bại");
+        },
+        complete: () => {
+          this.isLoading = false;
         }
       });
     } else {
-      console.log("⚠️ Kiểm tra content trước khi gửi:", this.postForm.get('content')?.value);
-      this.submitCreate(this.postForm.value);
+      this.submitCreate(this.postForm.value, role);
     }
 
   }
 
-  submitCreate(postData: any) {
+  submitCreate(postData: any, role: string) {
     this.isLoading = true;
     postData.published_at = postData.published_at
       ? new Date(postData.published_at.getTime() - new Date().getTimezoneOffset() * 60000)
@@ -211,7 +234,8 @@ export class PostsComponent implements OnInit {
         .slice(0, 19)
         .replace('T', ' ')
       : undefined;
-
+    postData.status = role === 'admin' ? 'scheduled' : 'draft';
+    console.log(postData);
 
     this.postService.create(postData).subscribe({
       next: (data) => {
@@ -226,7 +250,26 @@ export class PostsComponent implements OnInit {
       }
     })
     this.isLoading = false;
+
+    console.log(postData);
+
   }
 
+  showDialogPreview() {
+    this.visiblePreview = true;
+  }
+
+  getCategoryName(categoryId: any): string {
+    const category = this.categories.find(cat => cat.id == categoryId);
+    return category ? category.name : 'Chưa chọn';
+  }
+
+  cutText(text: string, wordLimit: number = 50): string {
+    if (!text) return '';
+    const words = text.split(' ');
+    if (words.length <= wordLimit) return text;
+
+    return words.slice(0, wordLimit).join(' ') + '...';
+  }
 
 }

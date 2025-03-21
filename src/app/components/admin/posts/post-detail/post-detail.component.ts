@@ -15,10 +15,12 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
+import { Select } from 'primeng/select';
+import { ModalSubmitDeleteComponent } from "../../../../shared/components/modal-submit-delete/modal-submit-delete.component";
 @Component({
   selector: 'app-post-detail',
   standalone: true,
-  imports: [MatProgressBarModule, FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, CommonModule, RouterLink, MatIconModule, FroalaEditorModule, FroalaViewModule, ButtonComponent],
+  imports: [Select, MatProgressBarModule, FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, CommonModule, RouterLink, MatIconModule, FroalaEditorModule, FroalaViewModule, ButtonComponent, ModalSubmitDeleteComponent],
   templateUrl: './post-detail.component.html',
   styleUrl: './post-detail.component.css'
 })
@@ -37,12 +39,24 @@ export class PostDetailComponent implements OnInit {
   isLoading = false;
   isEditting = false;
   isDeleted = false;
+  deletedId: number | null = null;
+  statuses: any[] = [];
+  selectedStatus: string = '';
   sanitizedContent: SafeHtml = '';
   selectedFile: File | null = null;
   ngOnInit(): void {
     this.loadPosts();
     this.loadCategory();
     this.isLoading = false;
+    this.statuses = [
+      { label: 'Nháp', value: 'draft' },
+      { label: 'Đang chờ', value: 'pending' },
+      { label: 'Công khai', value: 'published' },
+      { label: 'Lên lịch', value: 'scheduled' },
+      { label: 'Lưu trữ', value: 'archived' },
+      { label: 'Bị xoá', value: 'rejected' },
+      { label: 'Đã xoá', value: 'deleted' }
+    ];
   }
 
   options: Object = {
@@ -91,12 +105,21 @@ export class PostDetailComponent implements OnInit {
           this.post = data
           console.log(this.post);
           this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(this.post.content);
+          const foundedStatus = this.statuses.find(s => s.value === this.post.status || null);
+          console.log(foundedStatus.value);
+          this.selectedStatus = foundedStatus ? foundedStatus : '';
+          console.log(this.selectedStatus);
+
         },
         error: (err) => console.error("Lỗi tải chi tiết bài viết", err)
       });
     } else {
       console.error("ID bài viết không hợp lệ!");
     }
+  }
+
+  updateStatus(value: any) {
+    this.post.status = value.value;
   }
 
   loadCategory() {
@@ -111,7 +134,7 @@ export class PostDetailComponent implements OnInit {
   }
 
   deletePost() {
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this.deletedId;
     this.isLoading = true;
     if (id && !isNaN(+id)) {
       if (this.isDeleted) {
@@ -221,6 +244,7 @@ export class PostDetailComponent implements OnInit {
 
   savePost(id: number) {
     this.isLoading = true;
+
     this.postService.update((+id), this.post).subscribe({
       next: () => {
         this.toastr.success("Cập nhật bài báo thành công", "Thành công");
@@ -235,14 +259,17 @@ export class PostDetailComponent implements OnInit {
         this.loadPosts();
       }
     });
+    this.isLoading = false;
+
   }
 
   editPost() {
     this.isEditting = !this.isEditting;
   }
 
-  deleteModal() {
+  deleteModal(id: number) {
     this.isDeleted = true;
+    this.deletedId = id;
   }
 
 }

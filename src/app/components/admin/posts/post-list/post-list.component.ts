@@ -19,7 +19,15 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-post-list',
   standalone: true,
-  imports: [Tag, Image, CommonModule, RouterLink, FormsModule, DrawerModule, DropdownModule, ButtonModule, DatePicker, RouterLink, Tag, Image, TableModule, IconFieldModule, InputTextModule, InputIconModule, MultiSelectModule, SelectModule],
+  imports: [
+    Tag, Image,
+    CommonModule, RouterLink,
+    FormsModule, DrawerModule,
+    DropdownModule, ButtonModule, DatePicker,
+    RouterLink, Tag, Image, TableModule,
+    IconFieldModule, InputTextModule, InputIconModule,
+    MultiSelectModule, SelectModule
+  ],
   templateUrl: './post-list.component.html',
   styleUrl: './post-list.component.css'
 })
@@ -31,11 +39,22 @@ export class PostListComponent implements OnInit {
   status: any[] = [];
   filterMenu: boolean = false;
   loading: boolean = true;
+  tags: any[] = [];
+
   @ViewChild('dt2') dt2!: Table; // Import từ Primeng
 
 
   ngOnInit(): void {
     this.loadPosts();
+    this.tags = [
+      { label: 'Nháp', value: 'draft' },
+      { label: 'Đang chờ', value: 'pending' },
+      { label: 'Công khai', value: 'published' },
+      { label: 'Lên lịch', value: 'scheduled' },
+      { label: 'Lưu trữ', value: 'archived' },
+      { label: 'Bị xoá', value: 'rejected' },
+      { label: 'Đã xoá', value: 'deleted' }
+    ];
   }
 
   clear(table: Table) {
@@ -76,17 +95,19 @@ export class PostListComponent implements OnInit {
   }
 
   getStatusLabel(status: string) {
-    switch (status) {
-      case 'draft': return { label: 'Nháp', severity: "primary" as const };
-      case 'pending': return { label: 'Đang chờ duyệt', severity: 'warn' as const };
-      case 'published': return { label: 'Đã được đăng', severity: 'success' as const };
-      case 'scheduled': return { label: 'Đã lên lịch', severity: 'info' as const };
-      case 'archived': return { label: 'Lưu trữ', severity: 'info' as const };
-      case 'rejected': return { label: 'Từ chối', severity: 'danger' as const };
-      case 'deleted': return { label: 'Đã xoá', severity: 'contrast' as const };
-      default: return { label: 'Không xác định', severity: 'primary' as const };
-    }
+    const statuses: Record<string, { label: string; severity: "warn" | "success" | "info" | "danger" | "contrast" | "secondary" }> = {
+      draft: { label: 'Nháp', severity: "contrast" },
+      pending: { label: 'Đang chờ duyệt', severity: "warn" },
+      published: { label: 'Đã đăng', severity: "success" },
+      scheduled: { label: 'Đã lên lịch', severity: "info" },
+      archived: { label: 'Lưu trữ', severity: "info" },
+      rejected: { label: 'Từ chối', severity: "danger" },
+      deleted: { label: 'Đã xoá', severity: "danger" }
+    };
+
+    return statuses[status] ?? { label: 'Không xác định', severity: "secondary" };
   }
+
 
 
 }

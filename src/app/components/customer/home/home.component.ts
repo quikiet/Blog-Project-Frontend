@@ -3,11 +3,13 @@ import { Component, OnInit } from '@angular/core';
 import { LoginService } from '../../../services/Auth/login.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { UsersComponent } from "../../admin/users/users.component";
+import { PostListComponent } from "../../admin/posts/post-list/post-list.component";
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UsersComponent, PostListComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

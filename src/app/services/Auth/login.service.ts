@@ -32,7 +32,20 @@ export class LoginService {
   }
 
   isLoggedIn() {
-    return localStorage.getItem('token');
+    const token = localStorage.getItem('token');
+    const token_expiration = localStorage.getItem('token_expiration');
+
+    if (!token || !token_expiration) {
+      return false;
+    }
+
+    const now = new Date().getTime();
+    if (now > parseInt(token_expiration)) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('token_expiration');
+      return false;
+    }
+    return true;
   }
 
 

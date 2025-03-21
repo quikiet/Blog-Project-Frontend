@@ -34,6 +34,9 @@ export class LoginComponent {
         this.toastr.success('Đăng nhập thành công', 'Thành công');
         // Lưu token vào LocalStorage
         localStorage.setItem('token', res.token);
+        localStorage.setItem('user', JSON.stringify(res.user));
+        localStorage.setItem('token_expiration', res.expires_at.toString());
+
         this.router.navigate(['/']);
       },
       error: (error) => {
