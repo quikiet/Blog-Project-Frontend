@@ -11,6 +11,8 @@ import { isLoggedGuard } from './guard/is-logged.guard';
 import { PostListComponent } from './components/admin/posts/post-list/post-list.component';
 import { PostDetailComponent } from './components/admin/posts/post-detail/post-detail.component';
 import { UsersComponent } from './components/admin/users/users.component';
+import { AuthorsComponent } from './components/admin/authors/authors.component';
+import { TagsComponent } from './components/admin/tags/tags.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -27,9 +29,11 @@ export const routes: Routes = [
             { path: 'category', component: CategoryComponent },
             { path: 'posts', component: PostsComponent },
             { path: 'list-post', component: PostListComponent },
+            { path: 'authors', component: AuthorsComponent },
+            { path: 'tags/:slug', component: TagsComponent },
         ]
     },
-    { path: 'post-detail/:id', component: PostDetailComponent },
+    { path: 'post-detail/:slug', component: PostDetailComponent },
     { path: "**", component: HomeComponent, pathMatch: 'full' },
 
 ];

@@ -5,6 +5,7 @@ import { catchError, map, Observable, throwError } from 'rxjs';
 export interface Category {
   id?: number,
   name: string;
+  slug: string;
 }
 
 @Injectable({
@@ -48,22 +49,22 @@ export class CategoryService {
     )
   }
 
-  edit(id: number): Observable<Category> {
+  edit(slug: string): Observable<Category> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get<Category>(`${this.apiUrl}/${id}`, { headers });
+    return this.http.get<Category>(`${this.apiUrl}/${slug}`, { headers });
   }
 
-  update(id: number, category: Category): Observable<Category> {
+  update(slug: string, category: Category): Observable<Category> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.put<Category>(`${this.apiUrl}/${id}`, category, { headers });
+    return this.http.put<Category>(`${this.apiUrl}/${slug}`, category, { headers });
   }
 
-  delete(id: number): Observable<Category> {
+  delete(slug: string): Observable<Category> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.delete<Category>(`${this.apiUrl}/${id}`, { headers });
+    return this.http.delete<Category>(`${this.apiUrl}/${slug}`, { headers });
   }
 
 }

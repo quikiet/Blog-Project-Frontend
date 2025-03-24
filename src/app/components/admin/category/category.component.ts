@@ -24,23 +24,25 @@ export class CategoryComponent implements AfterViewInit, OnInit {
 
   constructor(private categoryService: CategoryService, private toastr: ToastrService) { }
   private _liveAnnouncer = inject(LiveAnnouncer);
-  displayedColumns: string[] = ['id', 'name', 'actions'];
+  displayedColumns: string[] = ['id', 'name', 'slug', 'actions'];
   categories = new MatTableDataSource<Category>;
   isLoading = true;
   newCategory: Category = {
     id: 0,
-    name: ''
+    name: '',
+    slug: ''
   };
   currentCategory: Category = {
     id: 0,
-    name: ''
+    name: '',
+    slug: ''
   };
   isSubmit = false;
   isEditting: Category | null = null;
   editting = false;
   isDeleted = false;
   filterValue = '';
-  idSelected: number | null = null;
+  slugSelected: string = '';
   @ViewChild('cateModal') cateModal!: ElementRef;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -62,14 +64,16 @@ export class CategoryComponent implements AfterViewInit, OnInit {
     this.categories.filter = this.filterValue.toLowerCase().trim();
   }
 
-  deleteModal(id: number) {
-    this.idSelected = id;
+  deleteModal(slug: string) {
+    this.slugSelected = slug;
     this.isDeleted = true;
   }
 
   resetForm() {
     this.currentCategory.name = '';
+    this.currentCategory.slug = '';
     this.newCategory.name = '';
+    this.newCategory.slug = '';
     this.editting = false;
     this.isLoading = false;
     this.validateCategoryName = false;
@@ -77,61 +81,77 @@ export class CategoryComponent implements AfterViewInit, OnInit {
   }
 
   deleteCategory() {
-    if (!this.idSelected) {
+    if (!this.slugSelected) {
       this.toastr.error("Không có danh mục này", "Lỗi");
     }
-    this.categoryService.delete(this.idSelected!).subscribe({
-      next: () => {
-        this.loadCategories();
-        this.toastr.success("Xoá danh mục thành công", "Thành công");
-        this.isDeleted = false;
-      }, error: (error) => {
-        this.toastr.error("Không thể xoá", "Lỗi xoá");
-        throwError(error);
-      }
-    });
-    this.isDeleted = false;
+    if (this.isDeleted) {
+      this.categoryService.delete(this.slugSelected!).subscribe({
+        next: () => {
+          this.loadCategories();
+          this.toastr.success("Xoá danh mục thành công", "Thành công");
+          this.isDeleted = false;
+        }, error: (error) => {
+          this.toastr.error("Không thể xoá", "Lỗi xoá");
+          console.log(error);
+        }
+      });
+      this.isDeleted = false;
+    }
   }
 
   updateCategory(): void {
-    if (!this.currentCategory.name.trim()) {
-      this.validateCategoryName = true;
-      return;
-    }
-    this.validateCategoryName = false;
-
-    if (!this.isEditting || !this.isEditting.name.trim() || this.isEditting.id === undefined) {
-      this.toastr.error("Không sửa được danh mục này", "Lỗi");
-    }
-    this.categoryService.update(this.currentCategory.id!, this.currentCategory).subscribe({
-      next: () => {
-        this.loadCategories(); // Load lại danh mục sau khi cập nhật
-        this.toastr.success('Cập nhật danh mục thành công!', 'Thành công!');
-        this.resetForm();
-        this.cateModal.nativeElement.close(); // Đóng modal
-      },
-      error: (err) => {
-        this.cateModal.nativeElement.close();
-        console.error("Lỗi khi cập nhật danh mục", err);
-      },
-      complete: () => {
+    try {
+      if (!this.currentCategory.name.trim()) {
+        this.validateCategoryName = true;
+        return;
       }
-    });
+      this.validateCategoryName = false;
+
+      const oldSlug = this.currentCategory.slug;
+
+      this.categoryService.update(oldSlug, this.currentCategory).subscribe({
+        next: () => {
+          this.loadCategories(); // Load lại danh mục sau khi cập nhật
+          this.toastr.success('Cập nhật danh mục thành công!', 'Thành công!');
+          this.resetForm();
+          this.cateModal.nativeElement.close(); // Đóng modal
+        },
+        error: (err) => {
+          this.cateModal.nativeElement.close();
+          this.toastr.error("Cập nhật không thành công", "Lỗi");
+          console.log(err);
+
+        },
+      });
+    } catch (error) {
+      this.toastr.error("Lỗi: " + error);
+    }
 
   }
 
   editCategory(category: Category) {
     this.editting = true;
-    this.isEditting = { ...category }; // Copy object tránh thay đổi trực tiếp
-    this.currentCategory = this.isEditting; // Trỏ đến category đang sửa
+    this.isEditting = { ...category };
+    this.currentCategory = this.isEditting;
     this.cateModal.nativeElement.showModal();
   }
+
+  // generateSlug(text: string): string {
+  //   if (!text) return '';
+  //   return text
+  //     .toLowerCase() // Chuyển thành chữ thường
+  //     .normalize('NFD') // Chuẩn hóa ký tự Unicode
+  //     .replace(/[\u0300-\u036f]/g, '') // Xóa dấu
+  //     .replace(/[^a-z0-9]+/g, '-') // Thay tất cả ký tự không phải chữ/số bằng -
+  //     .replace(/(^-|-$)/g, ''); // Xóa dấu - ở đầu và cuối
+  // }
 
   createCategory() {
     if (!this.newCategory.name.trim()) {
       this.validateCategoryName = true;
       return;
     }
+
     this.categoryService.create(this.newCategory).subscribe({
       next: (data) => {
         this.loadCategories();

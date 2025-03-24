@@ -1,0 +1,201 @@
+<div class="card">
+  <p-toast />
+  <p-toolbar styleClass="mb-6">
+    <ng-template #start>
+      <p-button
+        label="New"
+        icon="pi pi-plus"
+        class="mr-2"
+        (onClick)="openNew()"
+      />
+      <p-button
+        severity="danger"
+        label="Delete"
+        icon="pi pi-trash"
+        outlined
+        (onClick)="deleteSelectedAuthors()"
+        [disabled]="!selectedAuthors || !selectedAuthors.length"
+      />
+      <p-button
+        [outlined]="true"
+        icon="pi pi-filter-slash"
+        label="Clear"
+        (click)="clear(dt)"
+      />
+    </ng-template>
+
+    <ng-template #end>
+      <p-button
+        label="Export"
+        icon="pi pi-upload"
+        severity="secondary"
+        (onClick)="exportCSV()"
+      />
+    </ng-template>
+  </p-toolbar>
+
+  <p-table
+    class="w-full"
+    #tableAuthor
+    [value]="authors"
+    [rows]="10"
+    [columns]="cols"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'email']"
+    [(selection)]="selectedAuthors"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+  >
+    <ng-template #caption>
+      <div class="flex items-center justify-between">
+        <h5 class="m-0">Quản lý tác giả</h5>
+        <p-iconfield>
+          <p-inputicon styleClass="pi pi-search" />
+          <input
+            pInputText
+            type="text"
+            (input)="searchGlobal($event)"
+            placeholder="Search..."
+          />
+        </p-iconfield>
+      </div>
+    </ng-template>
+    <ng-template #header>
+      <tr>
+        <th style="width: 3rem">
+          <p-tableHeaderCheckbox />
+        </th>
+        <th pSortableColumn="id">
+          Mã
+          <p-sortIcon field="id" />
+        </th>
+        <th pSortableColumn="name">
+          Tên
+          <p-sortIcon field="name" />
+        </th>
+        <th>Hình ảnh</th>
+        <th pSortableColumn="email">
+          Địa chỉ email
+          <p-sortIcon field="email" />
+        </th>
+        <th>Tiểu sử</th>
+
+        <th>Hành động</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-author>
+      <tr>
+        <td style="width: 3rem">
+          <p-tableCheckbox [value]="author" />
+        </td>
+        <td>{{ author.id }}</td>
+        <td>{{ author.name }}</td>
+        <td>
+          <img
+            [src]="author.avatar"
+            [alt]="author.name"
+            style="width: 64px"
+            class="rounded"
+          />
+        </td>
+        <td>{{ author.email }}</td>
+        <td>{{ author.bio }}</td>
+        <td>
+          <p-button
+            icon="pi pi-pencil"
+            class="mr-2"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="editAuthor(author)"
+          />
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="deleteAuthor(author)"
+          />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-dialog
+    [(visible)]="authorDialog"
+    [style]="{ width: '450px' }"
+    header="Product Details"
+    [modal]="true"
+  >
+    <ng-template #content>
+      <div class="flex flex-col gap-6">
+        <img
+          [src]="author.avatar"
+          [alt]="author.avatar"
+          class="block m-auto pb-4"
+          *ngIf="author.avatar"
+        />
+
+        <input type="file" (change)="onFileSelected($event)" />
+        <div>
+          <label class="block font-semibold mb-2">Tên tác giả</label>
+          <p-inputgroup>
+            <p-inputgroup-addon>
+              <i class="pi pi-user"></i>
+            </p-inputgroup-addon>
+            <input
+              required
+              pInputText
+              type="text"
+              autofocus
+              [(ngModel)]="author.name"
+              placeholder="Nguyễn Văn A"
+            />
+          </p-inputgroup>
+          <small class="text-red-500" *ngIf="submitted && !author.name"
+            >Tên không được để trống.</small
+          >
+        </div>
+        <div>
+          <label class="block font-semibold mb-2">Địa chỉ email</label>
+          <p-inputgroup>
+            <p-inputgroup-addon>
+              <i class="pi pi-envelope"></i>
+            </p-inputgroup-addon>
+            <input
+              required
+              pInputText
+              type="email"
+              [(ngModel)]="author.email"
+              placeholder="example@gmail.com"
+            />
+          </p-inputgroup>
+          <small class="text-red-500" *ngIf="submitted && !author.name"
+            >Tên không được để trống.</small
+          >
+        </div>
+        <div>
+          <label for="bio" class="block font-semibold mb-2">Tiểu sử</label>
+          <textarea
+            id="bio"
+            pTextarea
+            [(ngModel)]="author.bio"
+            required
+            rows="3"
+            cols="20"
+            fluid
+            placeholder="Ông tên thật là..."
+          ></textarea>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template #footer>
+      <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
+      <p-button label="Save" icon="pi pi-check" (click)="saveAuthor()" />
+    </ng-template>
+  </p-dialog>
+
+  <p-confirmDialog [style]="{ width: '450px' }" />
+</div>

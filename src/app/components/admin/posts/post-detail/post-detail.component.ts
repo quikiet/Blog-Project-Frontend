@@ -39,11 +39,12 @@ export class PostDetailComponent implements OnInit {
   isLoading = false;
   isEditting = false;
   isDeleted = false;
-  deletedId: number | null = null;
+  deletedSlug: string = '';
   statuses: any[] = [];
   selectedStatus: string = '';
   sanitizedContent: SafeHtml = '';
   selectedFile: File | null = null;
+
   ngOnInit(): void {
     this.loadPosts();
     this.loadCategory();
@@ -98,9 +99,10 @@ export class PostDetailComponent implements OnInit {
   }
 
   loadPosts() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id && !isNaN(+id)) {  // Kiểm tra ID có hợp lệ không
-      this.postService.show(+id).subscribe({
+    const slug = this.route.snapshot.paramMap.get('slug');
+    console.log(slug);
+    if (slug) {
+      this.postService.show(slug).subscribe({
         next: (data) => {
           this.post = data
           console.log(this.post);
@@ -114,7 +116,7 @@ export class PostDetailComponent implements OnInit {
         error: (err) => console.error("Lỗi tải chi tiết bài viết", err)
       });
     } else {
-      console.error("ID bài viết không hợp lệ!");
+      console.error("Không có bài viết này");
     }
   }
 
@@ -134,11 +136,11 @@ export class PostDetailComponent implements OnInit {
   }
 
   deletePost() {
-    const id = this.deletedId;
+    const slug = this.deletedSlug;
     this.isLoading = true;
-    if (id && !isNaN(+id)) {
+    if (slug) {
       if (this.isDeleted) {
-        this.postService.delete(+id).subscribe({
+        this.postService.delete(slug).subscribe({
           next: () => {
             if (this.post.thumbnail) {
               this.deleteThumbmail();
@@ -163,19 +165,19 @@ export class PostDetailComponent implements OnInit {
   }
 
   updatePost() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id && !isNaN(+id)) {
+    const slug = this.route.snapshot.paramMap.get('slug');
+    if (slug) {
       if (this.selectedFile) {
         if (this.post.thumbnail) {
           const oldImageUrl = this.post.thumbnail;
           const publicId = this.getCloudinaryPublicId(oldImageUrl);
           this.deleteThumbnailInCloudinary(publicId);
-          this.updateThumbnailInCloudinary(this.selectedFile, +id);
+          this.updateThumbnailInCloudinary(this.selectedFile, slug);
         } else {
-          this.updateThumbnailInCloudinary(this.selectedFile, +id);
+          this.updateThumbnailInCloudinary(this.selectedFile, slug);
         }
       } else {
-        this.savePost(+id);
+        this.savePost(slug);
       }
     } else {
       this.toastr.error("Không tìm thấy bài báo này nữa", "Không tìm thấy");
@@ -225,12 +227,12 @@ export class PostDetailComponent implements OnInit {
     });
   }
 
-  updateThumbnailInCloudinary(selectedFile: File, id: number) {
+  updateThumbnailInCloudinary(selectedFile: File, slug: string) {
     this.isLoading = true;
     this.uploadServices.uploadImage(selectedFile).subscribe({
       next: (response: any) => {
         this.post.thumbnail = response.secure_url;
-        this.savePost(id);
+        this.savePost(slug);
       },
       error: (error) => {
         this.toastr.error("Lỗi thêm ảnh mới", "Thất bại");
@@ -242,10 +244,10 @@ export class PostDetailComponent implements OnInit {
   }
 
 
-  savePost(id: number) {
+  savePost(slug: string) {
     this.isLoading = true;
-
-    this.postService.update((+id), this.post).subscribe({
+    const oldSlug = slug;
+    this.postService.update((oldSlug), this.post).subscribe({
       next: () => {
         this.toastr.success("Cập nhật bài báo thành công", "Thành công");
         this.isEditting = false;
@@ -267,9 +269,9 @@ export class PostDetailComponent implements OnInit {
     this.isEditting = !this.isEditting;
   }
 
-  deleteModal(id: number) {
+  deleteModal(slug: string) {
     this.isDeleted = true;
-    this.deletedId = id;
+    this.deletedSlug = slug;
   }
 
 }
