@@ -38,14 +38,14 @@
     class="w-full"
     #tableAuthor
     [value]="authors"
-    [rows]="10"
+    [rows]="5"
     [columns]="cols"
     [paginator]="true"
     [globalFilterFields]="['name', 'email']"
     [(selection)]="selectedAuthors"
     [rowHover]="true"
-    dataKey="id"
-    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    dataKey="slug"
+    currentPageReportTemplate="Hiển thị {first} đến {last} của {totalRecords} tác giả"
     [showCurrentPageReport]="true"
   >
     <ng-template #caption>
@@ -121,11 +121,10 @@
       </tr>
     </ng-template>
   </p-table>
-
   <p-dialog
     [(visible)]="authorDialog"
     [style]="{ width: '450px' }"
-    header="Product Details"
+    header="{{ !isEditting ? 'Thêm tác giả' : 'Sửa tác giả' }}"
     [modal]="true"
   >
     <ng-template #content>
@@ -149,6 +148,7 @@
               pInputText
               type="text"
               autofocus
+              [ngClass]="{ 'ng-invalid ng-dirty': submitted && !author.name }"
               [(ngModel)]="author.name"
               placeholder="Nguyễn Văn A"
             />
@@ -167,12 +167,13 @@
               required
               pInputText
               type="email"
+              [ngClass]="{ 'ng-invalid ng-dirty': submitted && !author.email }"
               [(ngModel)]="author.email"
               placeholder="example@gmail.com"
             />
           </p-inputgroup>
-          <small class="text-red-500" *ngIf="submitted && !author.name"
-            >Tên không được để trống.</small
+          <small class="text-red-500" *ngIf="submitted && !author.email"
+            >Email không được để trống.</small
           >
         </div>
         <div>
@@ -192,8 +193,12 @@
     </ng-template>
 
     <ng-template #footer>
-      <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
-      <p-button label="Save" icon="pi pi-check" (click)="saveAuthor()" />
+      <p-button label="Huỷ bỏ" icon="pi pi-times" text (click)="hideDialog()" />
+      <p-button
+        label="{{ !isEditting ? 'Thêm' : 'Sửa' }}"
+        icon="pi pi-check"
+        (click)="!isEditting ? saveAuthor() : updateAuthor(author, author.slug)"
+      />
     </ng-template>
   </p-dialog>
 

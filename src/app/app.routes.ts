@@ -13,6 +13,7 @@ import { PostDetailComponent } from './components/admin/posts/post-detail/post-d
 import { UsersComponent } from './components/admin/users/users.component';
 import { AuthorsComponent } from './components/admin/authors/authors.component';
 import { TagsComponent } from './components/admin/tags/tags.component';
+import { outDateLoginGuard } from './guard/out-date-login.guard';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },

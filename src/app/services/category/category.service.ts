@@ -12,7 +12,7 @@ export interface Category {
   providedIn: 'root'
 })
 export class CategoryService {
-  apiUrl = "http://127.0.0.1:8000/api/categories";
+  apiUrl = "https://tqkdomain.io.vn/public/api/categories";
   constructor(private http: HttpClient) { }
 
   countCategory(): Observable<number> {

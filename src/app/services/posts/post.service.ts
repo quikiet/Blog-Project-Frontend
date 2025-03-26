@@ -24,7 +24,7 @@ export interface Post {
   providedIn: 'root'
 })
 export class PostService {
-  apiUrl = "http://127.0.0.1:8000/api/posts";
+  apiUrl = "https://tqkdomain.io.vn/public/api/posts";
   constructor(private http: HttpClient) { }
 
 

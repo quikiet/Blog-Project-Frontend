@@ -7,6 +7,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 })
 export class AuthorsService {
 
+  // apiUrl = "https://tqkdomain.io.vn/public/api/authors";
   apiUrl = "http://127.0.0.1:8000/api/authors";
   constructor(private http: HttpClient) { }
 
@@ -36,6 +37,12 @@ export class AuthorsService {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.delete<any>(`${this.apiUrl}/${slug}`, { headers });
+  }
+
+  bulkDeleteAuthors(slugs: string[]): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.delete(`${this.apiUrl}/bulk`, { body: { slugs } });
   }
 
   showAuthor(slug: string): Observable<any> {

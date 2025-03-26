@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class LoginService {
-  apiURL = "http://127.0.0.1:8000/api";
+  apiURL = "https://tqkdomain.io.vn/public/api";
   constructor(private http: HttpClient) { }
 
   login(data: any): Observable<any> {

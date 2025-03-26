@@ -44,10 +44,10 @@ export class AuthorsComponent implements OnInit {
   authorDialog: boolean = false;
   selectedFile: File | null = null;
   authors!: any[];
-
+  originalAuthor: any = {};
   author!: any;
-
-  selectedAuthors!: any[] | null;
+  isEditting = false;
+  selectedAuthors: any[] = [];
   searchValue: string | undefined;
   submitted: boolean = false;
 
@@ -97,7 +97,7 @@ export class AuthorsComponent implements OnInit {
     });
 
     this.cols = [
-      { field: 'code', header: 'Mã', customExportHeader: 'Product Code' },
+      { field: 'id', header: 'Mã' },
       { field: 'name', header: 'Tên' },
       { field: 'avatar', header: 'Hình ảnh' },
       { field: 'email', header: 'Địa chỉ email' },
@@ -115,7 +115,47 @@ export class AuthorsComponent implements OnInit {
 
   editAuthor(author: any) {
     this.author = { ...author };
+    this.originalAuthor = { ...author };
     this.authorDialog = true;
+    this.isEditting = true;
+  }
+
+  updateAuthor(author: any, slug: string) {
+    if (this.isEditting) {
+
+      const hasChanges = this.hasChanges(this.originalAuthor, author);
+      if (!hasChanges) {
+        // Nếu không có thay đổi, chỉ đóng dialog và đặt lại trạng thái
+        this.authorDialog = false;
+        this.isEditting = false;
+        return;
+      }
+      this.authorServices.updateAuthor(slug, author).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Đã cập nhật tác giả' });
+
+        },
+        error: (error) => {
+          this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: 'Cập nhật tác giả thất bại do: ' + error.error.error });
+        },
+        complete: () => {
+          this.authorDialog = false;
+          this.isEditting = false;
+          this.loadAuthorData();
+        }
+      });
+    }
+  }
+
+  private hasChanges(original: any, updated: any) {
+    const fieldsToCompare = ['name', 'bio', 'email', 'avatar'];
+
+    for (const field of fieldsToCompare) {
+      if (original[field] !== updated[field]) {
+        return true;
+      }
+    }
+    return false;
   }
 
   deleteSelectedAuthors() {
@@ -124,12 +164,30 @@ export class AuthorsComponent implements OnInit {
       header: 'Xác nhận xóa',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        console.log("Xoá selected");
-        // Thêm logic xóa nhiều tác giả ở đây
-        this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Đã xóa các tác giả' });
+        if (this.selectedAuthors.length === 0) {
+          this.messageService.add({ severity: 'warn', summary: 'Cảnh báo', detail: 'Vui lòng chọn ít nhất một tác giả để xóa' });
+          return;
+        } if (confirm(`Bạn có chắc chắn muốn xóa ${this.selectedAuthors.length} tác giả?`)) {
+          const slugs = this.selectedAuthors.map(author => author.slug);
+
+          this.authorServices.bulkDeleteAuthors(slugs).subscribe({
+            next: (response) => {
+              this.messageService.add({ severity: 'success', summary: 'Thành công', detail: response.message });
+              this.loadAuthorData();
+            },
+            error: (error) => {
+              this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: error.message });
+            },
+            complete: () => {
+              this.selectedAuthors = [];
+            }
+          });
+        }
       },
       reject: () => {
         this.messageService.add({ severity: 'info', summary: 'Hủy bỏ', detail: 'Hủy xóa tác giả' });
+        this.selectedAuthors = [];
+
       }
     });
   }
@@ -145,13 +203,18 @@ export class AuthorsComponent implements OnInit {
       header: 'Xác nhận xóa',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        console.log("Xoá author");
-        // Thêm logic xóa một tác giả ở đây
-        this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Đã xóa tác giả' });
+        this.authorServices.deleteAuthor(author.slug).subscribe({
+          next: () => {
+            this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Đã xóa tác giả' });
+            this.loadAuthorData();
+          }, error: (error) => {
+            this.messageService.add({ severity: 'error', summary: 'Thất bại', detail: 'Lỗi: ' + error });
+          }
+        });
       },
-      reject: () => {
-        this.messageService.add({ severity: 'info', summary: 'Hủy bỏ', detail: 'Hủy xóa tác giả' });
-      }
+      // reject: () => {
+      //   this.messageService.add({ severity: 'info', summary: 'Hủy bỏ', detail: 'Hủy xóa tác giả' });
+      // }
     });
   }
 
@@ -185,7 +248,7 @@ export class AuthorsComponent implements OnInit {
         }
       })
     } else {
-      // this.submitCreate(this.author);
+      this.submitCreate(this.author);
     }
   }
 
@@ -199,16 +262,13 @@ export class AuthorsComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Thất bại', detail: error });
       }, complete: () => {
         this.authorDialog = false;
+        this.loadAuthorData();
       }
     })
   }
 
   onFileSelected(event: any) {
     console.log(1);
-    // const file: File = ;
-
-    // if (!file) return;
-
     this.selectedFile = event.target.files[0];
     console.log(this.selectedFile);
   }
