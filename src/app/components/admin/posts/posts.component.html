@@ -205,31 +205,30 @@
 
   <!-- Upload ảnh thumbnail -->
   <input type="file" (change)="onFileSelected($event)" />
-  <div class="card flex justify-center">
-    <p-select
-      [options]="authors"
-      [(ngModel)]="selectedAuthor"
-      optionLabel="authors.name"
-      [filter]="true"
-      filterBy="authors.name"
-      [showClear]="true"
-      placeholder="Chọn tác giả"
-      class="w-full md:w-56"
-    >
-      <ng-template #selectedItem let-selectedOption>
-        <div class="flex items-center gap-2">
-          <img src="" style="width: 18px" />
-          <div>{{ selectedOption.name }}</div>
-        </div>
-      </ng-template>
-      <ng-template let-author #item>
-        <div class="flex items-center gap-2">
-          <img src="" style="width: 18px" />
-          <div>{{ author.name }}</div>
-        </div>
-      </ng-template>
-    </p-select>
-  </div>
+  <p-select
+    [options]="authors"
+    formControlName="author_id"
+    optionLabel="name"
+    optionValue="id"
+    [filter]="true"
+    filterBy="name"
+    [showClear]="true"
+    placeholder="Chọn tác giả"
+    class="w-full md:w-72"
+  >
+    <ng-template #selectedItem let-selectedOption>
+      <div class="flex items-center gap-2">
+        <img [src]="selectedOption.avatar" style="width: 24px" />
+        <div>{{ selectedOption.name }}</div>
+      </div>
+    </ng-template>
+    <ng-template let-author #item>
+      <div class="flex items-center gap-2">
+        <img [src]="author.avatar" style="width: 24px" />
+        <div>{{ author.name }}</div>
+      </div>
+    </ng-template>
+  </p-select>
   <!-- Tiêu đề -->
   <label class="form-control w-full">
     <div class="label">

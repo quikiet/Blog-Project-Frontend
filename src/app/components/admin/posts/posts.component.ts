@@ -62,7 +62,7 @@ export class PostsComponent implements OnInit {
 
   authors: any[] | undefined;
 
-  selectedAuthor: string | undefined;
+  selectedAuthor: number | undefined;
 
   constructor(
     private fb: FormBuilder,
@@ -82,7 +82,8 @@ export class PostsComponent implements OnInit {
       published_at: [new Date(), Validators.required],
       category_id: [0, Validators.required],
       status: [''],
-      user_id: [0]
+      user_id: [0],
+      author_id: [null],
     });
 
     merge(this.postForm.get('title')!.statusChanges, this.postForm.get('title')!.valueChanges)
@@ -203,7 +204,6 @@ export class PostsComponent implements OnInit {
     }
   };
 
-
   createPost() {
     if (this.postForm.invalid) {
       this.toastr.warning("Vui lòng điền đầy đủ thông tin", "Cảnh báo");
@@ -218,7 +218,6 @@ export class PostsComponent implements OnInit {
       return;
     }
     console.log(this.postForm);
-
     if (this.selectedFile) {
       this.uploadService.uploadImage(this.selectedFile).subscribe({
         next: (response: any) => {

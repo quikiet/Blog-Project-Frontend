@@ -154,7 +154,16 @@
                     <div
                       class="flex w-full justify-between items-center text-sm text-gray-500"
                     >
-                      <p>Bởi {{ post.posts_user?.name }}</p>
+                      <p>
+                        Bởi
+                        <span class="text-primary text-xs">
+                          {{
+                            post.authors?.name
+                              ? post.authors?.name
+                              : post.posts_user?.name
+                          }}
+                        </span>
+                      </p>
                       <p>
                         {{ post.published_at | date : "dd MMMM, YYYY HH:mm" }}
                       </p>
