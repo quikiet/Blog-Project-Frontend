@@ -125,25 +125,33 @@ export class AuthorsComponent implements OnInit {
 
       const hasChanges = this.hasChanges(this.originalAuthor, author);
       if (!hasChanges) {
-        // Nếu không có thay đổi, chỉ đóng dialog và đặt lại trạng thái
         this.authorDialog = false;
         this.isEditting = false;
         return;
       }
-      this.authorServices.updateAuthor(slug, author).subscribe({
-        next: () => {
-          this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Đã cập nhật tác giả' });
-
-        },
-        error: (error) => {
-          this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: 'Cập nhật tác giả thất bại do: ' + error.error.error });
-        },
-        complete: () => {
-          this.authorDialog = false;
-          this.isEditting = false;
-          this.loadAuthorData();
+      if (this.selectedFile) {
+        if (author.avatar) {
+          const oldImageUrl = author.avatar;
+          const publicId = this.getCloudinaryPublicId(oldImageUrl);
+          this.deleteThumbnailInCloudinary(publicId);
+          this.updateThumbnailInCloudinary(this.selectedFile, slug);
         }
-      });
+        if (author.avatar !== "https://res.cloudinary.com/djk2ys41m/image/upload/v1742972953/lvyrjwewxzjlht1leiqi.jpg") {
+          this.authorServices.updateAuthor(slug, author).subscribe({
+            next: () => {
+              this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Đã cập nhật tác giả' });
+            },
+            error: (error) => {
+              this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: 'Cập nhật tác giả thất bại do: ' + error.error.error });
+            },
+            complete: () => {
+              this.authorDialog = false;
+              this.isEditting = false;
+              this.loadAuthorData();
+            }
+          });
+        }
+      }
     }
   }
 
@@ -158,6 +166,49 @@ export class AuthorsComponent implements OnInit {
     return false;
   }
 
+  getCloudinaryPublicId(url: string) {
+    const parts = url.split('/');
+    return parts[parts.length - 1].split('.')[0];
+  }
+
+  deleteThumbnailInCloudinary(publicId: string) {
+    console.log("🗑️ Xóa ảnh có publicId:", publicId);
+    this.uploadService.deleteImage(publicId).subscribe({
+      next: () => {
+        console.log("🗑️ Ảnh cũ đã được xóa!");
+      },
+      error: (error) => {
+        console.error("❌ Không thể xóa ảnh cũ", error);
+      }
+    });
+  }
+
+  updateThumbnailInCloudinary(selectedFile: File, slug: string) {
+    this.uploadService.uploadImage(selectedFile).subscribe({
+      next: (response: any) => {
+        this.author.avatar = response.secure_url;
+        const oldSlug = slug;
+        this.authorServices.updateAuthor((oldSlug), this.author).subscribe({
+          next: () => {
+            this.messageService.add({ severity: 'success', summary: 'Thành công', detail: "Cập nhật thành công tác giả" });
+            this.isEditting = false;
+          },
+          error: (err) => {
+            this.messageService.add({ severity: 'error', summary: 'Thất bại', detail: err });
+          },
+          complete: () => {
+            this.loadAuthorData();
+          }
+        });
+      },
+      error: (error) => {
+        this.messageService.add({ severity: 'error', summary: 'Thất bại', detail: error });
+      },
+      complete: () => {
+      }
+    });
+  }
+
   deleteSelectedAuthors() {
     this.confirmationService.confirm({
       message: 'Bạn có chắc muốn xóa các tác giả đã chọn không?',
@@ -168,10 +219,17 @@ export class AuthorsComponent implements OnInit {
           this.messageService.add({ severity: 'warn', summary: 'Cảnh báo', detail: 'Vui lòng chọn ít nhất một tác giả để xóa' });
           return;
         } if (confirm(`Bạn có chắc chắn muốn xóa ${this.selectedAuthors.length} tác giả?`)) {
+
+          const avatarsToDelete = this.selectedAuthors.
+            filter(author => author.avatar !== "https://res.cloudinary.com/djk2ys41m/image/upload/v1742972953/lvyrjwewxzjlht1leiqi.jpg")
+            .map(author => this.getCloudinaryPublicId(author.avatar));
           const slugs = this.selectedAuthors.map(author => author.slug);
 
           this.authorServices.bulkDeleteAuthors(slugs).subscribe({
             next: (response) => {
+              avatarsToDelete.forEach(publicId => {
+                this.deleteThumbnailInCloudinary(publicId);
+              })
               this.messageService.add({ severity: 'success', summary: 'Thành công', detail: response.message });
               this.loadAuthorData();
             },
@@ -192,19 +250,18 @@ export class AuthorsComponent implements OnInit {
     });
   }
 
-  hideDialog() {
-    this.authorDialog = false;
-    this.submitted = false;
-  }
-
   deleteAuthor(author: any) {
     this.confirmationService.confirm({
-      message: `Bạn có chắc muốn xóa tác giả ${author.name} không?`,
+      message: `Bạn có chắc muốn xóa tác giả <span class="font-bold">${author.name}</span> không?`,
       header: 'Xác nhận xóa',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.authorServices.deleteAuthor(author.slug).subscribe({
           next: () => {
+            if (author.avatar !== "https://res.cloudinary.com/djk2ys41m/image/upload/v1742972953/lvyrjwewxzjlht1leiqi.jpg") {
+              const publicId = this.getCloudinaryPublicId(author.avatar);
+              this.deleteThumbnailInCloudinary(publicId);
+            }
             this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Đã xóa tác giả' });
             this.loadAuthorData();
           }, error: (error) => {
@@ -216,6 +273,11 @@ export class AuthorsComponent implements OnInit {
       //   this.messageService.add({ severity: 'info', summary: 'Hủy bỏ', detail: 'Hủy xóa tác giả' });
       // }
     });
+  }
+
+  hideDialog() {
+    this.authorDialog = false;
+    this.submitted = false;
   }
 
   findIndexById(id: string): number {
@@ -238,17 +300,19 @@ export class AuthorsComponent implements OnInit {
       this.uploadService.uploadImage(this.selectedFile).subscribe({
         next: (response: any) => {
           this.author.avatar = response.secure_url;
-
           setTimeout(() => {
             this.submitCreate(this.author);
-          }, 500)
+          }, 100)
         }, error: (error) => {
           this.messageService.add({ severity: 'error', summary: 'Thất bại', detail: 'Upload ảnh thất bại' });
           this.authorDialog = false;
         }
       })
     } else {
-      this.submitCreate(this.author);
+      this.author.avatar = "https://res.cloudinary.com/djk2ys41m/image/upload/v1742972953/lvyrjwewxzjlht1leiqi.jpg";
+      if (this.author.avatar) {
+        this.submitCreate(this.author);
+      }
     }
   }
 
@@ -262,6 +326,7 @@ export class AuthorsComponent implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Thất bại', detail: error });
       }, complete: () => {
         this.authorDialog = false;
+        this.selectedFile = null;
         this.loadAuthorData();
       }
     })

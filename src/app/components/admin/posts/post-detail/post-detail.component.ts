@@ -111,7 +111,6 @@ export class PostDetailComponent implements OnInit {
           console.log(foundedStatus.value);
           this.selectedStatus = foundedStatus ? foundedStatus : '';
           console.log(this.selectedStatus);
-
         },
         error: (err) => console.error("Lỗi tải chi tiết bài viết", err)
       });
@@ -259,6 +258,7 @@ export class PostDetailComponent implements OnInit {
       complete: () => {
         this.isLoading = false;
         this.loadPosts();
+        this.router.navigate(['admin/list-post'])
       }
     });
     this.isLoading = false;

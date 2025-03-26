@@ -34,13 +34,14 @@ import { Dialog } from 'primeng/dialog';
 import { PanelModule } from 'primeng/panel';
 import { StepperModule } from 'primeng/stepper';
 import { AvatarModule } from 'primeng/avatar';
-
+import { SelectModule } from 'primeng/select';
+import { AuthorsService } from '../../../services/authors/authors.service';
 
 @Component({
   selector: 'app-posts',
   standalone: true,
   providers: [provideNativeDateAdapter()],
-  imports: [FroalaViewModule, AvatarModule, StepperModule, PanelModule, Dialog, ButtonModule, DatePicker, Fluid, MatProgressBarModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, FormsModule, CommonModule, FroalaEditorModule, FroalaViewModule, ButtonComponent],
+  imports: [SelectModule, FroalaViewModule, AvatarModule, StepperModule, PanelModule, Dialog, ButtonModule, DatePicker, Fluid, MatProgressBarModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, FormsModule, CommonModule, FroalaEditorModule, FroalaViewModule, ButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './posts.component.html',
   styleUrl: './posts.component.css'
@@ -59,7 +60,9 @@ export class PostsComponent implements OnInit {
   maxDate: Date | undefined;
   visiblePreview: boolean = false;
 
+  authors: any[] | undefined;
 
+  selectedAuthor: string | undefined;
 
   constructor(
     private fb: FormBuilder,
@@ -68,7 +71,8 @@ export class PostsComponent implements OnInit {
     private postService: PostService,
     private toastr: ToastrService,
     private cateServices: CategoryService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private authorService: AuthorsService
   ) {
     this.postForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(254)]],
@@ -107,6 +111,7 @@ export class PostsComponent implements OnInit {
         console.error("Lỗi khi lấy thông tin người dùng:", err);
       }
     });
+    this.loadAuthors();
 
     // datePicker
     let today = new Date();
@@ -121,6 +126,17 @@ export class PostsComponent implements OnInit {
     this.maxDate = new Date();
     this.maxDate.setMonth(nextMonth);
     this.maxDate.setFullYear(nextYear);
+
+  }
+
+  loadAuthors() {
+    this.authorService.getAllAuthors().subscribe({
+      next: (data) => {
+        this.authors = data;
+      }, error: (error) => {
+        console.log("Lỗi tải tác giả: " + error);
+      }
+    })
   }
 
   updateErrorMessage() {
