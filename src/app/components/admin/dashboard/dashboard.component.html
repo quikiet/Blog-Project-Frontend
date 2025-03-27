@@ -60,45 +60,24 @@
       >
         <a
           routerLink="settings"
-          routerLinkActive="text-secondary  bg-primary-content"
-          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
+          routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
+          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
         >
           <span class="mr-2">
-            <svg
-              width="46"
-              height="46"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M11 13H3V3h8v10Zm0 8H3v-6h8v6Zm2 0h8V11h-8v10Zm0-12V3h8v6h-8Z"
-                clip-rule="evenodd"
-              ></path>
-            </svg>
+            <i class="pi pi-chart-bar text-success" style="font-size: 2rem"></i>
           </span>
-          Trang chủ
+          Thống kê
         </a>
         <a
           routerLink="category"
-          routerLinkActive="text-secondary  bg-primary-content"
-          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
+          routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
+          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
         >
           <span class="mr-2">
-            <svg
-              width="46"
-              height="46"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M11 13H3V3h8v10Zm0 8H3v-6h8v6Zm2 0h8V11h-8v10Zm0-12V3h8v6h-8Z"
-                clip-rule="evenodd"
-              ></path>
-            </svg>
+            <i
+              class="pi pi-list-check text-success"
+              style="font-size: 2rem"
+            ></i>
           </span>
 
           Danh mục
@@ -106,36 +85,16 @@
 
         <a
           routerLink="posts"
-          routerLinkActive="text-secondary  bg-primary-content hover:none"
-          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
+          routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
+          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
         >
           <span class="mr-2">
-            <svg
-              width="46"
-              height="46"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="m8.295 16.59 4.58-4.59-4.58-4.59L9.705 6l6 6-6 6-1.41-1.41Z"
-              ></path>
-            </svg>
+            <i
+              class="pi pi-pen-to-square text-success"
+              style="font-size: 2rem"
+            ></i>
           </span>
           Đăng bài
-          <span class="ml-auto"
-            ><svg
-              width="46"
-              height="46"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="m8.295 16.59 4.58-4.59-4.58-4.59L9.705 6l6 6-6 6-1.41-1.41Z"
-              ></path>
-            </svg>
-          </span>
         </a>
       </div>
 
@@ -144,79 +103,117 @@
       >
         <a
           routerLink="list-post"
-          routerLinkActive="text-secondary  bg-primary-content hover:none"
-          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
+          routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
+          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
         >
-          <span>
-            <mat-icon>local_post_office</mat-icon>
+          <span class="mr-2">
+            <i
+              class="pi pi-calendar-plus text-success"
+              style="font-size: 2rem"
+            ></i>
           </span>
+          Bài báo
+        </a>
+        <div>
+          <ul class="menu p-0">
+            <li>
+              <details open>
+                <summary
+                  class="px-0 flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
+                >
+                  <span class="mr-2">
+                    <i
+                      class="pi pi-user text-success"
+                      style="font-size: 2rem"
+                    ></i>
+                  </span>
+                  Người dùng
+                </summary>
+                <ul>
+                  <li>
+                    <a
+                      routerLink="authors"
+                      routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
+                      class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
+                    >
+                      <span class="mr-2">
+                        <i class="pi pi-user-edit text-success"></i>
+                      </span>
+                      Tác giả</a
+                    >
+                  </li>
+                  <li>
+                    <details open>
+                      <summary
+                        class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
+                      >
+                        Người dùng
+                      </summary>
+                      <ul>
+                        <li>
+                          <a
+                            routerLink="users"
+                            routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
+                            class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
+                          >
+                            <span class="mr-2">
+                              <i class="pi pi-user-plus text-success"></i>
+                            </span>
+                            Quản lý</a
+                          >
+                        </li>
+                        <li>
+                          <a
+                            routerLink="user-statistics"
+                            routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
+                            class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
+                          >
+                            <span class="mr-2">
+                              <i class="pi pi-users text-success"></i>
+                            </span>
+                            Biểu đồ</a
+                          >
+                        </li>
+                      </ul>
+                    </details>
+                  </li>
+                </ul>
+              </details>
+            </li>
+          </ul>
+        </div>
+      </div>
 
-          Danh sách bài báo
-        </a>
+      <div
+        class="bg-white rounded-xl shadow-lg mt-6 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+      >
         <a
-          routerLink="authors"
-          routerLinkActive="text-secondary  bg-primary-content hover:none"
-          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
+          routerLink="web-settings"
+          routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
+          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
         >
           <span class="mr-2">
-            <svg
-              width="46"
-              height="46"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="m8.295 16.59 4.58-4.59-4.58-4.59L9.705 6l6 6-6 6-1.41-1.41Z"
-              ></path>
-            </svg>
+            <i class="pi pi-cog text-success" style="font-size: 2rem"></i>
           </span>
-          Tác giả
-          <span class="ml-auto"
-            ><svg
-              width="46"
-              height="46"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="m8.295 16.59 4.58-4.59-4.58-4.59L9.705 6l6 6-6 6-1.41-1.41Z"
-              ></path>
-            </svg>
-          </span>
+          Cài đặt
         </a>
         <a
-          href="#"
-          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
+          routerLink="/"
+          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
         >
           <span class="mr-2">
-            <svg
-              width="46"
-              height="46"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="m8.295 16.59 4.58-4.59-4.58-4.59L9.705 6l6 6-6 6-1.41-1.41Z"
-              ></path>
-            </svg>
+            <i class="pi pi-sign-out text-success" style="font-size: 2rem"></i>
           </span>
-          Tags
-          <span class="ml-auto"
-            ><svg
-              width="46"
-              height="46"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="m8.295 16.59 4.58-4.59-4.58-4.59L9.705 6l6 6-6 6-1.41-1.41Z"
-              ></path>
-            </svg>
+          Trang chủ
+        </a>
+        <a
+          (click)="logout()"
+          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
+        >
+          <span class="mr-2">
+            <i class="pi pi-power-off text-success" style="font-size: 2rem"></i>
           </span>
+          Đăng xuất
         </a>
       </div>
     </aside>

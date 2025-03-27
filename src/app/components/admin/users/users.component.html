@@ -1,65 +1,151 @@
-<div class="p-6 max-w-4xl mx-auto">
+<div class="max-w-4xl mx-auto">
   <h2 class="text-xl font-bold mb-4">User Management</h2>
 
   <!-- Form thêm/sửa User -->
-  <form (ngSubmit)="saveUser()" class="mb-4 flex gap-2">
+  <form (ngSubmit)="saveUser()" class="mb-4 flex flex-col gap-4">
+    <!-- Tên người dùng -->
     <input
       type="text"
       [(ngModel)]="formData.name"
       name="name"
-      placeholder="Nhập tên"
-      class="border p-2 rounded w-full"
+      placeholder="Nhập tên người dùng"
+      class="border p-2 rounded"
       required
     />
+
+    <!-- Email -->
     <input
-      type="text"
-      [(ngModel)]="formData.student_code"
-      name="student_code"
-      placeholder="Nhập mã sv"
-      class="border p-2 rounded w-full"
+      type="email"
+      [(ngModel)]="formData.email"
+      name="email"
+      placeholder="Nhập email"
+      class="border p-2 rounded"
       required
     />
-    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
-      {{ formData.id ? "Sửa" : "Thêm" }} User
-    </button>
+
+    <!-- Mật khẩu (chỉ hiển thị khi tạo mới) -->
+    <input
+      type="password"
+      [(ngModel)]="formData.password"
+      name="password"
+      placeholder="Nhập mật khẩu"
+      class="border p-2 rounded"
+      required
+    />
+
+    <!-- Link ảnh đại diện -->
+    <div>
+      <label class="block text-sm font-medium mb-1">Link ảnh đại diện:</label>
+      <input
+        type="url"
+        [(ngModel)]="formData.avatar"
+        name="avatar"
+        placeholder="Nhập URL ảnh đại diện"
+        class="border p-2 rounded w-full"
+      />
+    </div>
+
+    <!-- Vai trò -->
+    <select
+      [(ngModel)]="formData.role"
+      name="role"
+      class="border p-2 rounded bg-white"
+      required
+    >
+      <option value="user">User</option>
+      <option value="admin">Admin</option>
+      <option value="editor">Editor</option>
+    </select>
+
+    <!-- Xem trước ảnh -->
+    <div *ngIf="formData.avatar" class="mt-2">
+      <p class="text-sm font-medium mb-1">Xem trước ảnh:</p>
+      <img
+        [src]="formData.avatar"
+        alt="Avatar preview"
+        class="max-w-[200px] max-h-[200px] rounded"
+        onerror="this.src='https://via.placeholder.com/200'"
+      />
+    </div>
+
+    <!-- Nút submit -->
+    <div class="flex gap-2">
+      <button
+        type="submit"
+        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors"
+        [disabled]="isLoading"
+      >
+        <span *ngIf="isLoading">Đang xử lý...</span>
+        <span *ngIf="!isLoading">{{
+          formData.id ? "Cập nhật" : "Thêm mới"
+        }}</span>
+      </button>
+
+      <button
+        type="button"
+        (click)="resetForm()"
+        class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded transition-colors"
+      >
+        Đặt lại
+      </button>
+    </div>
   </form>
-  <button
-    *ngIf="formData.id"
-    (click)="resetForm()"
-    class="bg-blue-500 text-white px-4 py-2 rounded w-full my-2"
-  >
-    Clear
-  </button>
+
   <!-- Bảng danh sách User -->
-  <table class="w-full border-collapse border border-gray-200">
-    <thead>
-      <tr class="bg-gray-100">
-        <th class="border p-2">ID</th>
-        <th class="border p-2">Tên</th>
-        <th class="border p-2">MSSV</th>
-        <th class="border p-2">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let user of users" class="text-center">
-        <td class="border p-2">{{ user.id }}</td>
-        <td class="border p-2">{{ user.name }}</td>
-        <td class="border p-2">{{ user.student_code }}</td>
-        <td class="border p-2 flex justify-center gap-2">
-          <button
-            (click)="editUser(user)"
-            class="bg-yellow-500 text-white px-2 py-1 rounded"
-          >
-            Edit
-          </button>
-          <button
-            (click)="deleteUser(user.id)"
-            class="bg-red-500 text-white px-2 py-1 rounded"
-          >
-            Delete
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="overflow-x-auto">
+    <table class="w-full border-collapse border border-gray-200">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="border p-2">ID</th>
+          <th class="border p-2">Tên</th>
+          <th class="border p-2">Email</th>
+          <th class="border p-2">Vai trò</th>
+          <th class="border p-2">Avatar</th>
+          <th class="border p-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users" class="text-center hover:bg-gray-50">
+          <td class="border p-2">{{ user.id }}</td>
+          <td class="border p-2">{{ user.name }}</td>
+          <td class="border p-2">{{ user.email }}</td>
+          <td class="border p-2 capitalize">{{ user.role }}</td>
+          <td class="border p-2">
+            <img
+              *ngIf="user.avatar"
+              [src]="user.avatar"
+              alt="Avatar"
+              class="w-10 h-10 rounded-full mx-auto"
+              onerror="this.src='https://via.placeholder.com/40'"
+            />
+            <span *ngIf="!user.avatar">-</span>
+          </td>
+          <td class="border p-2 flex justify-center gap-2">
+            <button
+              (click)="editUser(user)"
+              class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded transition-colors"
+            >
+              Sửa
+            </button>
+            <button
+              (click)="user.id && confirmDelete(user.id)"
+              class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition-colors"
+            >
+              Xóa
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Loading indicator -->
+  <div
+    *ngIf="isLoading"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+  >
+    <div class="bg-white p-4 rounded-lg">
+      <p>Đang tải dữ liệu...</p>
+    </div>
+  </div>
 </div>

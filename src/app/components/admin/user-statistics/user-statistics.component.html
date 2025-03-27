@@ -1,0 +1,135 @@
+<!-- user-statistics.component.html -->
+<div *ngIf="stats" class="statistics-container">
+  <!-- User Statistics Section -->
+  <div class="statistics-section">
+    <h2>User Statistics</h2>
+
+    <div class="stats-grid">
+      <!-- Total Users -->
+      <div class="stat-card">
+        <h3>Total Users</h3>
+        <p class="stat-value">{{ stats.userStats.totalUsers }}</p>
+        <p
+          class="stat-growth"
+          [class.positive]="stats.userStats.userGrowthRate >= 0"
+          [class.negative]="stats.userStats.userGrowthRate < 0"
+        >
+          {{ stats.userStats.userGrowthRate }}%
+        </p>
+      </div>
+
+      <!-- Active Users -->
+      <div class="stat-card">
+        <h3>Active Users</h3>
+        <p class="stat-value">{{ stats.userStats.activeUsers }}</p>
+        <p
+          class="stat-growth"
+          [class.positive]="stats.userStats.activeUsersGrowth >= 0"
+          [class.negative]="stats.userStats.activeUsersGrowth < 0"
+        >
+          {{ stats.userStats.activeUsersGrowth }}%
+        </p>
+      </div>
+
+      <!-- Role Distribution -->
+      <div class="stat-card">
+        <h3>Role Distribution</h3>
+        <div class="role-distribution">
+          <div class="role-item">
+            <span class="role-badge admin">Admin</span>
+            <span class="role-count">{{ getRoleCount("admin") }}</span>
+          </div>
+          <div class="role-item">
+            <span class="role-badge author">Author</span>
+            <span class="role-count">{{ getRoleCount("author") }}</span>
+          </div>
+          <div class="role-item">
+            <span class="role-badge user">User</span>
+            <span class="role-count">{{ getRoleCount("user") }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Users -->
+    <div class="recent-section">
+      <h3>Recent Users</h3>
+      <div class="recent-users">
+        <div *ngFor="let user of stats.userStats.recentUsers" class="user-card">
+          <img
+            [src]="user.avatar || 'assets/default-avatar.png'"
+            alt="User Avatar"
+            class="user-avatar"
+          />
+          <div class="user-info">
+            <h4>{{ user.name }}</h4>
+            <p>{{ user.email }}</p>
+            <span class="user-role {{ user.role }}">{{ user.role }}</span>
+            <p class="user-join-date">Joined: {{ user.created_at | date }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Post Statistics Section -->
+  <div class="statistics-section">
+    <h2>Post Statistics</h2>
+
+    <div class="stats-grid">
+      <!-- Total Posts -->
+      <div class="stat-card">
+        <h3>Total Posts</h3>
+        <p class="stat-value">{{ stats.postStats.totalPosts }}</p>
+        <p
+          class="stat-growth"
+          [class.positive]="stats.postStats.postGrowthRate >= 0"
+          [class.negative]="stats.postStats.postGrowthRate < 0"
+        >
+          {{ stats.postStats.postGrowthRate }}%
+        </p>
+      </div>
+
+      <!-- Status Distribution -->
+      <div class="stat-card wide-card">
+        <h3>Status Distribution</h3>
+        <div class="status-distribution">
+          <div class="status-item">
+            <span class="status-badge draft">Draft</span>
+            <span class="status-count">{{ getStatusCount("draft") }}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-badge pending">Pending</span>
+            <span class="status-count">{{ getStatusCount("pending") }}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-badge published">Published</span>
+            <span class="status-count">{{ getStatusCount("published") }}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-badge scheduled">Scheduled</span>
+            <span class="status-count">{{ getStatusCount("scheduled") }}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-badge archived">Archived</span>
+            <span class="status-count">{{ getStatusCount("archived") }}</span>
+          </div>
+          <div class="status-item">
+            <span class="status-badge rejected">Rejected</span>
+            <span class="status-count">{{ getStatusCount("rejected") }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Posts -->
+    <div class="recent-section" *ngIf="stats.postStats.recentPosts.length > 0">
+      <h3>Recent Posts</h3>
+      <div class="recent-posts">
+        <div *ngFor="let post of stats.postStats.recentPosts" class="post-card">
+          <!-- Post content would go here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

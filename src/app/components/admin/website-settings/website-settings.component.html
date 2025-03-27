@@ -1,0 +1,255 @@
+<div class="p-6 max-w-6xl mx-auto">
+  <h1 class="text-2xl font-bold mb-6">Quản lý thuộc tính website</h1>
+
+  <!-- Tab navigation -->
+  <div role="tablist" class="tabs tabs-border mb-6">
+    <button
+      *ngFor="let tab of tabs"
+      role="tab"
+      class="tab"
+      [class.tab-active]="activeTab === tab.id"
+      (click)="activeTab = tab.id"
+    >
+      {{ tab.name }}
+    </button>
+  </div>
+
+  <!-- General Settings Tab -->
+  <div *ngIf="activeTab === 'general'" class="space-y-6">
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">Thông tin chung</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Site Title -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Tên website</label>
+          <input
+            type="text"
+            [(ngModel)]="settings.site_title"
+            class="w-full border rounded p-2"
+          />
+        </div>
+
+        <!-- Site Slogan -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Slogan</label>
+          <input
+            type="text"
+            [(ngModel)]="settings.site_slogan"
+            class="w-full border rounded p-2"
+          />
+        </div>
+
+        <!-- Logo Upload -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium mb-1">Logo</label>
+          <div class="flex items-center gap-4">
+            <img
+              [src]="settings.logo_url || 'assets/placeholder-logo.png'"
+              alt="Logo"
+              class="w-20 h-20 object-contain border rounded"
+            />
+            <input
+              type="url"
+              [(ngModel)]="settings.logo_url"
+              placeholder="Nhập URL logo"
+              class="flex-1 border rounded p-2"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Info Tab -->
+  <div *ngIf="activeTab === 'contact'" class="space-y-6">
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">Thông tin liên hệ</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Address -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium mb-1">Địa chỉ</label>
+          <textarea
+            [(ngModel)]="settings.contact_address"
+            rows="2"
+            class="w-full border rounded p-2"
+          ></textarea>
+        </div>
+
+        <!-- Phone -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Điện thoại</label>
+          <input
+            type="tel"
+            [(ngModel)]="settings.contact_phone"
+            class="w-full border rounded p-2"
+          />
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Email</label>
+          <input
+            type="email"
+            [(ngModel)]="settings.contact_email"
+            class="w-full border rounded p-2"
+          />
+        </div>
+
+        <!-- Social Media -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium mb-2">Mạng xã hội</label>
+          <div class="space-y-3">
+            <div
+              *ngFor="let social of settings.social_links"
+              class="flex items-center gap-2"
+            >
+              <select
+                [(ngModel)]="social.platform"
+                class="border rounded p-2 w-32"
+              >
+                <option value="facebook">Facebook</option>
+                <option value="twitter">Twitter</option>
+                <option value="instagram">Instagram</option>
+                <option value="youtube">YouTube</option>
+                <option value="linkedin">LinkedIn</option>
+              </select>
+              <input
+                type="url"
+                [(ngModel)]="social.url"
+                placeholder="URL"
+                class="flex-1 border rounded p-2"
+              />
+              <button
+                (click)="removeSocialLink(social)"
+                class="text-red-500 hover:text-red-700"
+              >
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <button
+              (click)="addSocialLink()"
+              class="text-blue-500 hover:text-blue-700 text-sm"
+            >
+              + Thêm mạng xã hội
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEO Settings Tab -->
+  <div *ngIf="activeTab === 'seo'" class="space-y-6">
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">Cài đặt SEO</h2>
+
+      <div class="space-y-4">
+        <!-- Meta Title -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Meta Title</label>
+          <input
+            type="text"
+            [(ngModel)]="settings.meta_title"
+            class="w-full border rounded p-2"
+          />
+        </div>
+
+        <!-- Meta Description -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Meta Description</label>
+          <textarea
+            [(ngModel)]="settings.meta_description"
+            rows="3"
+            class="w-full border rounded p-2"
+          ></textarea>
+        </div>
+
+        <!-- Keywords -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Keywords</label>
+          <textarea
+            [(ngModel)]="settings.meta_keywords"
+            rows="2"
+            class="w-full border rounded p-2"
+            placeholder="Các từ khóa cách nhau bằng dấu phẩy"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Settings Tab -->
+  <div *ngIf="activeTab === 'footer'" class="space-y-6">
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">Cài đặt Footer</h2>
+
+      <div class="space-y-4">
+        <!-- Copyright Text -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Bản quyền</label>
+          <input
+            type="text"
+            [(ngModel)]="settings.footer_copyright"
+            class="w-full border rounded p-2"
+          />
+        </div>
+
+        <!-- Footer Links -->
+        <div>
+          <label class="block text-sm font-medium mb-2">Liên kết footer</label>
+          <div class="space-y-3">
+            <div
+              *ngFor="let link of settings.footer_links"
+              class="flex items-center gap-2"
+            >
+              <input
+                type="text"
+                [(ngModel)]="link.text"
+                placeholder="Tên liên kết"
+                class="border rounded p-2 w-40"
+              />
+              <input
+                type="url"
+                [(ngModel)]="link.url"
+                placeholder="URL"
+                class="flex-1 border rounded p-2"
+              />
+              <button
+                (click)="removeFooterLink(link)"
+                class="text-red-500 hover:text-red-700"
+              >
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <button
+              (click)="addFooterLink()"
+              class="text-blue-500 hover:text-blue-700 text-sm"
+            >
+              + Thêm liên kết
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="flex justify-end gap-4 mt-6">
+    <button
+      (click)="resetSettings()"
+      class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded"
+    >
+      Đặt lại
+    </button>
+    <button
+      (click)="saveSettings()"
+      [disabled]="isSaving"
+      class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+    >
+      <span *ngIf="isSaving">Đang lưu...</span>
+      <span *ngIf="!isSaving">Lưu thay đổi</span>
+    </button>
+  </div>
+</div>

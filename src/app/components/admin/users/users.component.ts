@@ -13,58 +13,159 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class UsersComponent implements OnInit {
   users: any[] = [];
-  formData = { id: null as number | null, name: '', student_code: '' };
+  isLoading = false;
+  formData = {
+    id: null as number | null,
+    name: '',
+    email: '',
+    password: '',
+    avatar: '', // Thay đổi từ File sang string để lưu URL
+    role: 'user',
+  };
 
-  constructor(private userService: UserService, private toastr: ToastrService) { }
+  constructor(
+    private userService: UserService,
+    private toastr: ToastrService
+  ) { }
 
   ngOnInit(): void {
     this.loadUsers();
   }
 
   loadUsers() {
-    this.userService.getAllUser().subscribe((data) =>
-      this.users = data
-    );
+    this.userService.getAllUser().subscribe({
+      next: (data) => (this.users = data),
+      error: (err) =>
+        this.toastr.error('Tải danh sách người dùng thất bại', 'Lỗi'),
+    });
   }
 
   saveUser() {
-    if (this.formData.name !== '' && this.formData.student_code !== '') {
-      const isDuplicate = this.users.some(user =>
-        user.student_code === this.formData.student_code && user.id !== this.formData.id
-      );
+    if (!this.validateForm()) {
+      this.toastr.error('Vui lòng điền đầy đủ thông tin hợp lệ', 'Lỗi');
+      return;
+    }
 
-      if (isDuplicate) {
-        this.toastr.error("Mã sinh viên đã tồn tại", "Lỗi");
-        return;
-      }
-      if (this.formData.id && (this.formData.name !== '' && this.formData.student_code !== '')) {
-        this.userService.updateUser(this.formData, this.formData.id).subscribe(() => {
-          this.loadUsers();
-          this.resetForm();
-        });
-      } else {
-        this.userService.createUser(this.formData).subscribe(() => {
-          this.loadUsers();
-          this.resetForm();
-        });
-      }
-      this.toastr.success("Thực hiện thành công", "Thành công");
+    // Kiểm tra trùng email
+    const isDuplicate = this.users.some(
+      (user) =>
+        user.email === this.formData.email && user.id !== this.formData.id
+    );
+
+    if (isDuplicate) {
+      this.toastr.error('Email đã tồn tại trong hệ thống', 'Lỗi');
+      return;
+    }
+
+    if (this.formData.id) {
+      this.updateUser();
     } else {
-      this.toastr.error("Vui lòng điền đầy đủ", "Lỗi");
+      this.createUser();
+    }
+  }
+
+  // Sửa lại phương thức validateForm
+  private validateForm(): boolean {
+    // Kiểm tra URL avatar nếu có
+    if (this.formData.avatar && !this.isValidUrl(this.formData.avatar)) {
+      this.toastr.error('URL ảnh đại diện không hợp lệ', 'Lỗi');
+      return false;
+    }
+
+    // Đảm bảo tất cả các điều kiện trả về boolean rõ ràng
+    const isNameValid = this.formData.name.trim() !== '';
+    const isEmailValid = this.formData.email.trim() !== '';
+    const isPasswordValid = this.formData.password.trim() !== '';
+    const isRoleValid = this.formData.role.trim() !== '';
+
+    return isNameValid && isEmailValid && isPasswordValid && isRoleValid;
+  }
+
+  private isValidUrl(url: string): boolean {
+    try {
+      new URL(url);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  private createUser() {
+    this.userService.createUser(this.formData).subscribe({
+      next: () => {
+        this.loadUsers();
+        this.resetForm();
+        this.toastr.success('Tạo người dùng thành công', 'Thành công');
+      },
+      error: (err) => {
+        this.handleError(err, 'tạo mới');
+      },
+    });
+  }
+
+  private updateUser() {
+    this.userService.updateUser(this.formData, this.formData.id!).subscribe({
+      next: () => {
+        this.loadUsers();
+        this.resetForm();
+        this.toastr.success('Cập nhật người dùng thành công', 'Thành công');
+      },
+      error: (err) => {
+        this.handleError(err, 'cập nhật');
+      },
+    });
+  }
+
+  private handleError(error: any, action: string) {
+    console.error(`Lỗi khi ${action} người dùng:`, error);
+
+    if (error.status === 409) {
+      this.toastr.error('Email đã tồn tại trong hệ thống', 'Lỗi');
+    } else if (error.error?.message) {
+      this.toastr.error(error.error.message, 'Lỗi');
+    } else {
+      this.toastr.error(`Đã xảy ra lỗi khi ${action} người dùng`, 'Lỗi');
     }
   }
 
   editUser(user: any) {
-    this.formData = { ...user };
+    this.formData = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      password: '', // Không hiển thị password cũ
+      avatar: user.avatar || '',
+      role: user.role,
+    };
   }
 
   deleteUser(id: number) {
-    this.userService.deleteUser(id).subscribe(() => this.loadUsers());
-    this.toastr.success("Thực hiện thành công", "Thành công");
+    if (confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
+      this.userService.deleteUser(id).subscribe({
+        next: () => {
+          this.loadUsers();
+          this.toastr.success('Xóa người dùng thành công', 'Thành công');
+        },
+        error: (err) => {
+          this.toastr.error('Có lỗi xảy ra khi xóa người dùng', 'Lỗi');
+        },
+      });
+    }
   }
 
   resetForm() {
-    this.formData = { id: null, name: '', student_code: '' };
+    this.formData = {
+      id: null,
+      name: '',
+      email: '',
+      password: '',
+      avatar: '',
+      role: 'user',
+    };
   }
-
+  confirmDelete(userId: number): void {
+    if (confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
+      this.deleteUser(userId);
+    }
+  }
 }
