@@ -56,6 +56,7 @@ export class UsersComponent implements OnInit {
       this.toastr.error('Email đã tồn tại trong hệ thống', 'Lỗi');
       return;
     }
+    console.log(this.formData);
 
     if (this.formData.id) {
       this.updateUser();

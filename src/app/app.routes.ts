@@ -18,7 +18,7 @@ import { WebsiteSettingsComponent } from './components/admin/website-settings/we
 import { UserStatisticsComponent } from './components/admin/user-statistics/user-statistics.component';
 
 export const routes: Routes = [
-    { path: '', component: HomeComponent },
+    { path: '', component: HomeComponent, canActivate: [outDateLoginGuard] },
     { path: 'register', component: RegisterComponent, canActivate: [isLoggedGuard] },
     { path: 'login', component: LoginComponent, canActivate: [isLoggedGuard] },
     {

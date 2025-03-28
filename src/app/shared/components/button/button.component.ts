@@ -9,13 +9,14 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrl: './button.component.css'
 })
 export class ButtonComponent {
-  @Input() variant: 'primary' | 'secondary' | 'black' | 'none' | 'warning' | 'full' = 'primary';
+  @Input() variant: 'primary' | 'secondary' | 'black' | 'none' | 'warning' | 'full' | 'success' = 'primary';
   @Output() clicked = new EventEmitter<void>();
 
   getButtonClasses() {
     const baseClass = 'transition-all';
     const variantClass = {
       primary: 'btn btn-xs sm:btn-sm md:btn-md rounded-none bg-primary border-black text-white font-medium hover:bg-secondary hover:border-black',
+      success: 'btn btn-xs sm:btn-sm md:btn-md rounded-none bg-success border-black text-white font-bold hover:bg-secondary-content hover:border-black',
       full: 'min-w-full btn btn-xs sm:btn-sm md:btn-md rounded-none bg-primary border-black text-white font-medium hover:bg-secondary hover:border-black',
       secondary: 'btn btn-xs sm:btn-sm md:btn-md rounded-none bg-secondary border-black text-white font-medium hover:bg-primary hover:border-black',
       black: 'py-1.5 px-4 rounded-md text-xs bg-black select-none text-white hover:bg-primary',

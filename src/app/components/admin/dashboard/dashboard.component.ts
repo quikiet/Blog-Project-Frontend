@@ -17,14 +17,13 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   constructor(private renderer: Renderer2, private toastr: ToastrService, private loginService: LoginService, private router: Router) { }
   token = localStorage.getItem('token');
   username: string = '';
-  showSuccess() {
-    this.toastr.success('Hello world!', 'Toastr fun!');
-  }
+  userAvatar: string = '';
 
   ngOnInit(): void {
     this.loginService.getUser().subscribe({
       next: (res) => {
         this.username = res.user.name;
+        this.userAvatar = res.user.avatar;
       },
       error: (error) => {
         console.log(error);

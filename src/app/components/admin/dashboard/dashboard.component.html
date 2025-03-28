@@ -26,14 +26,16 @@
           </svg>
         </span>
       </button>
-      <div class="text-xl font-bold">Qkit<span class="">Tran</span></div>
+      <div class="text-xl">Qkit<span class="">Tran</span></div>
       <div class="flex items-center space-x-2">
-        <div class="dropdown dropdown-end dropdown-hover">
+        <div class="dropdown dropdown-end">
           <div class="flex gap-2 items-center">
-            <div tabindex="0" role="button" class="btn m-1">
+            <div tabindex="0" role="button">
               <img
-                class="w-10 h-10 rounded-full transition-transform duration-300 hover:scale-110 object-cover"
-                src="https://i.pinimg.com/564x/de/0f/3d/de0f3d06d2c6dbf29a888cf78e4c0323.jpg"
+                class="w-10 h-10 rounded-full transition-transform duration-300 hover:scale-110 object-center"
+                *ngIf="userAvatar"
+                [src]="userAvatar"
+                alt="Avatar"
                 alt="Profile"
               />
             </div>
@@ -61,22 +63,22 @@
         <a
           routerLink="settings"
           routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
-          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
+          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
         >
           <span class="mr-2">
-            <i class="pi pi-chart-bar text-success" style="font-size: 2rem"></i>
+            <i class="pi pi-chart-bar text-success" style="font-size: 1rem"></i>
           </span>
           Thống kê
         </a>
         <a
           routerLink="category"
           routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
-          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
+          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
         >
           <span class="mr-2">
             <i
               class="pi pi-list-check text-success"
-              style="font-size: 2rem"
+              style="font-size: 1rem"
             ></i>
           </span>
 
@@ -86,12 +88,12 @@
         <a
           routerLink="posts"
           routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
-          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
+          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
         >
           <span class="mr-2">
             <i
               class="pi pi-pen-to-square text-success"
-              style="font-size: 2rem"
+              style="font-size: 1rem"
             ></i>
           </span>
           Đăng bài
@@ -104,12 +106,12 @@
         <a
           routerLink="list-post"
           routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
-          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
+          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
         >
           <span class="mr-2">
             <i
               class="pi pi-calendar-plus text-success"
-              style="font-size: 2rem"
+              style="font-size: 1rem"
             ></i>
           </span>
           Bài báo
@@ -117,14 +119,14 @@
         <div>
           <ul class="menu p-0">
             <li>
-              <details open>
+              <details>
                 <summary
-                  class="px-0 flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
+                  class="px-0 flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md text-base"
                 >
                   <span class="mr-2">
                     <i
                       class="pi pi-user text-success"
-                      style="font-size: 2rem"
+                      style="font-size: 1rem"
                     ></i>
                   </span>
                   Người dùng
@@ -134,7 +136,7 @@
                     <a
                       routerLink="authors"
                       routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
-                      class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
+                      class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
                     >
                       <span class="mr-2">
                         <i class="pi pi-user-edit text-success"></i>
@@ -145,7 +147,7 @@
                   <li>
                     <details open>
                       <summary
-                        class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
+                        class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
                       >
                         Người dùng
                       </summary>
@@ -154,7 +156,7 @@
                           <a
                             routerLink="users"
                             routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
-                            class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
+                            class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
                           >
                             <span class="mr-2">
                               <i class="pi pi-user-plus text-success"></i>
@@ -166,7 +168,7 @@
                           <a
                             routerLink="user-statistics"
                             routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
-                            class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
+                            class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
                           >
                             <span class="mr-2">
                               <i class="pi pi-users text-success"></i>
@@ -187,34 +189,61 @@
       <div
         class="bg-white rounded-xl shadow-lg mt-6 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
       >
-        <a
-          routerLink="web-settings"
-          routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
-          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
-        >
-          <span class="mr-2">
-            <i class="pi pi-cog text-success" style="font-size: 2rem"></i>
-          </span>
-          Cài đặt
-        </a>
-        <a
-          routerLink="/"
-          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
-        >
-          <span class="mr-2">
-            <i class="pi pi-sign-out text-success" style="font-size: 2rem"></i>
-          </span>
-          Trang chủ
-        </a>
-        <a
-          (click)="logout()"
-          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md font-bold"
-        >
-          <span class="mr-2">
-            <i class="pi pi-power-off text-success" style="font-size: 2rem"></i>
-          </span>
-          Đăng xuất
-        </a>
+        <div>
+          <ul class="menu p-0">
+            <li>
+              <details>
+                <summary
+                  class="px-0 flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md text-base"
+                >
+                  <span class="mr-2">
+                    <i
+                      class="pi pi-cog text-success"
+                      style="font-size: 1rem"
+                    ></i>
+                  </span>
+                  Cài đặt
+                </summary>
+                <ul>
+                  <li>
+                    <a
+                      routerLink="web-settings"
+                      routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
+                      class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
+                    >
+                      <span class="mr-2">
+                        <i class="pi pi-microchip text-success"></i>
+                      </span>
+                      Cấu hình trang</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      routerLink="/"
+                      class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
+                    >
+                      <span class="mr-2">
+                        <i class="pi pi-home text-success"></i>
+                      </span>
+                      Quay lại trang</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      (click)="logout()"
+                      class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
+                    >
+                      <span class="mr-2">
+                        <i class="pi pi-sign-out text-success"></i>
+                      </span>
+                      Đăng xuất</a
+                    >
+                  </li>
+                </ul>
+              </details>
+            </li>
+          </ul>
+        </div>
       </div>
     </aside>
 

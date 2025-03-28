@@ -1,7 +1,9 @@
 <div class="flex justify-between items-center">
   <h6>Thêm bài báo</h6>
   <div class="card flex justify-center">
-    <p-button (click)="showDialogPreview()" label="Xem trước" />
+    <app-button [variant]="'success'" (click)="showDialogPreview()"
+      >Xem trước</app-button
+    >
     <p-dialog
       header="Xem trước bài báo"
       [modal]="true"
