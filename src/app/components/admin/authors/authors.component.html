@@ -12,6 +12,7 @@
         severity="danger"
         label="Delete"
         icon="pi pi-trash"
+        class="mr-2"
         outlined
         (onClick)="deleteSelectedAuthors()"
         [disabled]="!selectedAuthors || !selectedAuthors.length"
@@ -28,7 +29,7 @@
       <p-button
         label="Xuất Excel"
         icon="pi pi-upload"
-        severity="secondary"
+        severity="contrast"
         (onClick)="exportCSV()"
       />
     </ng-template>
@@ -197,7 +198,7 @@
       <p-button
         label="{{ !isEditting ? 'Thêm' : 'Sửa' }}"
         icon="pi pi-check"
-        (click)="!isEditting ? saveAuthor() : updateAuthor(author, author.slug)"
+        (click)="!isEditting ? saveAuthor() : updateAuthor()"
       />
     </ng-template>
   </p-dialog>

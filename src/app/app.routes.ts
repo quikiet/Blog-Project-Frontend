@@ -16,6 +16,7 @@ import { TagsComponent } from './components/admin/tags/tags.component';
 import { outDateLoginGuard } from './guard/out-date-login.guard';
 import { WebsiteSettingsComponent } from './components/admin/website-settings/website-settings.component';
 import { UserStatisticsComponent } from './components/admin/user-statistics/user-statistics.component';
+import { RefuseReasonsComponent } from './components/admin/refuse-reasons/refuse-reasons.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent, canActivate: [outDateLoginGuard] },
@@ -31,6 +32,7 @@ export const routes: Routes = [
             { path: 'web-settings', component: WebsiteSettingsComponent },
             { path: 'users', component: UsersComponent },
             { path: 'category', component: CategoryComponent },
+            { path: 'refuse-reasons', component: RefuseReasonsComponent },
             { path: 'posts', component: PostsComponent },
             { path: 'list-post', component: PostListComponent },
             { path: 'authors', component: AuthorsComponent },

@@ -1,0 +1,148 @@
+<div class="card">
+  <p-toast />
+  <p-toolbar styleClass="mb-6">
+    <ng-template #start>
+      <p-button
+        label="Thêm"
+        icon="pi pi-plus"
+        class="mr-2"
+        (onClick)="openNew()"
+      />
+      <p-button
+        severity="danger"
+        label="Xoá"
+        icon="pi pi-trash"
+        class="mr-2"
+        outlined
+        (onClick)="deleteSelectedAuthors()"
+        [disabled]="!selectedReasons || !selectedReasons.length"
+      />
+      <p-button
+        [outlined]="true"
+        icon="pi pi-filter-slash"
+        label="Bỏ lọc"
+        (click)="clear(dt, searchValue)"
+      />
+    </ng-template>
+
+    <ng-template #end>
+      <p-button
+        label="Xuất Excel"
+        icon="pi pi-upload"
+        severity="contrast"
+        (onClick)="exportCSV()"
+      />
+    </ng-template>
+  </p-toolbar>
+
+  <p-table
+    class="w-full"
+    #tableReason
+    [value]="reasons"
+    [rows]="5"
+    [columns]="cols"
+    [paginator]="true"
+    [globalFilterFields]="['reason']"
+    [(selection)]="selectedReasons"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Hiển thị {first} đến {last} của {totalRecords} tác giả"
+    [showCurrentPageReport]="true"
+  >
+    <ng-template #caption>
+      <div class="flex items-center justify-between">
+        <h5 class="m-0">Quản lý lý do từ chối bài viết</h5>
+        <p-iconfield>
+          <p-inputicon styleClass="pi pi-search" />
+          <input
+            pInputText
+            type="text"
+            (input)="searchGlobal($event)"
+            placeholder="Tìm kiếm..."
+          />
+        </p-iconfield>
+      </div>
+    </ng-template>
+    <ng-template #header>
+      <tr>
+        <th style="width: 3rem">
+          <p-tableHeaderCheckbox />
+        </th>
+        <th pSortableColumn="id">
+          Mã
+          <p-sortIcon field="id" />
+        </th>
+        <th pSortableColumn="reason">
+          Lý do từ chối
+          <p-sortIcon field="reason" />
+        </th>
+
+        <th>Hành động</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-reason>
+      <tr>
+        <td style="width: 3rem">
+          <p-tableCheckbox [value]="reason" />
+        </td>
+        <td>{{ reason.id }}</td>
+        <td>{{ reason.reason }}</td>
+
+        <td>
+          <p-button
+            icon="pi pi-pencil"
+            class="mr-2"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="editAuthor(reason)"
+          />
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            [rounded]="true"
+            [outlined]="true"
+            (click)="deleteReason(reason)"
+          />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <p-dialog
+    [(visible)]="reasonDialog"
+    [style]="{ width: '450px' }"
+    header="{{ !isEditting ? 'Thêm lý do' : 'Sửa lý do' }}"
+    [modal]="true"
+  >
+    <ng-template #content>
+      <div class="flex flex-col gap-6">
+        <div>
+          <label class="block font-semibold mb-2">Lý do từ chối</label>
+          <input
+            required
+            pInputText
+            type="text"
+            class="w-full"
+            autofocus
+            [ngClass]="{ 'ng-invalid ng-dirty': submitted && !reason.reason }"
+            [(ngModel)]="reason.reason"
+            placeholder="Bài viết không chính thống..."
+          />
+          <small class="text-red-500" *ngIf="submitted && !reason.reason"
+            >Lý do không được để trống.</small
+          >
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template #footer>
+      <p-button label="Huỷ bỏ" icon="pi pi-times" text (click)="hideDialog()" />
+      <p-button
+        label="{{ !isEditting ? 'Thêm' : 'Sửa' }}"
+        icon="pi pi-check"
+        (click)="!isEditting ? saveReason() : updateReason(reason, reason.id)"
+      />
+    </ng-template>
+  </p-dialog>
+
+  <p-confirmDialog [style]="{ width: '450px' }" />
+</div>
