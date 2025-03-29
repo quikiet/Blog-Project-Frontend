@@ -27,17 +27,37 @@
           >
         </div>
       </div>
-      <p class="text-gray-500 mb-2">
-        Ngày đăng: {{ post.published_at | date : "dd/MM/yyyy" }}
-      </p>
-
       <img
         *ngIf="post.thumbnail"
         [src]="post.thumbnail"
         alt="Thumbnail"
         class="w-full h-64 object-cover rounded-lg mb-4"
       />
-
+      <div
+        class="flex justify-between py-2 items-center border-b-2 border-secondary-content"
+      >
+        <div class="flex items-center font-normal text-primary text-xs gap-2">
+          <p-avatar
+            *ngIf="post.authors?.avatar"
+            image="{{ post.authors?.avatar }}"
+            shape="circle"
+          />
+          <span class="pr-2 border-r border-primary-content">
+            Bởi
+            {{
+              post.authors?.name ? post.authors?.name : post.posts_user?.name
+            }}</span
+          >
+          <span class="pl-2">
+            {{ post.published_at | date : "dd MMMM, YYYY HH:mm" }}
+          </span>
+        </div>
+        <div class="flex gap-2 items-center">
+          <i class="pi pi-comment"></i>
+          <i class="pi pi-share-alt"></i>
+          <i class="pi pi-bookmark"></i>
+        </div>
+      </div>
       <div class="fr-view">
         <div [innerHTML]="sanitizedContent"></div>
       </div>
@@ -109,7 +129,7 @@
           ></textarea>
         </label>
 
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-3 gap-2">
           <!-- Danh mục -->
           <label class="form-control w-full max-w-xs">
             <div class="label">
@@ -126,6 +146,36 @@
           </label>
           <label class="form-control w-full max-w-xs">
             <div class="label">
+              <span class="label-text">Tác giả</span>
+            </div>
+            <p-select
+              [options]="authors"
+              [(ngModel)]="post.author_id"
+              optionLabel="name"
+              optionValue="id"
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+              placeholder="Chọn tác giả"
+              class="w-full"
+            >
+              <ng-template #selectedItem let-selectedOption>
+                <div class="flex items-center gap-2">
+                  <img [src]="selectedOption.avatar" style="width: 24px" />
+                  <div>{{ selectedOption.name }}</div>
+                </div>
+              </ng-template>
+              <ng-template let-author #item>
+                <div class="flex items-center gap-2">
+                  <img [src]="author.avatar" style="width: 24px" />
+                  <div>{{ author.name }}</div>
+                </div>
+              </ng-template>
+            </p-select>
+          </label>
+
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
               <span class="label-text">Trạng thái</span>
             </div>
             <p-select
@@ -137,7 +187,16 @@
             />
           </label>
         </div>
-
+        <p-select
+          [options]="refuseReasons"
+          [(ngModel)]="selectedReason"
+          optionValue="id"
+          optionLabel="reason"
+          [showClear]="true"
+          placeholder="Chọn lý do"
+          *ngIf="showRefuseReason || post.status === 'rejected'"
+          class="md:w-full w-56 my-3"
+        />
         <!-- Nút đăng bài -->
         <div class="flex justify-end gap-5 mt-2">
           <app-button variant="none" (clicked)="editPost()"

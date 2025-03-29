@@ -42,7 +42,7 @@
                           }}
                         </p>
                         <p class="text-xs text-primary-content">
-                          Bởi <span class="mr-2">{{ authorName }}</span>
+                          Bởi <span class="mr-2">{{ userName }}</span>
                           {{
                             postForm.get("published_at")?.value
                               | date : "dd MMMM, YYYY"
@@ -68,7 +68,7 @@
                               <span
                                 class="pr-2 border-r border-primary-content"
                               >
-                                Bởi {{ authorName }}</span
+                                Bởi {{ userName }}</span
                               >
                               <span class="pl-2">
                                 {{
@@ -103,7 +103,7 @@
 
             <p-step-panel [value]="2">
               <ng-template #content let-activateCallback="activateCallback">
-                <div>
+                <div class="p-6 shadow-md border">
                   <div class="w-full h-full">
                     <div class="w-full h-full mb-4">
                       <div
@@ -137,30 +137,28 @@
                         <div
                           class="flex justify-between py-2 items-center border-b-2 border-secondary-content"
                         >
-                          <div>
-                            <span class="font-normal text-primary text-xs"
-                              ><p-avatar
-                                *ngIf="!authorAvatar"
-                                label="{{ authorName[0] }}"
-                                styleClass="mr-2"
-                                shape="circle"
-                              />
-                              <p-avatar
-                                *ngIf="authorAvatar"
-                                image="{{ authorAvatar }}"
-                                shape="circle"
-                              />
-                              <span
-                                class="pr-2 border-r border-primary-content"
-                              >
-                                Bởi {{ authorName }}</span
-                              >
-                              <span class="pl-2">
-                                {{
-                                  postForm.get("published_at")?.value
-                                    | date : "dd MMMM, YYYY HH:mm"
-                                }}
-                              </span>
+                          <div
+                            class="flex items-center font-normal text-primary text-xs gap-2"
+                          >
+                            <p-avatar
+                              *ngIf="!authorAvatar"
+                              label="{{ userName[0] }}"
+                              styleClass="mr-2"
+                              shape="circle"
+                            />
+                            <p-avatar
+                              *ngIf="authorAvatar"
+                              image="{{ authorAvatar }}"
+                              shape="circle"
+                            />
+                            <span class="pr-2 border-r border-primary-content">
+                              Bởi {{ userName }}</span
+                            >
+                            <span class="pl-2">
+                              {{
+                                postForm.get("published_at")?.value
+                                  | date : "dd MMMM, YYYY HH:mm"
+                              }}
                             </span>
                           </div>
                           <div class="flex gap-2 items-center">
@@ -173,15 +171,10 @@
                       <div class="pt-5">
                         <div
                           [froalaView]="
-                            postForm.get('content')?.value || 'Chưa nhập'
+                            postForm.get('content')?.value || 'Chưa có nội dung'
                           "
                         ></div>
                       </div>
-
-                      <p>
-                        <strong>Status:</strong>
-                        {{ postForm.get("status")?.value || "Chưa xác định" }}
-                      </p>
                     </div>
                   </div>
                 </div>

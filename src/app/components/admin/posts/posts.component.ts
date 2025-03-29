@@ -51,6 +51,7 @@ export class PostsComponent implements OnInit {
   categories: any[] = [];
   errorMessage = signal('');
   authorId: number = 0;
+  userName: string = '';
   authorName: string = '';
   authorAvatar: string = '';
   selectedFile: File | null = null;
@@ -61,8 +62,6 @@ export class PostsComponent implements OnInit {
   visiblePreview: boolean = false;
 
   authors: any[] | undefined;
-
-  selectedAuthor: number | undefined;
 
   constructor(
     private fb: FormBuilder,
@@ -100,7 +99,7 @@ export class PostsComponent implements OnInit {
         console.log("Dữ liệu người dùng:", res);
         if (res?.user?.id) {
           this.authorId = res.user.id;
-          this.authorName = res.user.name;
+          this.userName = res.user.name;
           this.authorAvatar = res.user.avatar;
           this.postForm.controls['user_id'].setValue(this.authorId);
 

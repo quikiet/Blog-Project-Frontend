@@ -17,15 +17,35 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { Select } from 'primeng/select';
 import { ModalSubmitDeleteComponent } from "../../../../shared/components/modal-submit-delete/modal-submit-delete.component";
+import { AvatarModule } from 'primeng/avatar';
+import { AuthorsService } from '../../../../services/authors/authors.service';
+import { SelectModule } from 'primeng/select';
+import { Dialog } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { RefuseReasonService } from '../../../../services/category/refuse-reason.service';
+import { RefusesService } from '../../../../services/category/refuses.service';
+
 @Component({
   selector: 'app-post-detail',
   standalone: true,
-  imports: [Select, MatProgressBarModule, FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, CommonModule, RouterLink, MatIconModule, FroalaEditorModule, FroalaViewModule, ButtonComponent, ModalSubmitDeleteComponent],
+  imports: [Dialog, ButtonModule, InputTextModule, SelectModule, AvatarModule, Select, MatProgressBarModule, FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, CommonModule, RouterLink, MatIconModule, FroalaEditorModule, FroalaViewModule, ButtonComponent, ModalSubmitDeleteComponent],
   templateUrl: './post-detail.component.html',
   styleUrl: './post-detail.component.css'
 })
 export class PostDetailComponent implements OnInit {
-  constructor(private categoryService: CategoryService, private router: Router, private route: ActivatedRoute, private postService: PostService, private sanitizer: DomSanitizer, private toastr: ToastrService, private uploadServices: UploadService) { }
+  constructor(
+    private categoryService: CategoryService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private postService: PostService,
+    private sanitizer: DomSanitizer,
+    private toastr: ToastrService,
+    private uploadServices: UploadService,
+    private authorService: AuthorsService,
+    private refuseReasonService: RefuseReasonService,
+    private refuseService: RefusesService,
+  ) { }
   post: any = {
     title: '',
     content: '',
@@ -36,6 +56,7 @@ export class PostDetailComponent implements OnInit {
     user_id: 0
   };
   categories: any[] = [];
+  authors: any[] = [];
   isLoading = false;
   isEditting = false;
   isDeleted = false;
@@ -44,19 +65,32 @@ export class PostDetailComponent implements OnInit {
   selectedStatus: string = '';
   sanitizedContent: SafeHtml = '';
   selectedFile: File | null = null;
+  visible: boolean = false;
+
+  refuseReasons: any[] = [];
+  selectedReason: number | null = null;
+  showRefuseReason: boolean = false;
+  refuses = {
+    'post_id': null as number | null,
+    'reason_id': null as number | null
+  };
+  selectedRefuseId: number | null = null;
+
 
   ngOnInit(): void {
     this.loadPosts();
     this.loadCategory();
+    this.loadAuthors();
+    this.loadRefuseReasons();
     this.isLoading = false;
     this.statuses = [
-      { label: 'Nháp', value: 'draft' },
+      // { label: 'Nháp', value: 'draft' },
       { label: 'Đang chờ', value: 'pending' },
       { label: 'Công khai', value: 'published' },
       { label: 'Lên lịch', value: 'scheduled' },
       { label: 'Lưu trữ', value: 'archived' },
-      { label: 'Bị xoá', value: 'rejected' },
-      { label: 'Đã xoá', value: 'deleted' }
+      { label: 'Từ chối', value: 'rejected' },
+      // { label: 'Đã xoá', value: 'deleted' }
     ];
   }
 
@@ -79,25 +113,6 @@ export class PostDetailComponent implements OnInit {
     }
   };
 
-  onFileSelected(event: any) {
-    const file: File = event.target.files[0];
-
-    if (!file) return; // Nếu không có file, thoát ngay
-
-    if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
-      this.toastr.warning("Chỉ chấp nhận ảnh JPEG, JPG, PNG", "Cảnh báo");
-      return;
-    }
-    this.selectedFile = file;
-
-    // const reader = new FileReader();
-    // reader.onload = (event: any) => {
-    //   this.post.thumbnail = event.target.result;
-    // }
-    // reader.readAsDataURL(file);
-
-  }
-
   loadPosts() {
     const slug = this.route.snapshot.paramMap.get('slug');
     console.log(slug);
@@ -119,8 +134,54 @@ export class PostDetailComponent implements OnInit {
     }
   }
 
+  loadAuthors() {
+    this.authorService.getAllAuthors().subscribe({
+      next: (data) => {
+        this.authors = data;
+      }, error: (error) => {
+        console.log("Lỗi tải tác giả: " + error);
+      }
+    })
+  }
+
+  loadRefuseReasons() {
+    this.refuseReasonService.getAllReason().subscribe({
+      next: (data) => {
+        this.refuseReasons = data;
+        this.setLatestRefuseReason(this.post);
+      }, error: (error) => {
+        console.log("Lỗi: " + error.message);
+      }
+    })
+  }
+
+
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+
+    if (!file) return; // Nếu không có file, thoát ngay
+
+    if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+      this.toastr.warning("Chỉ chấp nhận ảnh JPEG, JPG, PNG", "Cảnh báo");
+      return;
+    }
+    this.selectedFile = file;
+
+    // const reader = new FileReader();
+    // reader.onload = (event: any) => {
+    //   this.post.thumbnail = event.target.result;
+    // }
+    // reader.readAsDataURL(file);
+
+  }
+
   updateStatus(value: any) {
     this.post.status = value.value;
+    // console.log(this.post.status);
+    if (this.post.status === 'rejected') {
+      this.showRefuseReason = true;
+    }
+
   }
 
   loadCategory() {
@@ -165,6 +226,7 @@ export class PostDetailComponent implements OnInit {
 
   updatePost() {
     const slug = this.route.snapshot.paramMap.get('slug');
+    // console.log(this.selectedReason);
     if (slug) {
       if (this.selectedFile) {
         if (this.post.thumbnail) {
@@ -246,6 +308,33 @@ export class PostDetailComponent implements OnInit {
   savePost(slug: string) {
     this.isLoading = true;
     const oldSlug = slug;
+    if (!this.selectedReason && this.post.status === 'rejected') {
+      this.toastr.warning("Lưu ý bạn phải chọn lý do từ chối", "Cảnh báo");
+      this.isLoading = false;
+      return;
+    }
+    if (this.selectedReason && this.post.status === 'rejected') {
+      this.refuses.post_id = this.post.id;
+      this.refuses.reason_id = this.selectedReason;
+      // console.log(this.refuses.reason_id);
+      if (this.selectedRefuseId) {
+        this.refuseService.update(this.selectedRefuseId, this.refuses).subscribe({
+          next: (respone) => {
+            console.log(respone.message);
+          }, error: (error) => {
+            console.log("Lỗi cập nhật ràng buộc từ chối: " + error.message);
+          }
+        });
+      } else {
+        this.refuseService.create(this.refuses).subscribe({
+          next: (respone) => {
+            console.log(respone.message);
+          }, error: (error) => {
+            console.log("Lỗi tạo ràng buộc từ chối: " + error.message);
+          }
+        });
+      }
+    }
     this.postService.update((oldSlug), this.post).subscribe({
       next: () => {
         this.toastr.success("Cập nhật bài báo thành công", "Thành công");
@@ -262,7 +351,27 @@ export class PostDetailComponent implements OnInit {
       }
     });
     this.isLoading = false;
+  }
 
+  getLatestRefuse(post: any) {
+    if (!post || !post.refuses || post.refuses.length === 0) {
+      return null;
+    }
+    const latestRefuse = post.refuses.sort((a: any, b: any) => {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    })[0];
+
+    return latestRefuse;
+  }
+
+  setLatestRefuseReason(post: any) {
+    const latestRefuse = this.getLatestRefuse(post);
+    this.selectedRefuseId = latestRefuse.id;
+    if (latestRefuse && latestRefuse.reason_id) {
+      this.selectedReason = latestRefuse.reason_id;
+    } else {
+      this.selectedReason = null; // Nếu không có lý do từ chối hoặc reason_id là null
+    }
   }
 
   editPost() {
