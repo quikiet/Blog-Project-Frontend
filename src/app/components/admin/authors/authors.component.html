@@ -1,3 +1,14 @@
+<div *ngIf="isLoading" class="overlay">
+  <p-progress-spinner
+    *ngIf="isLoading"
+    ariaLabel="loading"
+    strokeWidth="8"
+    fill="transparent"
+    animationDuration=".7s"
+    [style]="{ width: '50px', height: '50px' }"
+    class="spinner"
+  />
+</div>
 <div class="card">
   <p-toast />
   <p-toolbar styleClass="mb-6">
@@ -200,6 +211,11 @@
         icon="pi pi-check"
         (click)="!isEditting ? saveAuthor() : updateAuthor()"
       />
+      <!-- <app-button
+        [disabled]="isLoading"
+        (click)="!isEditting ? saveAuthor() : updateAuthor()"
+        >{{ !isEditting ? "Thêm" : "Sửa" }}</app-button
+      > -->
     </ng-template>
   </p-dialog>
 

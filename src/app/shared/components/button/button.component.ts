@@ -11,7 +11,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class ButtonComponent {
   @Input() variant: 'primary' | 'secondary' | 'black' | 'none' | 'warning' | 'full' | 'success' = 'primary';
   @Output() clicked = new EventEmitter<void>();
-
+  @Input() disabled: boolean = false;
   getButtonClasses() {
     const baseClass = 'transition-all';
     const variantClass = {
@@ -29,5 +29,7 @@ export class ButtonComponent {
   onClick() {
     this.clicked.emit();
   }
+
+
 
 }

@@ -1,3 +1,14 @@
+<div *ngIf="isLoading" class="overlay">
+  <p-progress-spinner
+    *ngIf="isLoading"
+    ariaLabel="loading"
+    strokeWidth="8"
+    fill="transparent"
+    animationDuration=".7s"
+    [style]="{ width: '50px', height: '50px' }"
+    class="spinner"
+  />
+</div>
 <div
   class="flex w-full justify-between pb-5 border-b border-gray-700 items-center"
 >
@@ -72,7 +83,7 @@
     </div>
   </dialog>
 </div>
-<div *ngIf="isLoading">Đang tải dữ liệu</div>
+
 <div>
   <mat-form-field class="w-full">
     <mat-label>Bộ lọc</mat-label>

@@ -315,6 +315,8 @@
   </div>
 
   <div class="mt-4">
-    <app-button variant="full" type="submit">Đăng tải</app-button>
+    <app-button variant="full" type="submit" [disabled]="isLoading"
+      >Đăng tải</app-button
+    >
   </div>
 </form>

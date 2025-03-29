@@ -22,6 +22,8 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { UploadService } from '../../../services/upload.service';
 import { RefuseReasonService } from '../../../services/category/refuse-reason.service';
+import { ProgressSpinner } from 'primeng/progressspinner';
+
 interface Column {
   field: string;
   header: string;
@@ -35,7 +37,7 @@ interface ExportColumn {
 @Component({
   selector: 'app-refuse-reasons',
   standalone: true,
-  imports: [InputGroupModule, InputGroupAddonModule, ConfirmDialogModule, ButtonModule, TableModule, DialogModule, Ripple, SelectModule, ToastModule, ToolbarModule, InputTextModule, TextareaModule, CommonModule, DropdownModule, InputTextModule, FormsModule, IconFieldModule, InputIconModule],
+  imports: [ProgressSpinner, InputGroupModule, InputGroupAddonModule, ConfirmDialogModule, ButtonModule, TableModule, DialogModule, Ripple, SelectModule, ToastModule, ToolbarModule, InputTextModule, TextareaModule, CommonModule, DropdownModule, InputTextModule, FormsModule, IconFieldModule, InputIconModule],
   providers: [ConfirmationService, MessageService],
   templateUrl: './refuse-reasons.component.html',
   styleUrl: './refuse-reasons.component.css'
@@ -49,7 +51,7 @@ export class RefuseReasonsComponent implements OnInit {
   selectedReasons: any[] = [];
   searchValue: string = '';
   submitted: boolean = false;
-
+  isLoading = true;
   @ViewChild('tableReason') dt!: Table;
 
   cols!: Column[];
@@ -87,12 +89,13 @@ export class RefuseReasonsComponent implements OnInit {
       next: (data) => {
         this.reasons = data;
         console.log(data);
-
         console.log(this.reason);
-
         this.cd.markForCheck();
       }, error: (error) => {
         console.error("Lỗi tải lý do từ chối", error);
+        this.isLoading = false;
+      }, complete: () => {
+        this.isLoading = false;
       }
     });
 
@@ -119,8 +122,8 @@ export class RefuseReasonsComponent implements OnInit {
   }
 
   updateReason(reason: any, id: number) {
+    this.isLoading = true;
     if (this.isEditting) {
-
       const hasChanges = this.hasChanges(this.originalReason, reason);
       if (!hasChanges) {
         this.reasonDialog = false;
@@ -138,6 +141,7 @@ export class RefuseReasonsComponent implements OnInit {
           this.reasonDialog = false;
           this.isEditting = false;
           this.loadReasonData();
+          this.isLoading = false;
         }
       });
     }
@@ -156,6 +160,7 @@ export class RefuseReasonsComponent implements OnInit {
   }
 
   deleteSelectedAuthors() {
+    this.isLoading = true;
     this.confirmationService.confirm({
       message: 'Bạn có chắc muốn xóa các lý do đã chọn không?',
       header: 'Xác nhận xóa',
@@ -177,10 +182,11 @@ export class RefuseReasonsComponent implements OnInit {
             error: (error) => {
               this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: error.message });
               console.log(error.request);
-
+              this.isLoading = false;
             },
             complete: () => {
               this.selectedReasons = [];
+              this.isLoading = false;
             }
           });
         }
@@ -188,11 +194,13 @@ export class RefuseReasonsComponent implements OnInit {
       reject: () => {
         this.messageService.add({ severity: 'info', summary: 'Hủy bỏ', detail: 'Hủy xóa lý do' });
         this.selectedReasons = [];
+        this.isLoading = false;
       }
     });
   }
 
   deleteReason(reason: any) {
+    this.isLoading = true;
     this.confirmationService.confirm({
       message: `Bạn có chắc muốn xóa lý do <span class="font-bold">${reason.reason}</span> không?`,
       header: 'Xác nhận xóa',
@@ -204,12 +212,15 @@ export class RefuseReasonsComponent implements OnInit {
             this.loadReasonData();
           }, error: (error) => {
             this.messageService.add({ severity: 'error', summary: 'Thất bại', detail: 'Lỗi: ' + error });
+            this.isLoading = false;
+          }, complete: () => {
+            this.isLoading = false;
           }
         });
       },
-      // reject: () => {
-      //   this.messageService.add({ severity: 'info', summary: 'Hủy bỏ', detail: 'Hủy xóa lý do' });
-      // }
+      reject: () => {
+        this.isLoading = false;
+      }
     });
   }
 
@@ -218,6 +229,7 @@ export class RefuseReasonsComponent implements OnInit {
     this.submitted = false;
     this.reason = {};
     this.isEditting = false;
+    this.isLoading = false;
   }
 
   findIndexById(id: string): number {
@@ -241,15 +253,17 @@ export class RefuseReasonsComponent implements OnInit {
 
   submitCreate(reason: any) {
     console.log(reason);
-
+    this.isLoading = true;
     this.reasonService.create(reason).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Đã thêm mới 1 lý do' });
       }, error: (error) => {
         this.messageService.add({ severity: 'error', summary: 'Thất bại', detail: error });
+        this.isLoading = false;
       }, complete: () => {
         this.reasonDialog = false;
         this.loadReasonData();
+        this.isLoading = false;
       }
     })
   }

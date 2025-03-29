@@ -19,7 +19,13 @@ import { UserStatisticsComponent } from './components/admin/user-statistics/user
 import { RefuseReasonsComponent } from './components/admin/refuse-reasons/refuse-reasons.component';
 
 export const routes: Routes = [
-    { path: '', component: HomeComponent, canActivate: [outDateLoginGuard] },
+    {
+        path: '', component: HomeComponent, canActivate: [outDateLoginGuard],
+        children: [
+            { path: 'list-post', component: PostDetailComponent, },
+            { path: 'posts', component: PostsComponent, canActivate: [roleGuard], data: { role: 'author' } }
+        ]
+    },
     { path: 'register', component: RegisterComponent, canActivate: [isLoggedGuard] },
     { path: 'login', component: LoginComponent, canActivate: [isLoggedGuard] },
     {

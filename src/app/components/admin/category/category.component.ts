@@ -11,12 +11,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { ModalSubmitDeleteComponent } from "../../../shared/components/modal-submit-delete/modal-submit-delete.component";
-import { throwError } from 'rxjs';
+import { ProgressSpinner } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-category',
   standalone: true,
-  imports: [FormsModule, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, CommonModule, FormsModule, MatPaginatorModule, ButtonComponent, ModalSubmitDeleteComponent],
+  imports: [ProgressSpinner, FormsModule, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, CommonModule, FormsModule, MatPaginatorModule, ButtonComponent, ModalSubmitDeleteComponent],
   templateUrl: './category.component.html',
   styleUrl: './category.component.css'
 })
@@ -81,6 +81,7 @@ export class CategoryComponent implements AfterViewInit, OnInit {
   }
 
   deleteCategory() {
+    this.isLoading = true;
     if (!this.slugSelected) {
       this.toastr.error("Không có danh mục này", "Lỗi");
     }
@@ -93,13 +94,17 @@ export class CategoryComponent implements AfterViewInit, OnInit {
         }, error: (error) => {
           this.toastr.error("Không thể xoá", "Lỗi xoá");
           console.log(error);
+          this.isLoading = false;
+        }, complete: () => {
+          this.isLoading = false;
         }
       });
-      this.isDeleted = false;
     }
+    this.isDeleted = false;
   }
 
   updateCategory(): void {
+    this.isLoading = true;
     try {
       if (!this.currentCategory.name.trim()) {
         this.validateCategoryName = true;
@@ -120,13 +125,15 @@ export class CategoryComponent implements AfterViewInit, OnInit {
           this.cateModal.nativeElement.close();
           this.toastr.error("Cập nhật không thành công", "Lỗi");
           console.log(err);
-
-        },
+          this.isLoading = false;
+        }, complete: () => {
+          this.isLoading = false;
+        }
       });
     } catch (error) {
       this.toastr.error("Lỗi: " + error);
     }
-
+    this.isLoading = false;
   }
 
   editCategory(category: Category) {
@@ -147,6 +154,7 @@ export class CategoryComponent implements AfterViewInit, OnInit {
   // }
 
   createCategory() {
+    this.isLoading = true;
     if (!this.newCategory.name.trim()) {
       this.validateCategoryName = true;
       return;
@@ -161,9 +169,10 @@ export class CategoryComponent implements AfterViewInit, OnInit {
       },
       error: (error) => {
         this.toastr.error(error, 'Cảnh báo');
-
+        this.isLoading = false;
       },
       complete: () => {
+        this.isLoading = false;
         this.validateCategoryName = false;
       }
     });

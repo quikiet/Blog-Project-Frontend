@@ -182,6 +182,7 @@
               [(ngModel)]="selectedStatus"
               (onChange)="updateStatus($event.value)"
               [options]="statuses"
+              [disabled]="userRole !== 'admin'"
               placeholder="Chọn trạng thái"
               optionLabel="label"
             />
@@ -190,6 +191,7 @@
         <p-select
           [options]="refuseReasons"
           [(ngModel)]="selectedReason"
+          [disabled]="userRole !== 'admin'"
           optionValue="id"
           optionLabel="reason"
           [showClear]="true"

@@ -25,6 +25,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { RefuseReasonService } from '../../../../services/category/refuse-reason.service';
 import { RefusesService } from '../../../../services/category/refuses.service';
+import { LoginService } from '../../../../services/Auth/login.service';
 
 @Component({
   selector: 'app-post-detail',
@@ -45,6 +46,7 @@ export class PostDetailComponent implements OnInit {
     private authorService: AuthorsService,
     private refuseReasonService: RefuseReasonService,
     private refuseService: RefusesService,
+    private loginService: LoginService,
   ) { }
   post: any = {
     title: '',
@@ -66,7 +68,7 @@ export class PostDetailComponent implements OnInit {
   sanitizedContent: SafeHtml = '';
   selectedFile: File | null = null;
   visible: boolean = false;
-
+  userRole: string | null = null;
   refuseReasons: any[] = [];
   selectedReason: number | null = null;
   showRefuseReason: boolean = false;
@@ -92,6 +94,7 @@ export class PostDetailComponent implements OnInit {
       { label: 'Từ chối', value: 'rejected' },
       // { label: 'Đã xoá', value: 'deleted' }
     ];
+    this.userRole = this.loginService.getRole();
   }
 
   options: Object = {

@@ -21,6 +21,8 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { UploadService } from '../../../services/upload.service';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 interface Column {
   field: string;
   header: string;
@@ -35,7 +37,7 @@ interface ExportColumn {
 @Component({
   selector: 'app-authors',
   standalone: true,
-  imports: [FileUpload, InputGroupModule, InputGroupAddonModule, ConfirmDialogModule, ButtonModule, TableModule, DialogModule, Ripple, SelectModule, ToastModule, ToolbarModule, InputTextModule, TextareaModule, CommonModule, DropdownModule, InputTextModule, FormsModule, IconFieldModule, InputIconModule],
+  imports: [ProgressSpinner, FileUpload, InputGroupModule, InputGroupAddonModule, ConfirmDialogModule, ButtonModule, TableModule, DialogModule, Ripple, SelectModule, ToastModule, ToolbarModule, InputTextModule, TextareaModule, CommonModule, DropdownModule, InputTextModule, FormsModule, IconFieldModule, InputIconModule, ButtonComponent],
   providers: [ConfirmationService, MessageService],
   templateUrl: './authors.component.html',
   styleUrl: './authors.component.css'
@@ -50,7 +52,7 @@ export class AuthorsComponent implements OnInit {
   selectedAuthors: any[] = [];
   searchValue: string | undefined;
   submitted: boolean = false;
-
+  isLoading = true;
   @ViewChild('tableAuthor') dt!: Table;
 
   cols!: Column[];
@@ -93,9 +95,10 @@ export class AuthorsComponent implements OnInit {
         this.cd.markForCheck();
       }, error: (error) => {
         console.error("Lỗi tải tác giả", error);
+      }, complete: () => {
+        this.isLoading = false;
       }
     });
-
     this.cols = [
       { field: 'id', header: 'Mã' },
       { field: 'name', header: 'Tên' },
@@ -103,8 +106,10 @@ export class AuthorsComponent implements OnInit {
       { field: 'email', header: 'Địa chỉ email' },
       { field: 'bio', header: 'Tiểu sử' }
     ];
-
     this.exportColumns = this.cols.map((col) => ({ title: col.header, dataKey: col.field }));
+
+    this.isLoading = false;
+
   }
 
   openNew() {
@@ -122,8 +127,8 @@ export class AuthorsComponent implements OnInit {
   }
 
   updateAuthor() {
+    this.isLoading = true;
     if (!this.isEditting) return;
-
     if (!this.author || !this.author.slug) {
       this.messageService.add({ severity: 'error', summary: 'Thất bại', detail: 'Dữ liệu không hợp lệ' });
       return;
@@ -133,6 +138,7 @@ export class AuthorsComponent implements OnInit {
     if (!hasChanges && !this.selectedFile) {
       this.authorDialog = false;
       this.isEditting = false;
+      this.isLoading = false;
       return;
     }
 
@@ -154,6 +160,7 @@ export class AuthorsComponent implements OnInit {
           this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: 'Cập nhật tác giả thất bại: ' + (error.error?.error || error.message) });
         },
         complete: () => {
+          this.isLoading = false;
           this.authorDialog = false;
           this.isEditting = false;
           this.selectedFile = null;
@@ -161,6 +168,7 @@ export class AuthorsComponent implements OnInit {
         }
       });
     }
+    this.isLoading = false;
   }
 
   private hasChanges(original: any, updated: any) {
@@ -191,11 +199,14 @@ export class AuthorsComponent implements OnInit {
       },
       error: (error) => {
         console.error("❌ Không thể xóa ảnh cũ", error);
+      }, complete: () => {
+        this.isLoading = false;
       }
     });
   }
 
   updateThumbnailInCloudinary(selectedFile: File, slug: string): void {
+    this.isLoading = true;
     this.uploadService.uploadImage(selectedFile).subscribe({
       next: (response: any) => {
         this.author.avatar = response.secure_url;
@@ -208,10 +219,12 @@ export class AuthorsComponent implements OnInit {
             this.messageService.add({ severity: 'error', summary: 'Thất bại', detail: error.error?.error || error.message });
           },
           complete: () => {
+            this.isLoading = false;
             this.authorDialog = false;
             this.isEditting = false;
             this.selectedFile = null;
             this.loadAuthorData();
+
           }
         });
       },
@@ -221,11 +234,15 @@ export class AuthorsComponent implements OnInit {
         this.isEditting = false;
         this.selectedFile = null;
       },
-      complete: () => { }
+      complete: () => {
+        this.isLoading = false;
+      }
     });
+    this.isLoading = false;
   }
 
   deleteSelectedAuthors() {
+    this.isLoading = true;
     this.confirmationService.confirm({
       message: 'Bạn có chắc muốn xóa các tác giả đã chọn không?',
       header: 'Xác nhận xóa',
@@ -254,6 +271,7 @@ export class AuthorsComponent implements OnInit {
             },
             complete: () => {
               this.selectedAuthors = [];
+              this.isLoading = false;
             }
           });
         }
@@ -261,12 +279,14 @@ export class AuthorsComponent implements OnInit {
       reject: () => {
         this.messageService.add({ severity: 'info', summary: 'Hủy bỏ', detail: 'Hủy xóa tác giả' });
         this.selectedAuthors = [];
-
+        this.isLoading = false;
       }
     });
+    this.isLoading = false;
   }
 
   deleteAuthor(author: any) {
+    this.isLoading = true;
     this.confirmationService.confirm({
       message: `Bạn có chắc muốn xóa tác giả <span class="font-bold">${author.name}</span> không?`,
       header: 'Xác nhận xóa',
@@ -282,18 +302,22 @@ export class AuthorsComponent implements OnInit {
             this.loadAuthorData();
           }, error: (error) => {
             this.messageService.add({ severity: 'error', summary: 'Thất bại', detail: 'Lỗi: ' + error });
+          }, complete: () => {
+            this.isLoading = true;
           }
         });
       },
-      // reject: () => {
-      //   this.messageService.add({ severity: 'info', summary: 'Hủy bỏ', detail: 'Hủy xóa tác giả' });
-      // }
+      reject: () => {
+        this.isLoading = false;
+      }
     });
+    this.isLoading = false;
   }
 
   hideDialog() {
     this.authorDialog = false;
     this.submitted = false;
+    this.isLoading = false;
   }
 
   findIndexById(id: string): number {
@@ -330,6 +354,7 @@ export class AuthorsComponent implements OnInit {
   }
 
   submitCreate(author: any) {
+    this.isLoading = true;
     this.authorServices.createAuthor(author).subscribe({
       next: () => {
         this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Đã lưu tác giả' });
@@ -338,11 +363,13 @@ export class AuthorsComponent implements OnInit {
         const publicId = this.getCloudinaryPublicId(author.avatar);
         this.deleteThumbnailInCloudinary(publicId);
       }, complete: () => {
+        this.isLoading = false;
         this.authorDialog = false;
         this.selectedFile = null;
         this.loadAuthorData();
       }
-    })
+    });
+    this.isLoading = false;
   }
 
   onFileSelected(event: any) {

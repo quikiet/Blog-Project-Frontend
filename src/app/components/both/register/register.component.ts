@@ -25,7 +25,8 @@ export class RegisterComponent {
       this.registerService.register(this.userData).subscribe({
         next: (response) => {
           console.log("Đăng ký thành công!", response);
-          this.router.navigate(['admin/category']);
+          alert("Chúc mừng bạn đã đăng ký tài khoản thành công!");
+          this.router.navigate(['login']);
         },
         error: (error) => {
           console.log("Đăng ký thất bại", error);
