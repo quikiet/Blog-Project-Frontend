@@ -17,17 +17,21 @@ import { outDateLoginGuard } from './guard/out-date-login.guard';
 import { WebsiteSettingsComponent } from './components/admin/website-settings/website-settings.component';
 import { UserStatisticsComponent } from './components/admin/user-statistics/user-statistics.component';
 import { RefuseReasonsComponent } from './components/admin/refuse-reasons/refuse-reasons.component';
+import { HomeContentComponent } from './components/customer/home/home-content/home-content.component';
 
 export const routes: Routes = [
+
+    { path: 'register', component: RegisterComponent, canActivate: [isLoggedGuard] },
+    { path: 'login', component: LoginComponent, canActivate: [isLoggedGuard] },
     {
         path: '', component: HomeComponent, canActivate: [outDateLoginGuard],
         children: [
+            { path: '', component: HomeContentComponent, pathMatch: 'full' },
             { path: 'list-post', component: PostDetailComponent, },
             { path: 'posts', component: PostsComponent, canActivate: [roleGuard], data: { role: 'author' } }
         ]
     },
-    { path: 'register', component: RegisterComponent, canActivate: [isLoggedGuard] },
-    { path: 'login', component: LoginComponent, canActivate: [isLoggedGuard] },
+
     {
         path: 'admin', component: DashboardComponent,
         canActivate: [roleGuard],
@@ -47,6 +51,6 @@ export const routes: Routes = [
         ]
     },
     { path: 'post-detail/:slug', component: PostDetailComponent },
-    { path: "**", component: HomeComponent, pathMatch: 'full' },
+    { path: "**", redirectTo: "", pathMatch: 'full' },
 
 ];

@@ -45,12 +45,29 @@ export class PostService {
       catchError(error => {
         console.error("error to fetch Post", error);
         if (error.status === 401) {
+          localStorage.removeItem('token_expiration');
           localStorage.removeItem('token');
           localStorage.removeItem('user');
         }
         return throwError(() => new Error("Failed to fetching"));
       })
     );
+  }
+
+  getFeaturePost(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/featured`);
+  }
+
+  getSubFeatures(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/sub-features`);
+  }
+
+  getLatestPosts(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/latest`);
+  }
+
+  getTrendingPosts(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/trending`);
   }
 
   update(slug: string, post: Post): Observable<Post> {
@@ -92,5 +109,6 @@ export class PostService {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.delete<Post>(`${this.apiUrl}/${slug}`, { headers });
   }
+
 
 }

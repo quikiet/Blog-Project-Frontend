@@ -1,27 +1,25 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { LoginService } from '../../../services/Auth/login.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { UsersComponent } from "../../admin/users/users.component";
-import { PostListComponent } from "../../admin/posts/post-list/post-list.component";
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 import { InputGroup } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { ButtonComponent } from "../../../shared/components/button/button.component";
-import { CategoryService } from '../../../services/category/category.service';
 import { ProgressSpinner } from 'primeng/progressspinner';
-import { PostService } from '../../../services/posts/post.service';
+import { LoginService } from '../../../../services/Auth/login.service';
+import { CategoryService } from '../../../../services/category/category.service';
+import { PostService } from '../../../../services/posts/post.service';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
 @Component({
-  selector: 'app-home',
+  selector: 'app-home-content',
   standalone: true,
-  imports: [ProgressSpinner, FormsModule, InputGroup, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, UsersComponent, PostListComponent, RouterOutlet, RouterLink, RouterLinkActive, ButtonComponent],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  imports: [ButtonComponent, ProgressSpinner, FormsModule, InputGroup, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, RouterOutlet, RouterLink, RouterLinkActive, ButtonComponent],
+  templateUrl: './home-content.component.html',
+  styleUrl: './home-content.component.css'
 })
-export class HomeComponent implements OnInit {
+export class HomeContentComponent implements OnInit {
   token = localStorage.getItem('token');
   userRole: string | null = null;
   username: string = '';
@@ -42,7 +40,10 @@ export class HomeComponent implements OnInit {
     private router: Router,
     private categoryService: CategoryService,
     private postService: PostService
-  ) { }
+  ) {
+
+  }
+
   ngOnInit(): void {
     this.loadCategory();
     this.loadUser();

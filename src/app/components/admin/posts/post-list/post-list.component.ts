@@ -71,12 +71,12 @@ export class PostListComponent implements OnInit {
     this.postService.getAllPosts().subscribe((data) => {
       this.posts = data.map(post => ({
         ...post,
-        published_at: post.published_at ? new Date(post.published_at) : null
+        published_at: post.published_at ? this.formatDate(new Date(post.published_at)) : null
       }));
       this.authors = Array.from(
         new Map(
           data
-            .filter(post => post.posts_user) // Chỉ lấy những bài có user hợp lệ
+            .filter(post => post.posts_user)
             .map(post => [post.posts_user?.id, { label: post.posts_user?.name, value: post.posts_user?.id }])
         ).values()
       );
@@ -108,6 +108,18 @@ export class PostListComponent implements OnInit {
     return statuses[status] ?? { label: 'Không xác định', severity: "secondary" };
   }
 
+  filterByDate(event: Date) {
+    if (!event) return;
+    const formattedDate = this.formatDate(event);
+    this.dt2.filter(formattedDate, 'published_at', 'equals');
+  }
+
+  formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  }
 
 
 }

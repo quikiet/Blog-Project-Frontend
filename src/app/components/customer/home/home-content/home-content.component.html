@@ -1,0 +1,231 @@
+<div class="pt-8 pb-10">
+  <main class="container mx-auto px-4">
+    <div class="h-[50px] bg-newsletter-bg-dark-alt flex items-center px-4">
+      <ul
+        class="menu-category flex space-x-40px overflow-x-auto scrollbar-hide hover:bg-primary p-2"
+        *ngFor="let category of categories"
+      >
+        <li>
+          <a
+            routerLink="/"
+            class="block py-2 font-sans font-semibold text-display-17 text-newsletter-card-bg hover:text-newsletter-gray-light whitespace-nowrap"
+            >{{ category.name }}</a
+          >
+        </li>
+      </ul>
+    </div>
+    <section
+      class="mb-8 relative h-[500px] bg-newsletter-card-bg shadow-md overflow-hidden"
+    >
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-0 h-full">
+        <div class="p-6 bg-white">
+          <article class="md:col-span-1 relative h-full group">
+            <div
+              class="absolute inset-0 bg-cover bg-center"
+              [style.backgroundImage]="
+                featurePost.thumbnail
+                  ? 'url(' + featurePost.thumbnail + ')'
+                  : 'url()'
+              "
+            ></div>
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-newsletter-bg-dark-alt via-black/50 to-transparent"
+            ></div>
+            <a
+              [routerLink]="['/post', featurePost.slug]"
+              class="absolute bottom-0 left-0 p-6 text-newsletter-offwhite block"
+            >
+              <h2
+                class="font-body font-bold text-display-24 mb-2 group-hover:underline"
+              >
+                {{ featurePost.title || "Unknown" }}
+              </h2>
+              <div class="font-meta text-meta-10">
+                Bởi {{ featurePost.authors?.name || "Unknown" }} |
+                {{ formatDate(featurePost.published_at) }}
+              </div>
+            </a>
+          </article>
+        </div>
+        <div
+          class="md:col-span-1 bg-newsletter-bg-dark-alt text-newsletter-offwhite flex flex-col h-full"
+        >
+          <article
+            class="relative flex-1 border-b border-gray-700 group overflow-hidden"
+          >
+            <div
+              [style.backgroundImage]="
+                subFeaturePosts[0].thumbnail
+                  ? 'url(' + subFeaturePosts[0].thumbnail + ')'
+                  : 'url()'
+              "
+              class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition-opacity duration-300"
+            ></div>
+            <a
+              [routerLink]="['/post', subFeaturePosts[0].slug]"
+              class="relative p-4 h-full flex flex-col justify-end"
+            >
+              <h3
+                class="font-body font-bold text-display-20 mb-1 group-hover:underline"
+              >
+                {{ subFeaturePosts[0].title || "Unknown" }}
+              </h3>
+              <p
+                class="font-body text-newsletter-gray-light line-clamp-3 text-sm"
+              >
+                {{
+                  subFeaturePosts[0].summary
+                    ? cutText(subFeaturePosts[0].summary, 20)
+                    : "Unknown"
+                }}
+              </p>
+            </a>
+          </article>
+          <article class="relative flex-1 group overflow-hidden bg-white">
+            <div class="grid grid-cols-3 w-full h-full py-6">
+              <div class="col-span-1 w-full h-full relative">
+                <div
+                  [style.backgroundImage]="
+                    subFeaturePosts[1]?.thumbnail
+                      ? 'url(' + subFeaturePosts[1].thumbnail + ')'
+                      : 'url(https://via.placeholder.com/400x250/cccccc/ffffff?text=Sub+Feature+2+Image)'
+                  "
+                  class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition-opacity duration-300"
+                ></div>
+                <div
+                  class="absolute inset-0 bg-gradient-to-b from-newsletter-bg-dark-alt via-black/20 to-transparent"
+                ></div>
+                <a
+                  [routerLink]="['/post', subFeaturePosts[1]?.slug]"
+                  class="relative p-4 h-full flex flex-col justify-start"
+                >
+                  <h3
+                    class="font-body font-bold text-display-22 group-hover:underline"
+                  >
+                    {{ subFeaturePosts[1]?.title || "Unknown" }}
+                  </h3>
+                </a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+      <!-- Latest News -->
+      <section class="lg:col-span-2">
+        <div
+          class="flex justify-between items-end mb-4 border-b-2 border-newsletter-bg-dark-alt pb-1"
+        >
+          <h2 class="font-body text-display-33 text-newsletter-bg-dark-alt">
+            Bài viết gần đây
+          </h2>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          <article
+            *ngFor="let post of latestPosts"
+            class="bg-newsletter-card-bg rounded-none shadow-md overflow-hidden flex flex-col group"
+          >
+            <a
+              [routerLink]="['/post', post.slug]"
+              class="block overflow-hidden"
+            >
+              <img
+                [src]="post.thumbnail"
+                *ngIf="post.thumbnail"
+                alt="Latest news image"
+                class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
+              />
+            </a>
+            <div class="p-4 flex flex-col flex-grow">
+              <a [routerLink]="['/post', post.slug]">
+                <h3
+                  class="font-body font-bold text-display-20 mb-2 text-newsletter-black group-hover:text-newsletter-green flex-grow"
+                >
+                  {{ post.title }}
+                </h3>
+              </a>
+              <div
+                class="font-meta text-meta-10 text-newsletter-gray-text mb-2 flex justify-between"
+              >
+                <span
+                  >Bởi {{ post.authors?.name || post.posts_user?.name }}</span
+                >
+                <span>{{ formatDate(post.published_at) }}</span>
+              </div>
+              <hr class="border-t-2 border-newsletter-border my-3" />
+
+              <p
+                class="font-body text-newsletter-green line-clamp-4 text-sm mb-3"
+              >
+                {{ post.summary }}
+              </p>
+            </div>
+          </article>
+        </div>
+        <div class="text-center mt-8">
+          <app-button>Xem thêm</app-button>
+        </div>
+      </section>
+
+      <aside class="lg:col-span-1">
+        <div class="bg-newsletter-card-bg p-4 shadow-md rounded-lg mb-6">
+          <div class="flex justify-between items-center mb-3">
+            <h6
+              class="font-body text-display-17 text-newsletter-bg-dark-alt !m-0"
+            >
+              Trending Headlines
+            </h6>
+            <app-button [variant]="'black'">Xem thêm</app-button>
+          </div>
+          <!-- <hr class="border-t-2 border-newsletter-border mb-4" /> -->
+          <div class="space-y-4">
+            <article
+              *ngFor="let post of trendingPosts"
+              class="border-t-2 pt-6 border-newsletter-border flex items-start space-x-15px group"
+            >
+              <a
+                [routerLink]="['/post', post.slug]"
+                class="flex-shrink-0 block w-[140px] h-[120px] overflow-hidden rounded-none"
+              >
+                <img
+                  [src]="post.thumbnail"
+                  *ngIf="post.thumbnail"
+                  alt="Trending
+                  post image"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </a>
+              <div class="flex-grow">
+                <a [routerLink]="['/post', post.slug]">
+                  <h4
+                    class="font-body text-body-15 font-normal text-newsletter-bg-dark-alt group-hover:text-newsletter-green mb-10px line-clamp-3"
+                  >
+                    {{ post.title }}
+                  </h4>
+                </a>
+                <p
+                  class="font-body text-meta-10 text-newsletter-green line-clamp-2 mb-10px"
+                >
+                  {{ post.summary }}
+                </p>
+                <div
+                  class="font-meta text-meta-9 text-newsletter-gray-text flex justify-between"
+                >
+                  <span>By {{ post.authors?.name || "Unknown" }}</span>
+                  <span>{{ formatDate(post.published_at) }}</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+        <div
+          class="mt-6 bg-gray-200 p-4 rounded-lg text-center text-gray-500 sticky top-[88px]"
+        >
+          Advertisement
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
