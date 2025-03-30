@@ -14,10 +14,11 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
 import { CategoryService } from '../../../services/category/category.service';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { PostService } from '../../../services/posts/post.service';
+import { FooterComponent } from "../footer/footer.component";
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [ProgressSpinner, FormsModule, InputGroup, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, UsersComponent, PostListComponent, RouterOutlet, RouterLink, RouterLinkActive, ButtonComponent],
+  imports: [ProgressSpinner, FormsModule, InputGroup, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, UsersComponent, PostListComponent, RouterOutlet, RouterLink, RouterLinkActive, ButtonComponent, FooterComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -41,7 +42,7 @@ export class HomeComponent implements OnInit {
     private toastr: ToastrService,
     private router: Router,
     private categoryService: CategoryService,
-    private postService: PostService
+    private postService: PostService,
   ) { }
   ngOnInit(): void {
     this.loadCategory();

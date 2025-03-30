@@ -1,0 +1,25 @@
+<!-- Footer -->
+<footer *ngIf="!isLoading" class="bg-gray-800 text-white py-8 mt-12">
+  <div class="container mx-auto px-4 text-center">
+    <p class="mb-4">{{ footerSettings.copyright }}</p>
+
+    <ul
+      *ngIf="footerSettings.links.length"
+      class="flex justify-center space-x-6"
+    >
+      <li *ngFor="let link of footerSettings.links">
+        <a
+          [href]="link.url"
+          class="hover:text-gray-300 transition-colors duration-200"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {{ link.text }}
+        </a>
+      </li>
+    </ul>
+  </div>
+</footer>
+<div *ngIf="isLoading" class="text-center py-12">
+  <span class="loading loading-spinner loading-lg"></span>
+</div>

@@ -26,11 +26,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { RefuseReasonService } from '../../../../services/category/refuse-reason.service';
 import { RefusesService } from '../../../../services/category/refuses.service';
 import { LoginService } from '../../../../services/Auth/login.service';
+import { ProgressSpinner } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-post-detail',
   standalone: true,
-  imports: [Dialog, ButtonModule, InputTextModule, SelectModule, AvatarModule, Select, MatProgressBarModule, FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, CommonModule, RouterLink, MatIconModule, FroalaEditorModule, FroalaViewModule, ButtonComponent, ModalSubmitDeleteComponent],
+  imports: [ProgressSpinner, ButtonModule, InputTextModule, SelectModule, AvatarModule, Select, MatProgressBarModule, FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, CommonModule, RouterLink, MatIconModule, FroalaEditorModule, FroalaViewModule, ButtonComponent, ModalSubmitDeleteComponent],
   templateUrl: './post-detail.component.html',
   styleUrl: './post-detail.component.css'
 })
@@ -341,6 +342,7 @@ export class PostDetailComponent implements OnInit {
     this.postService.update((oldSlug), this.post).subscribe({
       next: () => {
         this.toastr.success("Cập nhật bài báo thành công", "Thành công");
+
         this.isEditting = false;
       },
       error: (err) => {
