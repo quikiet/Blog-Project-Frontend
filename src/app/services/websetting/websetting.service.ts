@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 })
 export class WebsettingService {
   // private apiUrl = 'http://127.0.0.1:8000/api/website-settings';
-  apiUrl = "https://tqkdomain.io.vn/public/api/website-settings";
+  private apiUrl = "https://tqkdomain.io.vn/public/api/website-settings";
 
   constructor(private http: HttpClient) { }
 

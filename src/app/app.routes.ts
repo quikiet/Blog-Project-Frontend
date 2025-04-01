@@ -36,7 +36,6 @@ export const routes: Routes = [
             { path: 'posts', component: PostsComponent, canActivate: [roleGuard], data: { role: 'author' } },
         ]
     },
-    { path: 'post-detail/:slug', component: PostDetailUserComponent },
 
     {
         path: 'admin', component: DashboardComponent,
@@ -56,6 +55,9 @@ export const routes: Routes = [
             { path: 'user-statistics', component: UserStatisticsComponent },
         ]
     },
+    { path: 'post-detail/:slug', component: PostDetailComponent },
+    { path: 'post-detail-user/:slug', component: PostDetailUserComponent },
+
     { path: "**", redirectTo: "", pathMatch: 'full' },
 
 ];

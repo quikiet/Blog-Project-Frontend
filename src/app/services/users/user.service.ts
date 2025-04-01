@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -28,8 +28,12 @@ export class UserService {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
 
-  getPostByUserId(id: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}`);//api/users/2/posts
+  getPostByUserId(id: number, page: number = 1, perPage: number = 10): Observable<any> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('per_page', perPage.toString());
+
+    return this.http.get<any>(`${this.apiUrl}/${id}/posts`, { params });
   }
 
 

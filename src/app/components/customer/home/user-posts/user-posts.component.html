@@ -1,10 +1,88 @@
-<p-paginator [rows]="10" (onPageChange)="onPageChange($event)"> </p-paginator>
+<div *ngIf="isLoading" class="text-center py-4 text-gray-500">Đang tải...</div>
 
-<div *ngIf="isLoading">Đang tải...</div>
-<div *ngIf="!isLoading && user_posts.length === 0">Không có bài viết nào.</div>
+<div
+  *ngIf="!isLoading && user_posts.length === 0"
+  class="text-center py-4 text-gray-500"
+>
+  Không có bài viết nào.
+</div>
 
-<ul *ngIf="!isLoading">
-  <li *ngFor="let post of user_posts">
-    {{ post.title }}
+<ul *ngIf="!isLoading && user_posts.length > 0" class="space-y-6">
+  <li
+    *ngFor="let post of user_posts"
+    class="border border-gray-200 rounded-xl shadow-md p-6 bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col sm:flex-row gap-4"
+  >
+    <!-- Thumbnail (nếu có) -->
+    <div
+      class="flex-shrink-0 w-full sm:w-40 h-40 rounded-lg overflow-hidden"
+      *ngIf="post.thumbnail"
+    >
+      <img
+        [src]="post.thumbnail"
+        [alt]="post.title"
+        class="w-full h-full object-cover"
+      />
+    </div>
+
+    <!-- Nội dung bài viết -->
+    <div class="flex-1 flex flex-col justify-between">
+      <!-- Tiêu đề và nút xem chi tiết -->
+      <div class="flex justify-between items-start gap-4">
+        <h3
+          class="text-xl font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-200 line-clamp-2"
+        >
+          {{ post.title }}
+        </h3>
+        <a
+          [routerLink]="['/post-detail', post.slug]"
+          class="text-blue-500 hover:text-blue-700 transition-colors duration-200"
+        >
+          <span class="pi pi-eye text-lg"></span>
+        </a>
+      </div>
+
+      <!-- Tóm tắt -->
+      <p class="text-gray-600 mt-2 line-clamp-3">{{ post.summary }}</p>
+
+      <!-- Trạng thái, ngày đăng, và lý do từ chối -->
+      <div
+        class="mt-3 text-sm text-gray-500 flex flex-col sm:flex-row sm:items-center sm:gap-4"
+      >
+        <div class="flex items-center gap-2">
+          <span class="font-medium text-gray-700">Trạng thái:</span>
+          <p-tag
+            [value]="getStatusLabel(post.status).label"
+            [severity]="getStatusLabel(post.status).severity"
+          />
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="font-medium text-gray-700">Đăng ngày:</span>
+          <span>{{ post.published_at | date : "dd MMMM, YYYY HH:mm" }}</span>
+        </div>
+      </div>
+
+      <!-- Lý do từ chối -->
+      <div
+        *ngIf="post.refuses && post.refuses.length > 0"
+        class="mt-2 text-sm text-red-500 italic"
+      >
+        <p class="font-medium">Lý do từ chối:</p>
+        <ul class="list-disc pl-5">
+          <li *ngFor="let refuse of post.refuses">
+            {{ refuse.refuse_reason?.reason || "Không có lý do" }}
+          </li>
+        </ul>
+      </div>
+    </div>
   </li>
 </ul>
+
+<!-- Phân trang với p-paginator -->
+<div class="mt-6" *ngIf="!isLoading && user_posts.length > 0">
+  <p-paginator
+    [rows]="perPage"
+    [totalRecords]="totalPosts"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    (onPageChange)="onPageChange($event)"
+  ></p-paginator>
+</div>

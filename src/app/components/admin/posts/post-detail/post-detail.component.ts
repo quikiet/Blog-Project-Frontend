@@ -31,7 +31,7 @@ import { ProgressSpinner } from 'primeng/progressspinner';
 @Component({
   selector: 'app-post-detail',
   standalone: true,
-  imports: [ProgressSpinner, ButtonModule, InputTextModule, SelectModule, AvatarModule, Select, MatProgressBarModule, FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, CommonModule, RouterLink, MatIconModule, FroalaEditorModule, FroalaViewModule, ButtonComponent, ModalSubmitDeleteComponent],
+  imports: [ProgressSpinner, ButtonModule, InputTextModule, SelectModule, AvatarModule, MatProgressBarModule, FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, CommonModule, RouterLink, MatIconModule, FroalaEditorModule, FroalaViewModule, ButtonComponent, ModalSubmitDeleteComponent],
   templateUrl: './post-detail.component.html',
   styleUrl: './post-detail.component.css'
 })
@@ -81,6 +81,9 @@ export class PostDetailComponent implements OnInit {
 
 
   ngOnInit(): void {
+    if (this.post && this.post.status === 'rejected') {
+      this.setLatestRefuseReason(this.post);
+    }
     this.loadPosts();
     this.loadCategory();
     this.loadAuthors();
@@ -96,6 +99,7 @@ export class PostDetailComponent implements OnInit {
       // { label: 'Đã xoá', value: 'deleted' }
     ];
     this.userRole = this.loginService.getRole();
+
   }
 
   options: Object = {
@@ -312,6 +316,11 @@ export class PostDetailComponent implements OnInit {
   savePost(slug: string) {
     this.isLoading = true;
     const oldSlug = slug;
+    if (this.userRole === 'author') {
+      this.selectedRefuseId = null;
+      this.selectedReason = null;
+      this.post.status = 'pending';
+    }
     if (!this.selectedReason && this.post.status === 'rejected') {
       this.toastr.warning("Lưu ý bạn phải chọn lý do từ chối", "Cảnh báo");
       this.isLoading = false;
@@ -339,10 +348,10 @@ export class PostDetailComponent implements OnInit {
         });
       }
     }
+
     this.postService.update((oldSlug), this.post).subscribe({
       next: () => {
         this.toastr.success("Cập nhật bài báo thành công", "Thành công");
-
         this.isEditting = false;
       },
       error: (err) => {
@@ -352,35 +361,46 @@ export class PostDetailComponent implements OnInit {
       complete: () => {
         this.isLoading = false;
         this.loadPosts();
-        this.router.navigate(['admin/list-post'])
+        this.setLatestRefuseReason(this.post);
+        // this.router.navigate(['admin/list-post']);
       }
     });
     this.isLoading = false;
   }
 
   getLatestRefuse(post: any) {
-    if (!post || !post.refuses || post.refuses.length === 0) {
-      return null;
+    if (!post || !Array.isArray(post.refuses) || post.refuses.length === 0) {
+      return null; // Trả về null nếu không có dữ liệu
     }
-    const latestRefuse = post.refuses.sort((a: any, b: any) => {
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    })[0];
 
-    return latestRefuse;
+    return post.refuses.reduce((latest: any, current: any) => {
+      if (!latest || new Date(current.created_at).getTime() > new Date(latest.created_at).getTime()) {
+        return current;
+      }
+      return latest;
+    }, null);
   }
 
   setLatestRefuseReason(post: any) {
     const latestRefuse = this.getLatestRefuse(post);
-    this.selectedRefuseId = latestRefuse.id;
-    if (latestRefuse && latestRefuse.reason_id) {
-      this.selectedReason = latestRefuse.reason_id;
+    // console.log("lastest:" + latestRefuse.reason_id);
+    // console.log("before reason:" + this.selectedReason);
+
+    if (latestRefuse) {
+      this.selectedRefuseId = latestRefuse.id;
+      this.selectedReason = latestRefuse.reason_id ?? null;
     } else {
-      this.selectedReason = null; // Nếu không có lý do từ chối hoặc reason_id là null
+      this.selectedRefuseId = null;
+      this.selectedReason = null;
     }
+    // console.log("after reason:" + this.selectedReason);
+
   }
+
 
   editPost() {
     this.isEditting = !this.isEditting;
+    this.setLatestRefuseReason(this.post);
   }
 
   deleteModal(slug: string) {
