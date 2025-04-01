@@ -1,0 +1,10 @@
+<p-paginator [rows]="10" (onPageChange)="onPageChange($event)"> </p-paginator>
+
+<div *ngIf="isLoading">Đang tải...</div>
+<div *ngIf="!isLoading && user_posts.length === 0">Không có bài viết nào.</div>
+
+<ul *ngIf="!isLoading">
+  <li *ngFor="let post of user_posts">
+    {{ post.title }}
+  </li>
+</ul>

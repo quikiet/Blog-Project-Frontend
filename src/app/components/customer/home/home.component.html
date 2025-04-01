@@ -59,6 +59,11 @@
                   <li><a>Hồ sơ</a></li>
                   <li *ngIf="userRole === 'author'">
                     <a routerLink="posts">Đăng bài</a>
+                    <a routerLink="user-posts">Danh sách đăng bài</a>
+                  </li>
+
+                  <li *ngIf="userRole === 'admin'">
+                    <a routerLink="admin">Trang quản trị</a>
                   </li>
                   <li><a (click)="logout()">Đăng xuất</a></li>
                 </ul>
@@ -259,5 +264,4 @@
     </div>
   </div>
 </footer> -->
-
 <app-footer></app-footer>

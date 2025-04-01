@@ -12,6 +12,7 @@ import { LoginService } from '../../../../services/Auth/login.service';
 import { CategoryService } from '../../../../services/category/category.service';
 import { PostService } from '../../../../services/posts/post.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-home-content',
   standalone: true,
@@ -45,13 +46,37 @@ export class HomeContentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadCategory();
     this.loadUser();
-    this.loadPost();
-    this.loadFeaturePost();
-    this.loadSubFeatrurePost();
-    this.loadLatestPosts();
-    this.loadTrendingPosts();
+    this.userRole = this.loginService.getRole();
+    this.loadData();
+  }
+
+  loadData() {
+    this.isLoading = true;
+    forkJoin({
+      // posts: this.postService.getAllPosts(),
+      featurePost: this.postService.getFeaturePost(),
+      subFeaturePosts: this.postService.getSubFeatures(),
+      latestPosts: this.postService.getLatestPosts(),
+      trendingPosts: this.postService.getTrendingPosts()
+    }).subscribe({
+      next: (res) => {
+        this.loadCategory();
+        // this.posts = res.posts.map(post => ({
+        //   ...post,
+        //   published_at: post.published_at ? new Date(post.published_at) : null
+        // }));
+        this.featurePost = res.featurePost;
+        this.subFeaturePosts = res.subFeaturePosts;
+        this.latestPosts = res.latestPosts;
+        this.trendingPosts = res.trendingPosts;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error("Lỗi tải dữ liệu", error);
+        this.isLoading = false;
+      }
+    });
   }
 
   loadUser() {
@@ -132,14 +157,27 @@ export class HomeContentComponent implements OnInit {
   }
 
   loadCategory() {
-    this.categoryService.getAll().subscribe({
-      next: (data) => {
-        this.categories = data;
-      }, error: (error) => {
-        console.error("Lỗi tải danh mục", error);
-      }
-    })
+    const cachedData = localStorage.getItem('categories');
+    const cachedTime = localStorage.getItem('categories_cache_time');
+    const cacheExpiration = 60 * 60 * 1000; // 1 giờ
+
+    if (cachedData && cachedTime && (Date.now() - Number(cachedTime)) < cacheExpiration) {
+      this.categories = JSON.parse(cachedData);
+    } else {
+      this.categoryService.getAll().subscribe({
+        next: (data) => {
+          this.categories = data;
+          localStorage.setItem('categories', JSON.stringify(data)); // Lưu vào cache
+          localStorage.setItem('categories_cache_time', Date.now().toString()); // Lưu thời gian cache
+        },
+        error: (error) => {
+          console.error("Lỗi tải danh mục", error);
+        }
+      });
+    }
   }
+
+
 
   logout() {
     this.loginService.logout().subscribe({

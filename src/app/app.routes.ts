@@ -18,6 +18,8 @@ import { WebsiteSettingsComponent } from './components/admin/website-settings/we
 import { UserStatisticsComponent } from './components/admin/user-statistics/user-statistics.component';
 import { RefuseReasonsComponent } from './components/admin/refuse-reasons/refuse-reasons.component';
 import { HomeContentComponent } from './components/customer/home/home-content/home-content.component';
+import { UserPostsComponent } from './components/customer/home/user-posts/user-posts.component';
+import { PostDetailUserComponent } from './components/customer/post-detail-user/post-detail-user.component';
 
 export const routes: Routes = [
 
@@ -26,11 +28,15 @@ export const routes: Routes = [
     {
         path: '', component: HomeComponent, canActivate: [outDateLoginGuard],
         children: [
-            { path: '', component: HomeContentComponent, pathMatch: 'full' },
-            { path: 'list-post', component: PostDetailComponent, },
-            { path: 'posts', component: PostsComponent, canActivate: [roleGuard], data: { role: 'author' } }
+            {
+                path: '',
+                loadComponent: () => import('./components/customer/home/home-content/home-content.component').then(m => m.HomeContentComponent)
+            },
+            { path: 'user-posts', component: UserPostsComponent, canActivate: [roleGuard], data: { role: 'author' } },
+            { path: 'posts', component: PostsComponent, canActivate: [roleGuard], data: { role: 'author' } },
         ]
     },
+    { path: 'post-detail/:slug', component: PostDetailUserComponent },
 
     {
         path: 'admin', component: DashboardComponent,
@@ -50,7 +56,6 @@ export const routes: Routes = [
             { path: 'user-statistics', component: UserStatisticsComponent },
         ]
     },
-    { path: 'post-detail/:slug', component: PostDetailComponent },
     { path: "**", redirectTo: "", pathMatch: 'full' },
 
 ];

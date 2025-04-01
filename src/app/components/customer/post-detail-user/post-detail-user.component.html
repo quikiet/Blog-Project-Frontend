@@ -1,0 +1,60 @@
+<div class="m-0 p-0 bg-white min-h-full">
+  <div class="w-full h-[350px] mb-4 relative" *ngIf="post.thumbnail">
+    <!-- <div *ngIf="post.thumbnail" class="thumbnail-preview w-full h-[450px]">
+      <img
+        [src]="post.thumbnail"
+        [alt]="post.slug"
+        class="object-center h-full w-full"
+      />
+    </div> -->
+    <img
+      [src]="post.thumbnail"
+      alt="Post thumbnail"
+      class="absolute inset-0 w-full h-full object-center"
+    />
+    <div
+      class="absolute inset-0 bg-gradient-to-t from-newsletter-bg-dark-alt via-black/50 to-transparent"
+    ></div>
+  </div>
+  <div class="max-w-6xl m-auto px-8">
+    <div class="text-xl font-bold">
+      <div class="breadcrumbs text-sm text-black">
+        <ul>
+          <li><a class="text-primary" routerLink="['/']">Trang chủ</a></li>
+          <li class="text-secondary">
+            {{ getCategoryName(post.category_id) }}
+          </li>
+        </ul>
+      </div>
+      Tiêu đề
+      <div
+        class="flex justify-between py-2 items-center border-b-2 border-secondary-content"
+      >
+        <div class="flex items-center font-normal text-primary text-xs gap-2">
+          <p-avatar
+            *ngIf="!post.authors"
+            image="{{ post.posts_user.avatar }}"
+            styleClass="mr-2"
+            shape="circle"
+          />
+          <p-avatar
+            *ngIf="post.authors"
+            image="{{ post.authors.avatar }}"
+            shape="circle"
+          />
+          <span class="pr-2 border-r border-primary-content"
+            >Bởi {{ post.authors ? post.authors?.name : post.posts_user?.name }}
+          </span>
+          <span class="pl-2"> {{ post.published_at }} </span>
+        </div>
+        <div class="flex gap-2 items-center">
+          <i class="pi pi-comment"></i><i class="pi pi-share-alt"></i
+          ><i class="pi pi-bookmark"></i>
+        </div>
+      </div>
+    </div>
+    <div class="pt-5">
+      <div [froalaView]="post.content"></div>
+    </div>
+  </div>
+</div>

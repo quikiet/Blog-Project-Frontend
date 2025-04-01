@@ -7,8 +7,8 @@ import { Observable } from 'rxjs';
 })
 export class UserService {
 
-  // apiUrl = "https://67d78aa99d5e3a10152b1732.mockapi.io/User";
-  apiUrl = "http://127.0.0.1:8000/api/users";
+  apiUrl = "https://tqkdomain.io.vn/public/api/users";
+  // apiUrl = "http://127.0.0.1:8000/api/users";
 
   constructor(private http: HttpClient) { }
 
@@ -28,7 +28,9 @@ export class UserService {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
 
-
+  getPostByUserId(id: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}`);//api/users/2/posts
+  }
 
 
 }

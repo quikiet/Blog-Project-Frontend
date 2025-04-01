@@ -32,7 +32,7 @@
               class="absolute inset-0 bg-gradient-to-t from-newsletter-bg-dark-alt via-black/50 to-transparent"
             ></div>
             <a
-              [routerLink]="['/post', featurePost.slug]"
+              [routerLink]="['/post-detail', featurePost.slug]"
               class="absolute bottom-0 left-0 p-6 text-newsletter-offwhite block"
             >
               <h2
@@ -62,7 +62,7 @@
               class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition-opacity duration-300"
             ></div>
             <a
-              [routerLink]="['/post', subFeaturePosts[0].slug]"
+              [routerLink]="['/post-detail', subFeaturePosts[0].slug]"
               class="relative p-4 h-full flex flex-col justify-end"
             >
               <h3
@@ -96,7 +96,7 @@
                   class="absolute inset-0 bg-gradient-to-b from-newsletter-bg-dark-alt via-black/20 to-transparent"
                 ></div>
                 <a
-                  [routerLink]="['/post', subFeaturePosts[1]?.slug]"
+                  [routerLink]="['/post-detail', subFeaturePosts[1]?.slug]"
                   class="relative p-4 h-full flex flex-col justify-start"
                 >
                   <h3
@@ -128,7 +128,7 @@
             class="bg-newsletter-card-bg rounded-none shadow-md overflow-hidden flex flex-col group"
           >
             <a
-              [routerLink]="['/post', post.slug]"
+              [routerLink]="['/post-detail', post.slug]"
               class="block overflow-hidden"
             >
               <img
@@ -139,7 +139,7 @@
               />
             </a>
             <div class="p-4 flex flex-col flex-grow">
-              <a [routerLink]="['/post', post.slug]">
+              <a [routerLink]="['/post-detail', post.slug]">
                 <h3
                   class="font-body font-bold text-display-20 mb-2 text-newsletter-black group-hover:text-newsletter-green flex-grow"
                 >
@@ -186,7 +186,7 @@
               class="border-t-2 pt-6 border-newsletter-border flex items-start space-x-15px group"
             >
               <a
-                [routerLink]="['/post', post.slug]"
+                [routerLink]="['/post-detail', post.slug]"
                 class="flex-shrink-0 block w-[140px] h-[120px] overflow-hidden rounded-none"
               >
                 <img
@@ -198,7 +198,7 @@
                 />
               </a>
               <div class="flex-grow">
-                <a [routerLink]="['/post', post.slug]">
+                <a [routerLink]="['/post-detail', post.slug]">
                   <h4
                     class="font-body text-body-15 font-normal text-newsletter-bg-dark-alt group-hover:text-newsletter-green mb-10px line-clamp-3"
                   >
