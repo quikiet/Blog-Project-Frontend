@@ -210,7 +210,8 @@ export class PostsComponent implements OnInit {
     }
 
     const role = this.loginService.getRole();
-    console.log(role);
+    // console.log(role);
+    let isDraft = false;
 
     if (role !== 'admin' && role !== 'author') {
       this.toastr.warning("Bạn không có quyền tạo bài viết", "Truy cập bị từ chối");
@@ -224,7 +225,7 @@ export class PostsComponent implements OnInit {
           this.postForm.patchValue({ thumbnail: response.secure_url });
 
           setTimeout(() => {
-            this.submitCreate(this.postForm.value, role);
+            this.submitCreate(this.postForm.value, role, isDraft);
           }, 100);
         },
         error: (error) => {
@@ -235,12 +236,50 @@ export class PostsComponent implements OnInit {
         }
       });
     } else {
-      this.submitCreate(this.postForm.value, role);
+      this.submitCreate(this.postForm.value, role, isDraft);
     }
 
   }
 
-  submitCreate(postData: any, role: string) {
+  draftPost() {
+    if (this.postForm.invalid) {
+      this.toastr.warning("Vui lòng điền đầy đủ thông tin", "Cảnh báo");
+      return;
+    }
+
+    const role = this.loginService.getRole();
+    // console.log(role);
+    let isDraft = true;
+
+    if (role !== 'admin' && role !== 'author') {
+      this.toastr.warning("Bạn không có quyền tạo bài viết", "Truy cập bị từ chối");
+      return;
+    }
+    console.log(this.postForm);
+    if (this.selectedFile) {
+      this.uploadService.uploadImage(this.selectedFile).subscribe({
+        next: (response: any) => {
+
+          this.postForm.patchValue({ thumbnail: response.secure_url });
+
+          setTimeout(() => {
+            this.submitCreate(this.postForm.value, role, isDraft);
+          }, 100);
+        },
+        error: (error) => {
+          this.toastr.error("Lỗi upload ảnh: " + error, "Thất bại");
+        },
+        complete: () => {
+          this.isLoading = false;
+        }
+      });
+    } else {
+      this.submitCreate(this.postForm.value, role, isDraft);
+    }
+
+  }
+
+  submitCreate(postData: any, role: string, isDraft: boolean) {
     this.isLoading = true;
     postData.published_at = postData.published_at
       ? new Date(postData.published_at.getTime() - new Date().getTimezoneOffset() * 60000)
@@ -248,8 +287,12 @@ export class PostsComponent implements OnInit {
         .slice(0, 19)
         .replace('T', ' ')
       : undefined;
-    postData.status = role === 'admin' ? 'scheduled' : 'draft';
-    console.log(postData);
+
+    if (isDraft) {
+      postData.status = 'draft';
+    } else {
+      postData.status = role === 'admin' ? 'scheduled' : 'pending';
+    }
 
     this.postService.create(postData).subscribe({
       next: (data) => {
@@ -264,10 +307,9 @@ export class PostsComponent implements OnInit {
       }
     })
     this.isLoading = false;
-
     console.log(postData);
-
   }
+
 
   showDialogPreview() {
     this.visiblePreview = true;

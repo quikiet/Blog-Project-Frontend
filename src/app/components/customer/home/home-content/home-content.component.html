@@ -18,8 +18,8 @@
       class="mb-8 relative h-[500px] bg-newsletter-card-bg shadow-md overflow-hidden"
     >
       <div class="grid grid-cols-1 md:grid-cols-2 gap-0 h-full">
-        <div class="p-6 bg-white">
-          <article class="md:col-span-1 relative h-full group">
+        <div class="p-6 bg-white h-fit">
+          <article class="md:col-span-1 relative h-[450px] group">
             <div
               class="absolute inset-0 bg-cover bg-center"
               [style.backgroundImage]="
@@ -35,11 +35,9 @@
               [routerLink]="['/post-detail-user', featurePost.slug]"
               class="absolute bottom-0 left-0 p-6 text-newsletter-offwhite block"
             >
-              <h2
-                class="font-body font-bold text-display-24 mb-2 group-hover:underline"
-              >
+              <p class="font-body text-lg mb-2 group-hover:underline">
                 {{ featurePost.title || "Unknown" }}
-              </h2>
+              </p>
               <div class="font-meta text-meta-10">
                 Bởi {{ featurePost.authors?.name || "Unknown" }} |
                 {{ formatDate(featurePost.published_at) }}
@@ -51,7 +49,7 @@
           class="md:col-span-1 bg-newsletter-bg-dark-alt text-newsletter-offwhite flex flex-col h-full"
         >
           <article
-            class="relative flex-1 border-b border-gray-700 group overflow-hidden"
+            class="relative flex-1 border-b border-gray-700 group overflow-hidden h-2/3"
           >
             <div
               [style.backgroundImage]="
@@ -63,13 +61,13 @@
             ></div>
             <a
               [routerLink]="['/post-detail-user', subFeaturePosts[0].slug]"
-              class="relative p-4 h-full flex flex-col justify-end"
+              class="relative p-4 flex flex-col justify-end"
             >
-              <h3
+              <p
                 class="font-body font-bold text-display-20 mb-1 group-hover:underline"
               >
                 {{ subFeaturePosts[0].title || "Unknown" }}
-              </h3>
+              </p>
               <p
                 class="font-body text-newsletter-gray-light line-clamp-3 text-sm"
               >
@@ -81,8 +79,8 @@
               </p>
             </a>
           </article>
-          <article class="relative flex-1 group overflow-hidden bg-white">
-            <div class="grid grid-cols-3 w-full h-full py-6">
+          <article class="relative flex-1 group overflow-hidden bg-white h-1/3">
+            <div class="grid grid-cols-2 w-full py-6 h-full">
               <div class="col-span-1 w-full h-full relative">
                 <div
                   [style.backgroundImage]="
@@ -90,20 +88,20 @@
                       ? 'url(' + subFeaturePosts[1].thumbnail + ')'
                       : 'url(https://via.placeholder.com/400x250/cccccc/ffffff?text=Sub+Feature+2+Image)'
                   "
-                  class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition-opacity duration-300"
+                  class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition-opacity duration-300 h-fit"
                 ></div>
                 <div
                   class="absolute inset-0 bg-gradient-to-b from-newsletter-bg-dark-alt via-black/20 to-transparent"
                 ></div>
                 <a
                   [routerLink]="['/post-detail-user', subFeaturePosts[1]?.slug]"
-                  class="relative p-4 h-full flex flex-col justify-start"
+                  class="relative p-4 flex flex-col justify-start"
                 >
-                  <h3
-                    class="font-body font-bold text-display-22 group-hover:underline"
+                  <p
+                    class="font-body font-bold text-display-17 group-hover:underline"
                   >
                     {{ subFeaturePosts[1]?.title || "Unknown" }}
-                  </h3>
+                  </p>
                 </a>
               </div>
             </div>
@@ -118,9 +116,9 @@
         <div
           class="flex justify-between items-end mb-4 border-b-2 border-newsletter-bg-dark-alt pb-1"
         >
-          <h2 class="font-body text-display-33 text-newsletter-bg-dark-alt">
+          <h4 class="font-body text-display-33 text-newsletter-bg-dark-alt">
             Bài viết gần đây
-          </h2>
+          </h4>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <article
@@ -140,11 +138,11 @@
             </a>
             <div class="p-4 flex flex-col flex-grow">
               <a [routerLink]="['/post-detail-user', post.slug]">
-                <h3
+                <p
                   class="font-body font-bold text-display-20 mb-2 text-newsletter-black group-hover:text-newsletter-green flex-grow"
                 >
                   {{ post.title }}
-                </h3>
+                </p>
               </a>
               <div
                 class="font-meta text-meta-10 text-newsletter-gray-text mb-2 flex justify-between"
@@ -175,7 +173,7 @@
             <h6
               class="font-body text-display-17 text-newsletter-bg-dark-alt !m-0"
             >
-              Trending Headlines
+              Xu hướng hiện tại
             </h6>
             <app-button [variant]="'black'">Xem thêm</app-button>
           </div>
@@ -186,12 +184,13 @@
               class="border-t-2 pt-6 border-newsletter-border flex items-start space-x-15px group"
             >
               <a
+                *ngIf="post.thumbnail"
                 [routerLink]="['/post-detail-user', post.slug]"
                 class="flex-shrink-0 block w-[140px] h-[120px] overflow-hidden rounded-none"
               >
                 <img
-                  [src]="post.thumbnail"
                   *ngIf="post.thumbnail"
+                  [src]="post.thumbnail"
                   alt="Trending
                   post image"
                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -199,11 +198,11 @@
               </a>
               <div class="flex-grow">
                 <a [routerLink]="['/post-detail-user', post.slug]">
-                  <h4
+                  <p
                     class="font-body text-body-15 font-normal text-newsletter-bg-dark-alt group-hover:text-newsletter-green mb-10px line-clamp-3"
                   >
                     {{ post.title }}
-                  </h4>
+                  </p>
                 </a>
                 <p
                   class="font-body text-meta-10 text-newsletter-green line-clamp-2 mb-10px"

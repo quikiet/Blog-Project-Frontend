@@ -67,11 +67,11 @@
         class="mt-2 text-sm text-red-500 italic"
       >
         <p class="font-medium">Lý do từ chối:</p>
-        <ul class="list-disc pl-5">
+        <ol class="list-decimal pl-5">
           <li *ngFor="let refuse of post.refuses">
             {{ refuse.refuse_reason?.reason || "Không có lý do" }}
           </li>
-        </ul>
+        </ol>
       </div>
     </div>
   </li>

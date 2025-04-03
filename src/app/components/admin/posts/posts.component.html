@@ -282,7 +282,7 @@
     ></textarea>
   </label>
 
-  <div class="grid grid-cols-2 gap-2">
+  <div class="grid grid-cols-3 gap-2 items-center">
     <!-- Danh mục -->
     <label class="form-control w-full max-w-xs">
       <div class="label">
@@ -314,9 +314,10 @@
     </label>
   </div>
 
-  <div class="mt-4">
+  <div class="my-4 flex justify-between items-center">
+    <a class="link" (click)="draftPost()">Lưu nháp</a>
     <app-button variant="full" type="submit" [disabled]="isLoading"
-      >Đăng tải</app-button
-    >
+      >Đăng tải
+    </app-button>
   </div>
 </form>
