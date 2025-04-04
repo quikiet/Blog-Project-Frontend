@@ -55,7 +55,7 @@
 
   <div class="pt-16 max-w-7xl mx-auto flex">
     <aside
-      class="sidebar z-50 lg:z-0 fixed lg:static w-[240px] h-[calc(100vh-4rem)] lg:h-auto transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-45 overflow-y-auto p-4"
+      class="sidebar z-50 lg:z-0 fixed lg:static w-[240px] h-[calc(100vh-4rem)] lg:h-auto transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-45 overflow-y-auto p-4 bg-primary-content lg:bg-transparent"
     >
       <div
         class="bg-white rounded-xl shadow-lg mb-6 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
@@ -103,19 +103,79 @@
       <div
         class="bg-white rounded-xl shadow-lg p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
       >
-        <a
-          routerLink="list-post"
-          routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
-          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
-        >
-          <span class="mr-2">
-            <i
-              class="pi pi-calendar-plus text-success"
-              style="font-size: 1rem"
-            ></i>
-          </span>
-          Bài báo
-        </a>
+        <div>
+          <ul class="menu p-0">
+            <li>
+              <details>
+                <summary
+                  class="px-0 flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md text-base"
+                >
+                  <span class="mr-2">
+                    <p-overlaybadge
+                      [badgeDisabled]="disableDot"
+                      severity="danger"
+                    >
+                      <i
+                        class="pi pi-calendar text-success"
+                        style="font-size: 1rem"
+                      ></i>
+                    </p-overlaybadge>
+                  </span>
+                  Bài báo
+                </summary>
+                <ul>
+                  <li>
+                    <a
+                      routerLink="list-post/all"
+                      routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
+                      class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
+                    >
+                      <span class="mr-2">
+                        <i
+                          class="pi pi-calendar-plus text-success"
+                          style="font-size: 1rem"
+                        ></i>
+                      </span>
+                      Danh sách
+                    </a>
+                  </li>
+                  <li>
+                    <details open>
+                      <summary
+                        class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
+                      >
+                        Quản lý
+                      </summary>
+                      <ul>
+                        <li>
+                          <a
+                            routerLink="list-post/pending"
+                            routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
+                            class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
+                          >
+                            <span class="mr-2">
+                              <p-overlaybadge
+                                [value]="pendingPost"
+                                badgeSize="small"
+                                severity="danger"
+                              >
+                                <i
+                                  class="pi pi-hourglass text-success"
+                                  style="font-size: 1rem"
+                                ></i>
+                              </p-overlaybadge>
+                            </span>
+                            Chờ duyệt
+                          </a>
+                        </li>
+                      </ul>
+                    </details>
+                  </li>
+                </ul>
+              </details>
+            </li>
+          </ul>
+        </div>
         <div>
           <ul class="menu p-0">
             <li>
@@ -184,17 +244,6 @@
             </li>
           </ul>
         </div>
-
-        <a
-          routerLink="refuse-reasons"
-          routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
-          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
-        >
-          <span class="mr-2">
-            <i class="pi pi-ban text-success" style="font-size: 1rem"></i>
-          </span>
-          Từ chối
-        </a>
       </div>
 
       <div
@@ -255,6 +304,17 @@
             </li>
           </ul>
         </div>
+
+        <a
+          routerLink="refuse-reasons"
+          routerLinkActive="text-secondary  bg-primary-content bg-opacity-50"
+          class="flex items-center text-black hover:text-primary py-4 transition-all duration-300 hover:translate-x-1 rounded-md"
+        >
+          <span class="mr-2">
+            <i class="pi pi-ban text-success" style="font-size: 1rem"></i>
+          </span>
+          Từ chối
+        </a>
       </div>
     </aside>
 

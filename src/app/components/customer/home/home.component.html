@@ -11,106 +11,42 @@
 </div>
 
 <header
-  class="bg-newsletter-bg-dark text-newsletter-offwhite shadow-md sticky top-0 z-50"
+  class="bg-newsletter-bg-dark text-newsletter-offwhite shadow-md top-0 z-0 h-[450px] absolute w-full"
 >
-  <div class="container mx-auto px-4">
+  <div class="container mx-auto px-4 max-w-6xl">
     <div
-      class="flex flex-wrap justify-between items-center min-h-[80px] py-2 md:min-h-[100px]"
+      class="max-w-full p-6 grid grid-cols-12 gap-5 items-center min-h-[80px] py-2 md:min-h-[100px] top-0"
     >
-      <a
-        routerLink="/"
-        class="font-serif font-extrabold text-3xl md:text-display-24 text-newsletter-offwhite order-1"
-      >
-        NEWSLETTER
-      </a>
-
-      <div
-        class="w-full md:w-auto order-3 md:order-2 mt-2 md:mt-0 flex flex-col sm:flex-row items-center justify-center md:justify-start space-y-2 sm:space-y-0 sm:space-x-0"
-      >
-        <p-inputgroup>
-          <input
-            type="text"
-            placeholder="Từ khoá"
-            class="input rounded-none focus:outline-none bg-primary w-full text-black"
-          />
-          <app-button [variant]="'secondary'">Tìm kiếm</app-button>
-        </p-inputgroup>
-      </div>
-
-      <div class="order-2 md:order-3 flex items-center space-x-4">
-        <div class="hidden md:block">
-          <span *ngIf="token; else showLogin">
-            <div class="flex items-center space-x-2">
-              <div class="dropdown dropdown-end">
-                <div tabindex="0" role="button" class="flex gap-2 items-center">
-                  <img
-                    class="w-10 h-10 rounded-full transition-transform duration-300 hover:scale-110 object-center"
-                    *ngIf="userAvatar"
-                    [src]="userAvatar"
-                    alt="Avatar"
-                    alt="Profile"
-                  />
-                  <span *ngIf="username">{{ username }}</span>
-                </div>
-                <ul
-                  tabindex="0"
-                  class="dropdown-content menu bg-secondary-content text-black rounded-box z-[1] w-52 p-2 shadow"
-                >
-                  <li><a>Hồ sơ</a></li>
-                  <li *ngIf="userRole === 'author'">
-                    <a routerLink="posts">Đăng bài</a>
-                    <a routerLink="user-posts">Danh sách đăng bài</a>
-                  </li>
-
-                  <li *ngIf="userRole === 'admin'">
-                    <a routerLink="admin">Trang quản trị</a>
-                  </li>
-                  <li><a (click)="logout()">Đăng xuất</a></li>
-                </ul>
-              </div>
-            </div>
-          </span>
-
-          <ng-template #showLogin>
-            <a
-              routerLink="/login"
-              class="text-sm font-meta hover:text-newsletter-gray-light"
-              >Login</a
-            >
-            <span class="mx-1">|</span>
-            <a
-              routerLink="/register"
-              class="text-sm font-meta hover:text-newsletter-gray-light"
-              >Register</a
-            >
-          </ng-template>
-        </div>
-        <button
-          class="md:hidden text-newsletter-gray-light hover:text-newsletter-offwhite focus:outline-none"
+      <div class="col-span-5">
+        <a
+          routerLink="/"
+          class="font-serif font-extrabold text-4xl md:text-display-24 text-newsletter-offwhite"
         >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 12h16m-7 6h7"
-            ></path>
-          </svg>
-        </button>
+          NEWSLETTER
+        </a>
+      </div>
+      <div class="col-span-7">
+        <div
+          class="w-full md:w-auto mt-2 md:mt-0 flex flex-col sm:flex-row items-center justify-center md:justify-start space-y-2 sm:space-y-0 sm:space-x-0"
+        >
+          <p-inputgroup>
+            <input
+              type="text"
+              placeholder="Từ khoá"
+              class="input rounded-none focus:outline-none bg-primary w-full text-black"
+            />
+            <app-button [variant]="'secondary'">Tìm kiếm</app-button>
+          </p-inputgroup>
+        </div>
       </div>
     </div>
   </div>
 </header>
 
-<div class="max-w-7xl m-auto p-6">
+<div class="max-w-6xl m-auto p-6 relative top-20 z-0 pb-24">
   <router-outlet></router-outlet>
 </div>
+<app-footer class="bottom-0"></app-footer>
 
 <!-- <footer class="bg-newsletter-bg-dark text-newsletter-gray-text pt-10 pb-6">
   <div class="container mx-auto px-4">
@@ -264,4 +200,3 @@
     </div>
   </div>
 </footer> -->
-<app-footer></app-footer>

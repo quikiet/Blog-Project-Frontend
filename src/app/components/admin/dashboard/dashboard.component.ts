@@ -6,19 +6,29 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { ToastrService } from 'ngx-toastr';
 import { LoginService } from '../../../services/Auth/login.service';
 import { MatIconModule } from '@angular/material/icon'
+import { PostService } from '../../../services/posts/post.service';
+import { OverlayBadgeModule } from 'primeng/overlaybadge';
+import { BadgeModule } from 'primeng/badge';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, CommonModule, FormsModule, MatIconModule],
+  imports: [BadgeModule, OverlayBadgeModule, RouterOutlet, RouterLink, RouterLinkActive, CommonModule, FormsModule, MatIconModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements AfterViewInit, OnInit {
-  constructor(private renderer: Renderer2, private toastr: ToastrService, private loginService: LoginService, private router: Router) { }
+  constructor(
+    private renderer: Renderer2,
+    private toastr: ToastrService,
+    private loginService: LoginService,
+    private router: Router,
+    private postService: PostService,
+  ) { }
   token = localStorage.getItem('token');
   username: string = '';
   userAvatar: string = '';
-
+  pendingPost: number = 0;
+  disableDot: boolean = false;
   ngOnInit(): void {
     this.loginService.getUser().subscribe({
       next: (res) => {
@@ -30,7 +40,16 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         return;
       }
     });
+    this.countPendingPost();
+  }
 
+  countPendingPost() {
+    this.postService.countPendingPost().subscribe(data => {
+      this.pendingPost = data;
+      if (this.pendingPost === 0) {
+        this.disableDot = true;
+      }
+    })
   }
 
   ngAfterViewInit(): void {

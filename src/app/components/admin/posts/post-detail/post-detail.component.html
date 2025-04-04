@@ -5,10 +5,10 @@
         <h1 class="text-2xl font-bold">{{ post.title }}</h1>
         <div class="flex gap-2 text-sm">
           <a
-            (click)="editPost()"
+            (click)="post.status !== 'deleted' ? editPost() : ''"
             class="link hover:text-primary transition text-center"
           >
-            <mat-icon>edit</mat-icon></a
+            <mat-icon *ngIf="post.status !== 'deleted'">edit</mat-icon></a
           >
           <a
             (click)="deleteModal(post.slug)"
@@ -58,7 +58,9 @@
       <div class="fr-view">
         <div [innerHTML]="sanitizedContent"></div>
       </div>
-      <a routerLink="/admin/list-post" class="text-blue-500 mt-4 inline-block"
+      <a
+        routerLink="/admin/list-post/all"
+        class="text-blue-500 mt-4 inline-block"
         >⬅ Quay lại danh sách</a
       >
     </div>
@@ -139,7 +141,7 @@
           ></textarea>
         </label>
 
-        <div class="grid grid-cols-3 gap-2">
+        <div class="grid grid-cols-2 gap-2">
           <!-- Danh mục -->
           <label class="form-control w-full max-w-xs">
             <div class="label">
@@ -197,6 +199,22 @@
               optionLabel="label"
             />
           </label>
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
+              <span class="label-text">Ngày đăng tải</span>
+            </div>
+            <p-datepicker
+              [readonlyInput]="true"
+              [showIcon]="true"
+              [showOnFocus]="false"
+              inputId="calendar-24h"
+              [(ngModel)]="post.published_at"
+              [showTime]="true"
+              name="published_at"
+              dateFormat="yy-mm-dd"
+              [disabled]="post.status !== 'pending'"
+            />
+          </label>
         </div>
         <p-select
           [options]="refuseReasons"
@@ -206,7 +224,7 @@
           optionLabel="reason"
           [showClear]="true"
           placeholder="Chọn lý do"
-          *ngIf="showRefuseReason || post.status === 'rejected'"
+          *ngIf="post.status === 'rejected'"
           class="md:w-full w-56 my-3"
         />
         <!-- Nút đăng bài -->

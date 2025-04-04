@@ -115,20 +115,20 @@
         <td class="bg-primary-content">
           <div class="grid grid-cols-1 gap-4 bg-white">
             <div class="overflow-hidden p-4">
-              <div class="grid grid-cols-6 gap-10">
+              <div class="lg:grid lg:grid-cols-6 gap-10">
                 <div
-                  class="col-span-2 relative w-[250px] h-[150px] overflow-hidden"
+                  class="col-span-2 relative w-auto lg:w-[250px] h-[150px] overflow-hidden"
                 >
                   <p-image
                     *ngIf="post.thumbnail"
-                    class="cursor-cell w-[250px] h-[150px] object-cover"
+                    class="cursor-cell w-auto lg:w-[250px] h-[150px] object-cover"
                     [src]="post.thumbnail"
                     alt="Ảnh đại diện của bài báo"
                     [preview]="true"
                   />
                   <div
                     *ngIf="!post.thumbnail"
-                    class="text-lg font-semibold text-primary p-5 text-center items-center flex w-[250px] h-[150px] bg-gray-200 justify-center"
+                    class="text-lg font-semibold text-primary p-5 text-center items-center flex w-auto lg:w-[250px] h-[150px] bg-gray-200 justify-center"
                   >
                     Bài báo không có hình đại diện
                   </div>
@@ -139,13 +139,14 @@
                     />
                   </div>
                 </div>
-
                 <div class="col-span-4">
                   <div
                     class="flex flex-col justify-between gap-3 w-full h-full pr-6"
                   >
-                    <div class="flex justify-between">
-                      <h3 class="text-xl font-semibold">{{ post.title }}</h3>
+                    <div class="flex justify-between my-2 lg:my-0">
+                      <p class="font-medium lg:text-xl lg:font-semibold">
+                        {{ post.title }}
+                      </p>
                       <span
                         [routerLink]="['/post-detail', post.slug]"
                         class="pi pi-eye cursor-pointer"

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Post, PostService } from '../../../../services/posts/post.service';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Image } from 'primeng/image';
 import { Tag } from 'primeng/tag';
 import { SelectModule } from 'primeng/select';
@@ -33,19 +33,26 @@ import { FormsModule } from '@angular/forms';
 })
 export class PostListComponent implements OnInit {
 
-  constructor(private postService: PostService) { }
+  constructor(
+    private postService: PostService,
+    private route: ActivatedRoute,
+  ) { }
   posts: any[] = [];
   authors: any[] = [];
   status: any[] = [];
   filterMenu: boolean = false;
   loading: boolean = true;
   tags: any[] = [];
+  filterType: string = 'all';
 
   @ViewChild('dt2') dt2!: Table; // Import từ Primeng
 
 
   ngOnInit(): void {
-    this.loadPosts();
+    this.route.data.subscribe(data => {
+      this.filterType = data['filter'] || 'all';
+      this.loadPosts();
+    })
     this.tags = [
       { label: 'Nháp', value: 'draft' },
       { label: 'Đang chờ', value: 'pending' },
@@ -68,10 +75,13 @@ export class PostListComponent implements OnInit {
   }
 
   loadPosts() {
-    this.postService.getAllPosts().subscribe((data) => {
+
+    const postObservable = this.filterType === 'pending' ? this.postService.getPendingPosts() : this.postService.getAllPosts();
+
+    postObservable.subscribe((data) => {
       this.posts = data.map(post => ({
         ...post,
-        published_at: post.published_at ? this.formatDate(new Date(post.published_at)) : null
+        // published_at: post.published_at ? this.formatDate(new Date(post.published_at)) : null
       }));
       this.authors = Array.from(
         new Map(

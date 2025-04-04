@@ -1,25 +1,94 @@
 <div class="pt-8 pb-10">
   <main class="container mx-auto px-4">
-    <div class="h-[50px] bg-newsletter-bg-dark-alt flex items-center px-4">
-      <ul
-        class="menu-category flex space-x-40px overflow-x-auto scrollbar-hide hover:bg-primary p-2"
-        *ngFor="let category of categories"
-      >
-        <li>
-          <a
-            routerLink="/"
-            class="block py-2 font-sans font-semibold text-display-17 text-newsletter-card-bg hover:text-newsletter-gray-light whitespace-nowrap"
-            >{{ category.name }}</a
+    <div
+      class="h-[60px] bg-newsletter-bg-dark-alt flex items-center px-4 justify-between gap-5"
+    >
+      <div class="flex items-center overscroll-x-auto">
+        <ul
+          class="menu-category flex space-x-40px overflow-x-auto scrollbar-hide hover:bg-primary p-2"
+          *ngFor="let category of categories"
+        >
+          <li>
+            <a
+              routerLink="/"
+              class="block py-2 font-sans text-newsletter-card-bg hover:text-newsletter-gray-light whitespace-nowrap"
+              >{{ category.name }}</a
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="flex items-center space-x-4 ml-2">
+        <div class="hidden md:block p-3 bg-secondary-content">
+          <span *ngIf="token; else showLogin">
+            <div class="flex items-center space-x-2">
+              <div class="dropdown dropdown-end">
+                <div
+                  tabindex="0"
+                  role="button"
+                  class="flex gap-2 items-center z-50"
+                >
+                  <img
+                    class="w-10 h-10 rounded-full transition-transform duration-300 hover:scale-110 object-center"
+                    *ngIf="userAvatar"
+                    [src]="userAvatar"
+                    alt="Avatar"
+                    alt="Profile"
+                  />
+                  <span *ngIf="username" class="text-white">{{
+                    username
+                  }}</span>
+                </div>
+                <ul
+                  tabindex="0"
+                  class="dropdown-content menu bg-secondary-content text-black rounded-box w-52 p-2 shadow z-50"
+                >
+                  <li><a>Hồ sơ</a></li>
+                  <li *ngIf="userRole === 'author'" class="z-50">
+                    <a routerLink="posts">Đăng bài</a>
+                    <a routerLink="user-posts">Danh sách đăng bài</a>
+                  </li>
+
+                  <li *ngIf="userRole === 'admin'" class="z-50">
+                    <a routerLink="admin">Trang quản trị</a>
+                  </li>
+                  <li class="z-50"><a (click)="logout()">Đăng xuất</a></li>
+                </ul>
+              </div>
+            </div>
+          </span>
+
+          <ng-template #showLogin>
+            <a routerLink="/login" class="text-sm font-meta">Login</a>
+            <span class="mx-1">|</span>
+            <a routerLink="/register" class="text-sm font-meta">Register</a>
+          </ng-template>
+        </div>
+        <button
+          class="md:hidden text-newsletter-gray-light hover:text-newsletter-offwhite focus:outline-none"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
           >
-        </li>
-      </ul>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16m-7 6h7"
+            ></path>
+          </svg>
+        </button>
+      </div>
     </div>
     <section
       class="mb-8 relative h-[500px] bg-newsletter-card-bg shadow-md overflow-hidden"
     >
       <div class="grid grid-cols-1 md:grid-cols-2 gap-0 h-full">
         <div class="p-6 bg-white h-fit">
-          <article class="md:col-span-1 relative h-[450px] group">
+          <article class="relative h-[350px] group">
             <div
               class="absolute inset-0 bg-cover bg-center"
               [style.backgroundImage]="
@@ -41,6 +110,37 @@
               <div class="font-meta text-meta-10">
                 Bởi {{ featurePost.authors?.name || "Unknown" }} |
                 {{ formatDate(featurePost.published_at) }}
+              </div>
+            </a>
+          </article>
+          <article class="relative h-[100px] group">
+            <a
+              [routerLink]="['/post-detail-user', featurePost.slug]"
+              class="bottom-0 left-0 pt-6 text-newsletter-black block"
+            >
+              <div
+                class="flex items-center gap-5 justify-between w-full h-full"
+              >
+                <div>
+                  <p
+                    class="font-body font-semibold text-lg mb-2 group-hover:underline"
+                  >
+                    {{ featurePost.title || "Unknown" }}
+                  </p>
+                  <div class="font-meta text-meta-10 text-primary">
+                    {{ featurePost.description || "Mô tả" }}
+                  </div>
+                </div>
+                <div
+                  class="w-28 h-16 inset-0 bg-cover bg-center"
+                  [style.backgroundImage]="
+                    featurePost.thumbnail
+                      ? 'url(' + featurePost.thumbnail + ')'
+                      : 'url(' +
+                        'https://cdn-media.sforum.vn/storage/app/media/anh-dep-16.jpg' +
+                        ')'
+                  "
+                ></div>
               </div>
             </a>
           </article>
@@ -80,7 +180,7 @@
             </a>
           </article>
           <article class="relative flex-1 group overflow-hidden bg-white h-1/3">
-            <div class="grid grid-cols-2 w-full py-6 h-full">
+            <div class="grid grid-cols-3 w-full py-6 h-full gap-5">
               <div class="col-span-1 w-full h-full relative">
                 <div
                   [style.backgroundImage]="
@@ -170,17 +270,17 @@
       <aside class="lg:col-span-1">
         <div class="bg-newsletter-card-bg p-4 shadow-md rounded-lg mb-6">
           <div class="flex justify-between items-center mb-3">
-            <h6
+            <p
               class="font-body text-display-17 text-newsletter-bg-dark-alt !m-0"
             >
-              Xu hướng hiện tại
-            </h6>
+              Bài báo được lưu trữ
+            </p>
             <app-button [variant]="'black'">Xem thêm</app-button>
           </div>
           <!-- <hr class="border-t-2 border-newsletter-border mb-4" /> -->
           <div class="space-y-4">
             <article
-              *ngFor="let post of trendingPosts"
+              *ngFor="let post of archivedPosts"
               class="border-t-2 pt-6 border-newsletter-border flex items-start space-x-15px group"
             >
               <a

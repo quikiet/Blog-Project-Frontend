@@ -27,11 +27,12 @@ import { RefuseReasonService } from '../../../../services/category/refuse-reason
 import { RefusesService } from '../../../../services/category/refuses.service';
 import { LoginService } from '../../../../services/Auth/login.service';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { DatePicker } from 'primeng/datepicker';
 
 @Component({
   selector: 'app-post-detail',
   standalone: true,
-  imports: [ProgressSpinner, ButtonModule, InputTextModule, SelectModule, AvatarModule, MatProgressBarModule, FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, CommonModule, RouterLink, MatIconModule, FroalaEditorModule, FroalaViewModule, ButtonComponent, ModalSubmitDeleteComponent],
+  imports: [DatePicker, ProgressSpinner, ButtonModule, InputTextModule, SelectModule, AvatarModule, MatProgressBarModule, FormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, CommonModule, RouterLink, MatIconModule, FroalaEditorModule, FroalaViewModule, ButtonComponent, ModalSubmitDeleteComponent],
   templateUrl: './post-detail.component.html',
   styleUrl: './post-detail.component.css'
 })
@@ -78,7 +79,9 @@ export class PostDetailComponent implements OnInit {
     'reason_id': null as number | null
   };
   selectedRefuseId: number | null = null;
-
+  minDate: Date | undefined;
+  maxDate: Date | undefined;
+  visiblePreview: boolean = false;
 
   ngOnInit(): void {
     if (this.post && this.post.status === 'rejected') {
@@ -99,7 +102,19 @@ export class PostDetailComponent implements OnInit {
       // { label: 'Đã xoá', value: 'deleted' }
     ];
     this.userRole = this.loginService.getRole();
-
+    // datePicker
+    let today = new Date();
+    let month = today.getMonth();
+    let year = today.getFullYear();
+    let prevMonth = (month === 0) ? 11 : month - 1;
+    let prevYear = (prevMonth === 11) ? year - 1 : year;
+    let nextMonth = (month === 11) ? 0 : month + 1;
+    let nextYear = (nextMonth === 0) ? year + 1 : year;
+    this.minDate = new Date();
+    this.minDate.setSeconds(0, 0);
+    this.maxDate = new Date();
+    this.maxDate.setMonth(nextMonth);
+    this.maxDate.setFullYear(nextYear);
   }
 
   options: Object = {
@@ -127,7 +142,14 @@ export class PostDetailComponent implements OnInit {
     if (slug) {
       this.postService.show(slug).subscribe({
         next: (data) => {
-          this.post = data
+          this.post = data;
+          if (this.post.published_at) {
+            this.post.published_at = new Date(this.post.published_at);
+            console.log('Published At (Date):', this.post.published_at);
+          } else {
+            this.post.published_at = null; // Đảm bảo giá trị là null nếu không có
+            console.log('Published At is null');
+          }
           console.log(this.post);
           this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(this.post.content);
           const foundedStatus = this.statuses.find(s => s.value === this.post.status || null);
@@ -235,6 +257,7 @@ export class PostDetailComponent implements OnInit {
   updatePost() {
     const slug = this.route.snapshot.paramMap.get('slug');
     // console.log(this.selectedReason);
+
     if (slug) {
       if (this.selectedFile) {
         if (this.post.thumbnail) {
@@ -314,6 +337,9 @@ export class PostDetailComponent implements OnInit {
 
 
   savePost(slug: string) {
+    if (this.post.published_at instanceof Date) {
+      this.post.published_at = this.formatDate(this.post.published_at);
+    }
     this.isLoading = true;
     const oldSlug = slug;
     if (this.userRole === 'author') {
@@ -366,6 +392,15 @@ export class PostDetailComponent implements OnInit {
       }
     });
     this.isLoading = false;
+  }
+
+  formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
   }
 
   getLatestRefuse(post: any) {

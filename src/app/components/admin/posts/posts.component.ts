@@ -291,14 +291,26 @@ export class PostsComponent implements OnInit {
     if (isDraft) {
       postData.status = 'draft';
     } else {
-      postData.status = role === 'admin' ? 'scheduled' : 'pending';
+      if (postData.status !== 'deleted') {
+        postData.status = role === 'admin' ? 'scheduled' : 'pending';
+      } else {
+        postData.status = 'deleted';
+      }
     }
 
     this.postService.create(postData).subscribe({
       next: (data) => {
-        this.toastr.success("Thêm bài báo thành công", "Thành công");
+        if (isDraft) {
+          this.toastr.info("Tạo nháp bài báo thành công", "Thành công");
+        } else {
+          this.toastr.success("Thêm bài báo thành công", "Thành công");
+        }
         this.postForm.reset();
-        this.router.navigate(['admin/list-post']);
+        if (role === 'admin') {
+          this.router.navigate(['admin/list-post']);
+        } else {
+          this.router.navigate(['user-posts']);
+        }
       }, error: (error) => {
         this.toastr.error("Lỗi: " + error, "Thất bại");
       },

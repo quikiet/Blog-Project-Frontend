@@ -38,6 +38,14 @@ export class PostService {
     );
   }
 
+  countPendingPost(): Observable<number> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<Post[]>(`${this.apiUrl}/pending`, { headers }).pipe(
+      map((post) => post.length)
+    );
+  }
+
   getAllPosts(): Observable<Post[]> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
@@ -68,6 +76,14 @@ export class PostService {
 
   getTrendingPosts(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/trending`);
+  }
+
+  getPendingPosts(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/pending`);
+  }
+
+  getArchivedPosts(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/archived`);
   }
 
   update(slug: string, post: Post): Observable<Post> {

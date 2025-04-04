@@ -20,6 +20,7 @@ import { RefuseReasonsComponent } from './components/admin/refuse-reasons/refuse
 import { HomeContentComponent } from './components/customer/home/home-content/home-content.component';
 import { UserPostsComponent } from './components/customer/home/user-posts/user-posts.component';
 import { PostDetailUserComponent } from './components/customer/post-detail-user/post-detail-user.component';
+import { filter } from 'rxjs';
 
 export const routes: Routes = [
 
@@ -49,7 +50,8 @@ export const routes: Routes = [
             { path: 'category', component: CategoryComponent },
             { path: 'refuse-reasons', component: RefuseReasonsComponent },
             { path: 'posts', component: PostsComponent },
-            { path: 'list-post', component: PostListComponent },
+            { path: 'list-post/all', component: PostListComponent, data: { filter: 'all' } },
+            { path: 'list-post/pending', component: PostListComponent, data: { filter: 'pending' } },
             { path: 'authors', component: AuthorsComponent },
             { path: 'tags/:slug', component: TagsComponent },
             { path: 'user-statistics', component: UserStatisticsComponent },

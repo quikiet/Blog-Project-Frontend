@@ -34,6 +34,7 @@ export class HomeContentComponent implements OnInit {
   subFeaturePosts: any[] = [];
   latestPosts: any[] = [];
   trendingPosts: any[] = [];
+  archivedPosts: any[] = [];
 
   constructor(
     private loginService: LoginService,
@@ -58,7 +59,8 @@ export class HomeContentComponent implements OnInit {
       featurePost: this.postService.getFeaturePost(),
       subFeaturePosts: this.postService.getSubFeatures(),
       latestPosts: this.postService.getLatestPosts(),
-      trendingPosts: this.postService.getTrendingPosts()
+      trendingPosts: this.postService.getTrendingPosts(),
+      archivedPosts: this.postService.getArchivedPosts()
     }).subscribe({
       next: (res) => {
         this.loadCategory();
@@ -70,6 +72,7 @@ export class HomeContentComponent implements OnInit {
         this.subFeaturePosts = res.subFeaturePosts;
         this.latestPosts = res.latestPosts;
         this.trendingPosts = res.trendingPosts;
+        this.archivedPosts = res.archivedPosts;
         this.isLoading = false;
       },
       error: (error) => {
@@ -94,67 +97,78 @@ export class HomeContentComponent implements OnInit {
 
   }
 
-  loadPost() {
-    this.postService.getAllPosts().subscribe((data) => {
-      this.posts = data.map(post => ({
-        ...post,
-        published_at: post.published_at ? new Date(post.published_at) : null
-      }));
-      this.authors = Array.from(
-        new Map(
-          data
-            .filter(post => post.posts_user) // Chỉ lấy những bài có user hợp lệ
-            .map(post => [post.posts_user?.id, { label: post.posts_user?.name, value: post.posts_user?.id }])
-        ).values()
-      );
-      this.isLoading = false;
-    });
+  // loadPost() {
+  //   this.postService.getAllPosts().subscribe((data) => {
+  //     this.posts = data.map(post => ({
+  //       ...post,
+  //       published_at: post.published_at ? new Date(post.published_at) : null
+  //     }));
+  //     this.authors = Array.from(
+  //       new Map(
+  //         data
+  //           .filter(post => post.posts_user) // Chỉ lấy những bài có user hợp lệ
+  //           .map(post => [post.posts_user?.id, { label: post.posts_user?.name, value: post.posts_user?.id }])
+  //       ).values()
+  //     );
+  //     this.isLoading = false;
+  //   });
 
-  }
+  // }
 
-  loadFeaturePost() {
-    this.postService.getFeaturePost().subscribe({
-      next: (data) => {
-        this.featurePost = data;
-      },
-      error: (error) => {
-        console.error('Error loading featured post:', error);
-      }
-    });
-  }
+  // loadFeaturePost() {
+  //   this.postService.getFeaturePost().subscribe({
+  //     next: (data) => {
+  //       this.featurePost = data;
+  //     },
+  //     error: (error) => {
+  //       console.error('Error loading featured post:', error);
+  //     }
+  //   });
+  // }
 
-  loadSubFeatrurePost() {
-    this.postService.getSubFeatures().subscribe({
-      next: (data) => {
-        this.subFeaturePosts = data;
-      },
-      error: (error) => {
-        console.error('Error loading sub-features post:', error);
-      }
-    });
-  }
+  // loadSubFeatrurePost() {
+  //   this.postService.getSubFeatures().subscribe({
+  //     next: (data) => {
+  //       this.subFeaturePosts = data;
+  //     },
+  //     error: (error) => {
+  //       console.error('Error loading sub-features post:', error);
+  //     }
+  //   });
+  // }
 
-  loadLatestPosts() {
-    this.postService.getLatestPosts().subscribe({
-      next: (data) => {
-        this.latestPosts = data;
-      },
-      error: (error) => {
-        console.error('Error loading sub-features post:', error);
-      }
-    });
-  }
+  // loadLatestPosts() {
+  //   this.postService.getLatestPosts().subscribe({
+  //     next: (data) => {
+  //       this.latestPosts = data;
+  //     },
+  //     error: (error) => {
+  //       console.error('Error loading sub-features post:', error);
+  //     }
+  //   });
+  // }
 
-  loadTrendingPosts() {
-    this.postService.getTrendingPosts().subscribe({
-      next: (data) => {
-        this.trendingPosts = data;
-      },
-      error: (error) => {
-        console.error('Error loading sub-features post:', error);
-      }
-    });
-  }
+  // loadTrendingPosts() {
+  //   this.postService.getTrendingPosts().subscribe({
+  //     next: (data) => {
+  //       this.trendingPosts = data;
+  //     },
+  //     error: (error) => {
+  //       console.error('Error loading sub-features post:', error);
+  //     }
+  //   });
+  // }
+
+  // loadArchivedPosts() {
+  //   this.postService.getArchivedPosts().subscribe({
+  //     next: (data) => {
+  //       this.trendingPosts = data;
+  //     },
+  //     error: (error) => {
+  //       console.error('Error loading sub-features post:', error);
+  //     }
+  //   });
+  // }
 
   loadCategory() {
     const cachedData = localStorage.getItem('categories');

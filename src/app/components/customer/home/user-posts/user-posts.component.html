@@ -7,16 +7,16 @@
   Không có bài viết nào.
 </div>
 
-<ul *ngIf="!isLoading && user_posts.length > 0" class="space-y-6">
+<ul
+  *ngIf="!isLoading && user_posts.length > 0"
+  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+>
   <li
     *ngFor="let post of user_posts"
-    class="border border-gray-200 rounded-xl shadow-md p-6 bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col sm:flex-row gap-4"
+    class="border border-gray-200 rounded-xl shadow-md p-6 bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col gap-4"
   >
-    <!-- Thumbnail (nếu có) -->
-    <div
-      class="flex-shrink-0 w-full sm:w-40 h-40 rounded-lg overflow-hidden"
-      *ngIf="post.thumbnail"
-    >
+    <!-- Thumbnail -->
+    <div class="w-full h-40 rounded-lg overflow-hidden" *ngIf="post.thumbnail">
       <img
         [src]="post.thumbnail"
         [alt]="post.title"
@@ -44,10 +44,8 @@
       <!-- Tóm tắt -->
       <p class="text-gray-600 mt-2 line-clamp-3">{{ post.summary }}</p>
 
-      <!-- Trạng thái, ngày đăng, và lý do từ chối -->
-      <div
-        class="mt-3 text-sm text-gray-500 flex flex-col sm:flex-row sm:items-center sm:gap-4"
-      >
+      <!-- Trạng thái và ngày đăng -->
+      <div class="mt-3 text-sm text-gray-500 flex flex-col gap-2">
         <div class="flex items-center gap-2">
           <span class="font-medium text-gray-700">Trạng thái:</span>
           <p-tag
@@ -82,7 +80,6 @@
   <p-paginator
     [rows]="perPage"
     [totalRecords]="totalPosts"
-    [rowsPerPageOptions]="[5, 10, 20]"
     (onPageChange)="onPageChange($event)"
   ></p-paginator>
 </div>
