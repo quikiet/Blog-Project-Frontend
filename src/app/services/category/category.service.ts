@@ -37,6 +37,18 @@ export class CategoryService {
     );
   }
 
+  getPostsByCategory(slug: string): Observable<Category[]> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.get<Category[]>(`${this.apiUrl}/${slug}`, { headers }).pipe(
+      catchError(error => {
+        console.error("error get posts by category", error);
+        return throwError(() => new Error("Failed to get posts by category"));
+      })
+    )
+  }
+
   create(category: Category): Observable<Category> {
 
     const token = localStorage.getItem('token');
