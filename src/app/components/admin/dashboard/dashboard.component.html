@@ -70,21 +70,29 @@
                     'bg-info bg-opacity-10': notify.read_at === null
                   }"
                   (click)="markAsRead(notify.id)"
-                  [routerLink]="['/post-detail', notify.data.user.post_slug]"
+                  [routerLink]="
+                    notify.data.type === 'new_post'
+                      ? ['/post-detail', notify.data.user.post_slug]
+                      : ['/admin/users']
+                  "
                 >
                   <div
                     class="flex items-center justify-around lg:justify-between py-2 gap-5 w-52 md:w-64 lg:w-80 px-0"
                   >
                     <div class="w-6 h-6 lg:w-12 lg:h-12">
                       <p-avatar
-                        [image]="notify.data.user.avatar"
+                        [image]="
+                          notify.data.user.avatar !== ''
+                            ? notify.data.user.avatar
+                            : 'https://icons.veryicon.com/png/o/system/management-end-web/registered-users.png'
+                        "
                         class=""
                         size="large"
                         shape="circle"
                       />
                     </div>
                     <div class="w-32 lg:w-64">
-                      <p>
+                      <p class="font-semibold">
                         {{ notify.data.message }}
                       </p>
                       <small class="text-blue-500">
