@@ -307,7 +307,7 @@ export class PostsComponent implements OnInit {
         }
         this.postForm.reset();
         if (role === 'admin') {
-          this.router.navigate(['admin/list-post']);
+          this.router.navigate(['admin/list-post/all']);
         } else {
           this.router.navigate(['user-posts']);
         }

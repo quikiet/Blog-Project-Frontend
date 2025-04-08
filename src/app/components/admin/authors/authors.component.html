@@ -79,7 +79,7 @@
         <th style="width: 3rem">
           <p-tableHeaderCheckbox />
         </th>
-        <th pSortableColumn="id" class="hidden lg:block">
+        <th pSortableColumn="id" class="hidden lg:table-cell">
           Mã
           <p-sortIcon field="id" />
         </th>
@@ -102,9 +102,9 @@
         <td style="width: 3rem">
           <p-tableCheckbox [value]="author" />
         </td>
-        <td class="hidden lg:block">{{ author.id }}</td>
+        <td class="hidden lg:table-cell">{{ author.id }}</td>
         <td>{{ author.name }}</td>
-        <td class="hidden lg:block">
+        <td class="hidden lg:table-cell">
           <img
             [src]="author.avatar"
             [alt]="author.name"
@@ -113,7 +113,7 @@
           />
         </td>
         <td>{{ author.email }}</td>
-        <td class="hidden lg:block">{{ author.bio }}</td>
+        <td class="hidden lg:table-cell">{{ author.bio }}</td>
         <td>
           <p-button
             icon="pi pi-pencil"

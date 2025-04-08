@@ -236,12 +236,20 @@ export class PostDetailComponent implements OnInit {
               this.deleteThumbmail();
             }
             this.toastr.success("Xoá thành công", "Thành công");
-            this.router.navigate(['/admin/list-post']);
+            if (this.userRole === 'admin') {
+              this.router.navigate(['/admin/list-post/all']);
+            } else {
+              this.router.navigate(['/user-posts']);
+            }
           },
           error: (err) => {
             this.toastr.error("Đã xảy ra lỗi khi xoá", "Thất bại");
             throwError("Lỗi: ", err);
-            this.router.navigate(['/admin/list-post']);
+            if (this.userRole === 'admin') {
+              this.router.navigate(['/admin/list-post/all']);
+            } else {
+              this.router.navigate(['/user-posts']);
+            }
           },
           complete: () => {
             this.isLoading = false;

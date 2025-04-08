@@ -9,10 +9,14 @@ import { MatIconModule } from '@angular/material/icon'
 import { PostService } from '../../../services/posts/post.service';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
 import { BadgeModule } from 'primeng/badge';
+import { NotificationsService } from '../../../services/users/notifications.service';
+import { AvatarModule } from 'primeng/avatar';
+import { RelativeTimePipe } from '../../../pipe/relative-time.pipe';
+import { DividerModule } from 'primeng/divider';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [BadgeModule, OverlayBadgeModule, RouterOutlet, RouterLink, RouterLinkActive, CommonModule, FormsModule, MatIconModule],
+  imports: [DividerModule, RelativeTimePipe, AvatarModule, BadgeModule, OverlayBadgeModule, RouterOutlet, RouterLink, RouterLinkActive, CommonModule, FormsModule, MatIconModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -23,29 +27,93 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     private loginService: LoginService,
     private router: Router,
     private postService: PostService,
+    private notificationService: NotificationsService,
   ) { }
   token = localStorage.getItem('token');
   username: string = '';
   userAvatar: string = '';
+  userRole: string = '';
   pendingPost: number = 0;
   disableDot: boolean = false;
+  notifyDot: boolean = false;
+
+  notifications: any = [];
+  unReadNotificationsCount: number = 0;
+
+
   ngOnInit(): void {
     this.loginService.getUser().subscribe({
       next: (res) => {
         this.username = res.user.name;
         this.userAvatar = res.user.avatar;
+        this.userRole = res.user.role;
       },
       error: (error) => {
         console.log(error);
         return;
       }
     });
+
     this.countPendingPost();
+    this.loadNotifications();
+    this.loadUnReadNotifications();
+    setInterval(() => {
+      this.countPendingPost();
+      this.loadNotifications();
+      this.loadUnReadNotifications();
+    }, 30000)
+  }
+
+  deleteAllNotifications() {
+    this.notificationService.deleteAllNotifications().subscribe(() => {
+      this.loadNotifications();
+      this.loadUnReadNotifications();
+    })
+  }
+
+  loadNotifications() {
+    this.notificationService.getNotifications().subscribe(data => {
+      this.notifications = data;
+      console.log(this.notifications);
+    });
+  }
+
+  loadUnReadNotifications() {
+    this.notificationService.getUnreadNotifications().subscribe(data => {
+      this.unReadNotificationsCount = data.unread_count;
+      if (this.unReadNotificationsCount === 0) {
+        this.notifyDot = true;
+      }
+    });
+
+  }
+
+  markAsRead(id: string) {
+    this.notificationService.markAsRead(id).subscribe({
+      next: () => {
+        this.loadNotifications();
+        this.loadUnReadNotifications();
+      }, error: (error) => {
+        console.error('Error marking notification as read:', error);
+      }
+    })
+  }
+
+  markReadAll() {
+    this.notificationService.markReadAll().subscribe({
+      next: () => {
+        this.loadNotifications();
+        this.loadUnReadNotifications();
+      }, error: (error) => {
+        console.error('Error marking notification as read:', error);
+      }
+    })
   }
 
   countPendingPost() {
     this.postService.countPendingPost().subscribe(data => {
       this.pendingPost = data;
+
       if (this.pendingPost === 0) {
         this.disableDot = true;
       }

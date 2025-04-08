@@ -5,7 +5,7 @@
     class="fixed w-full bg-secondary text-white z-50 shadow-lg animate-slide-down"
   >
     <div
-      class="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between h-16"
+      class="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between h-20"
     >
       <button class="mobile-menu-button p-2 lg:hidden">
         <span class="text-2xl">
@@ -27,7 +27,80 @@
         </span>
       </button>
       <div class="text-xl">Qkit<span class="">Tran</span></div>
-      <div class="flex items-center space-x-2">
+      <div class="flex items-center space-x-2 gap-5">
+        <div class="dropdown dropdown-end">
+          <div class="flex gap-2 items-center">
+            <div tabindex="0" role="button">
+              <p-overlaybadge
+                badgeSize="small"
+                [badgeDisabled]="notifyDot"
+                [value]="unReadNotificationsCount"
+                severity="danger"
+              >
+                <i
+                  class="pi pi-bell text-primary-content"
+                  style="font-size: 1.5rem"
+                ></i>
+              </p-overlaybadge>
+            </div>
+          </div>
+          <ul
+            tabindex="0"
+            class="dropdown-content menu bg-white text-black rounded-box z-[1] lg:w-96 shadow p-0"
+          >
+            <div
+              class="flex justify-between gap-2 items-center p-4 text-primary text-sm"
+            >
+              <a
+                class="cursor-pointer hover:text-blue-500"
+                (click)="deleteAllNotifications()"
+                >Xoá tất cả</a
+              >
+              <a
+                class="cursor-pointer hover:text-blue-500"
+                (click)="markReadAll()"
+                >Đánh dấu đã đọc</a
+              >
+            </div>
+            <div class="notification-list max-h-80 overflow-y-auto">
+              <li *ngFor="let notify of notifications">
+                <a
+                  class="overflow-hidden hover:bg-primary-content py-4 rounded-none"
+                  [ngClass]="{
+                    'bg-info bg-opacity-10': notify.read_at === null
+                  }"
+                  (click)="markAsRead(notify.id)"
+                  [routerLink]="['/post-detail', notify.data.user.post_slug]"
+                >
+                  <div
+                    class="flex items-center justify-around lg:justify-between py-2 gap-5 w-52 md:w-64 lg:w-80 px-0"
+                  >
+                    <div class="w-6 h-6 lg:w-12 lg:h-12">
+                      <p-avatar
+                        [image]="notify.data.user.avatar"
+                        class=""
+                        size="large"
+                        shape="circle"
+                      />
+                    </div>
+                    <div class="w-32 lg:w-64">
+                      <p>
+                        {{ notify.data.message }}
+                      </p>
+                      <small class="text-blue-500">
+                        {{ notify.created_at | relativeTime }}
+                      </small>
+                    </div>
+                  </div>
+                </a>
+                <p-divider class="!m-0" />
+              </li>
+            </div>
+            <div class="p-4 text-center text-sm text-gray-500">
+              <p *ngIf="notifications.length === 0">Không có thông báo nào</p>
+            </div>
+          </ul>
+        </div>
         <div class="dropdown dropdown-end">
           <div class="flex gap-2 items-center">
             <div tabindex="0" role="button">
@@ -39,7 +112,12 @@
                 alt="Profile"
               />
             </div>
-            <span *ngIf="username">{{ username }}</span>
+            <div class="flex flex-col">
+              <span *ngIf="username" class="text-lg">{{ username }}</span>
+              <span *ngIf="userRole" class="text-sm text-primary-content">{{
+                userRole
+              }}</span>
+            </div>
           </div>
           <ul
             tabindex="0"
