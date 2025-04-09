@@ -86,6 +86,10 @@ export class PostService {
     return this.http.get<any[]>(`${this.apiUrl}/archived`);
   }
 
+  getScheduledPosts(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/scheduled`);
+  }
+
   update(slug: string, post: Post): Observable<Post> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);

@@ -1,0 +1,116 @@
+<div class="flex gap-5 justify-between items-start">
+  <!-- Color Legend -->
+  <div class="w-full">
+    <p *ngIf="isLoading">Đang tải...</p>
+    <full-calendar
+      *ngIf="!isLoading"
+      [options]="calendarOptions"
+      style="background-color: aliceblue; padding: 20px"
+      [deepChangeDetection]="true"
+    ></full-calendar>
+    <div
+      *ngIf="showModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <div class="bg-white rounded-lg p-6 max-w-md w-full">
+        <div class="flex justify-between items-center mb-4">
+          <h6 class="text-xl font-bold">{{ selectedPost?.title }}</h6>
+          <button
+            (click)="closeModal()"
+            class="text-gray-500 hover:text-gray-700"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="space-y-4">
+          <img
+            [src]="selectedPost?.thumbnail"
+            alt="Thumbnail"
+            *ngIf="selectedPost?.thumbnail"
+            class="w-full h-40 object-cover rounded-md"
+          />
+          <p>
+            <strong>Thời gian xuất bản:</strong>
+            {{ selectedPost?.published_at }}
+          </p>
+          <p><strong>Tóm tắt:</strong> {{ selectedPost?.summary }}</p>
+          <p>
+            <strong>Người đăng:</strong> {{ selectedPost?.posts_user?.name }}
+          </p>
+          <p>
+            <strong>Trạng thái:</strong>
+            <span
+              [ngClass]="{
+                'text-blue-500': selectedPost?.status === 'scheduled',
+                'text-green-500': selectedPost?.status === 'published',
+                'text-red-900': selectedPost?.status === 'deleted',
+                'text-red-500': selectedPost?.status === 'rejected',
+                'text-orange-500': selectedPost?.status === 'pending',
+                'text-amber-700': selectedPost?.status === 'archived',
+                'text-gray-500': selectedPost?.status === 'default'
+              }"
+            >
+              {{
+                selectedPost?.status === "scheduled"
+                  ? "Đã lên lịch"
+                  : selectedPost?.status === "published"
+                  ? "Đã xuất bản"
+                  : selectedPost?.status === "deleted"
+                  ? "Đã xóa"
+                  : selectedPost?.status === "rejected"
+                  ? "Bị từ chối"
+                  : selectedPost?.status === "pending"
+                  ? "Đang chờ duyệt"
+                  : selectedPost?.status === "archived"
+                  ? "Đã lưu trữ"
+                  : "Không xác định"
+              }}
+            </span>
+          </p>
+          <div class="flex space-x-2">
+            <a
+              [routerLink]="['/post-detail', selectedPost?.slug]"
+              target="_blank"
+              class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+            >
+              Xem chi tiết
+            </a>
+            <button
+              *ngIf="selectedPost?.status === 'scheduled'"
+              class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+            >
+              Xuất bản ngay
+            </button>
+            <button
+              class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+            >
+              Xóa
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mb-4">
+    <div class="flex flex-col gap-4">
+      <div class="flex items-center space-x-2">
+        <div
+          class="w-5 h-5 rounded-full cursor-pointer bg-cyan-400"
+          (click)="changeFilter('all')"
+        ></div>
+        <span>Tất cả</span>
+      </div>
+      <div
+        *ngFor="let item of statusColors"
+        class="flex items-center space-x-2"
+      >
+        <div
+          [style.backgroundColor]="item.color"
+          class="w-5 h-5 rounded-full cursor-pointer"
+          (click)="changeFilter(item.status)"
+        ></div>
+        <span>{{ item.label }}</span>
+      </div>
+    </div>
+  </div>
+</div>
