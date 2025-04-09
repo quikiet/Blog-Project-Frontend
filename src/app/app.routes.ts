@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { DashboardComponent } from './components/admin/dashboard/dashboard.component';
-import { RegisterComponent } from './components/both/register/register.component';
 import { CategoryComponent } from './components/admin/category/category.component';
 import { SettingComponent } from './components/admin/setting/setting.component';
 import { PostsComponent } from './components/admin/posts/posts.component';
@@ -24,7 +23,6 @@ import { filter } from 'rxjs';
 
 export const routes: Routes = [
 
-    { path: 'register', component: RegisterComponent, canActivate: [isLoggedGuard] },
     { path: 'login', component: LoginComponent, canActivate: [isLoggedGuard] },
     {
         path: '', component: HomeComponent, canActivate: [outDateLoginGuard],
