@@ -1,87 +1,130 @@
-<div class="flex items-center justify-center min-h-screen w-full bg-img">
-  <div class="flex justify-between max-w-6xl gap-10 p-10">
-    <!-- Left Side -->
+<div class="min-w-full min-h-screen flex items-center justify-center">
+  <div
+    class="container flex items-center justify-center px-4 min-h-screen"
+    x-data="{ tab: 'signup' }"
+  >
     <div
-      class="hidden lg:flex flex-col justify-center lg:w-1/2 bg-cover bg-center p-10"
+      class="max-w-md m-auto w-full bg-white rounded-lg overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300"
     >
       <div
-        class="text-white text-center flex flex-col justify-around w-full h-full"
+        class="text-center py-6 bg-gradient-to-br from-newsletter-bg-dark to-newsletter-offwhite text-secondary-content"
       >
-        <h1 class="text-3xl font-bold pt-12">Newsletter</h1>
-        <h2 class="mt-4 text-2xl font-semibold">
-          Luôn mang đến những tin tức mới nhất
-        </h2>
-        <p class="mt-2 text-gray-200 pb-12">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        </p>
+        <p class="text-3xl font-extrabold text-white">Xin chào</p>
+        <p class="mt-2">Tham gia cùng các thành viên của trang báo</p>
       </div>
-    </div>
-
-    <div
-      class="w-full lg:w-1/2 flex flex-col lg:flex-row bg-white bg-opacity-25 shadow-lg rounded-lg overflow-hidden"
-    >
-      <!-- Right Side -->
-      <div class="lg:w-full p-8 min-w-96">
-        <h3 class="text-xl font-semibold text-gray-200">
-          LET'S GET YOU STARTED
-        </h3>
-        <h3 class="text-xl font-bold text-gray-200 mt-2">Đăng nhập</h3>
-
-        <div class="mt-6">
-          <div class="mt-4">
-            <label class="block text-gray-200 font-medium mb-1">Email</label>
-            <input
-              [(ngModel)]="loginFields.email"
-              type="email"
-              placeholder="Enter your email"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div class="mt-4">
-            <label class="block text-gray-200 font-medium mb-1">Mật khẩu</label>
-            <input
-              [(ngModel)]="loginFields.password"
-              type="password"
-              placeholder="Enter your password"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+      <div class="p-8">
+        <div class="flex justify-center mb-6">
           <button
-            (click)="login()"
-            class="w-full mt-6 bg-black text-white font-semibold py-3 rounded-lg hover:bg-gray-900"
+            (click)="tab = 'signup'"
+            [ngClass]="{
+              'bg-blue-500 text-white': tab === 'signup',
+              'bg-gray-200 text-gray-700': tab !== 'signup'
+            }"
+            class="px-4 py-2 rounded-l-md focus:outline-none transition-colors duration-300"
+          >
+            Đăng ký
+          </button>
+          <button
+            (click)="tab = 'login'"
+            [ngClass]="{
+              'bg-blue-500 text-white': tab === 'login',
+              'bg-gray-200 text-gray-700': tab !== 'login'
+            }"
+            class="px-4 py-2 rounded-r-md focus:outline-none transition-colors duration-300"
           >
             Đăng nhập
           </button>
-
-          <div class="text-center my-4 text-gray-200">Hoặc</div>
-
-          <div class="space-y-3">
+        </div>
+        <form *ngIf="tab === 'signup'" class="space-y-4">
+          <div class="relative">
+            <input
+              [(ngModel)]="userData.name"
+              name="name"
+              type="text"
+              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
+              placeholder="Tên người dùng"
+            />
+            <i class="fas fa-user absolute left-3 top-3 text-gray-400"></i>
+          </div>
+          <div class="relative">
+            <input
+              [(ngModel)]="userData.email"
+              name="email"
+              type="email"
+              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
+              placeholder="Địa chỉ Email"
+            />
+            <i class="fas fa-envelope absolute left-3 top-3 text-gray-400"></i>
+          </div>
+          <div class="relative">
+            <input
+              [(ngModel)]="userData.password"
+              name="password"
+              type="password"
+              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
+              placeholder="Nhập mật khẩu"
+            />
+            <i class="fas fa-lock absolute left-3 top-3 text-gray-400"></i>
+          </div>
+          <div class="relative">
+            <input
+              [(ngModel)]="userData.password_confirmation"
+              name="password_confirmation"
+              type="password"
+              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
+              placeholder="Nhập lại mật khẩu"
+            />
+            <i class="fas fa-lock absolute left-3 top-3 text-gray-400"></i>
+          </div>
+          <button
+            (click)="register()"
+            class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 rounded-md hover:opacity-90 transition-opacity duration-300 transform hover:scale-105"
+          >
+            Đăng ký
+          </button>
+        </form>
+        <form *ngIf="tab === 'login'" class="space-y-4">
+          <div class="relative">
+            <input
+              type="email"
+              [(ngModel)]="loginFields.email"
+              name="email"
+              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
+              placeholder="Địa chỉ Email"
+            />
+            <i class="fas fa-envelope absolute left-3 top-3 text-gray-400"></i>
+          </div>
+          <div class="relative">
+            <input
+              [(ngModel)]="loginFields.password"
+              name="password"
+              type="password"
+              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
+              placeholder="Nhập mật khẩu"
+            />
+            <i class="fas fa-lock absolute left-3 top-3 text-gray-400"></i>
+          </div>
+          <button
+            (click)="login()"
+            class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 rounded-md hover:opacity-90 transition-opacity duration-300 transform hover:scale-105"
+          >
+            Đăng nhập
+          </button>
+        </form>
+        <div class="mt-6">
+          <p class="text-center text-gray-600 mb-4">Hoặc tiếp tục với</p>
+          <div class="flex justify-center space-x-4">
             <button
-              class="w-full flex items-center justify-center border py-2 rounded-lg text-gray-200 hover:bg-gray-100"
+              class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300"
             >
-              <img
-                src="https://www.svgrepo.com/show/355037/google.svg"
-                class="w-5 h-5 mr-2"
-              />
-              Sign up with Google
+              <i class="fab fa-facebook-f mr-2"></i> Facebook
             </button>
             <button
-              class="w-full flex items-center justify-center border py-2 rounded-lg text-gray-200 hover:bg-gray-100"
+              class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors duration-300"
             >
-              <img
-                src="https://www.svgrepo.com/show/448224/facebook.svg"
-                class="w-5 h-5 mr-2"
-              />
-              Sign up with Facebook
+              <i class="fab fa-google mr-2"></i> Google
             </button>
           </div>
-
-          <p class="text-center mt-6 text-gray-200">
-            Already have an account?
-            <a href="#" class="text-blue-600 font-semibold">LOGIN HERE</a>
-          </p>
         </div>
       </div>
     </div>

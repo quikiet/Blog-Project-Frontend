@@ -57,8 +57,9 @@ export const routes: Routes = [
             { path: 'user-statistics', component: UserStatisticsComponent },
         ]
     },
-    { path: 'post-detail/:slug', component: PostDetailComponent },
     { path: 'post-detail-user/:slug', component: PostDetailUserComponent },
+    { path: 'post-detail/:slug', component: PostDetailComponent },
+
     { path: "**", redirectTo: "", pathMatch: 'full' },
 
 ];

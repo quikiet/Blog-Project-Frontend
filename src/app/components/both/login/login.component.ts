@@ -5,6 +5,7 @@ import { LoginService } from '../../../services/Auth/login.service';
 import { ToastrService } from 'ngx-toastr';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { RegisterService } from '../../../services/Auth/register.service';
 
 @Component({
   selector: 'app-login',
@@ -15,13 +16,20 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
 
-
-  constructor(private http: HttpClient, private loginService: LoginService, private toastr: ToastrService, private router: Router) { }
+  constructor(private registerService: RegisterService, private http: HttpClient, private loginService: LoginService, private toastr: ToastrService, private router: Router) { }
   loginFields = {
     email: '',
     password: ''
   };
 
+  userData = {
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: ''
+  };
+
+  tab: string = 'login';
   login(): void {
     if (this.loginFields.email === '' || this.loginFields.password === '') {
       this.toastr.error('Vui lòng nhập đầy đủ thông tin', 'Lỗi');
@@ -46,4 +54,20 @@ export class LoginComponent {
     });
   }
 
+  register() {
+    try {
+      this.registerService.register(this.userData).subscribe({
+        next: (response) => {
+          console.log("Đăng ký thành công!", response);
+          alert("Chúc mừng bạn đã đăng ký tài khoản thành công!");
+          this.tab = 'login';
+        },
+        error: (error) => {
+          console.log("Đăng ký thất bại", error);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }

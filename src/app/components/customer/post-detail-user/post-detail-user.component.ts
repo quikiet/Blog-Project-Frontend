@@ -8,11 +8,13 @@ import { CategoryService } from '../../../services/category/category.service';
 import { throwError } from 'rxjs';
 import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
 import { FooterComponent } from "../footer/footer.component";
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { LoadingComponent } from "../../../shared/loading/loading.component";
 
 @Component({
   selector: 'app-post-detail-user',
   standalone: true,
-  imports: [FroalaEditorModule, FroalaViewModule, AvatarModule, CommonModule, FooterComponent, RouterLink],
+  imports: [ProgressSpinner, FroalaEditorModule, FroalaViewModule, AvatarModule, CommonModule, FooterComponent, RouterLink, LoadingComponent],
   templateUrl: './post-detail-user.component.html',
   styleUrl: './post-detail-user.component.css'
 })
@@ -29,7 +31,7 @@ export class PostDetailUserComponent implements OnInit {
   };
   categories: any[] = [];
   sanitizedContent: SafeHtml = '';
-
+  isLoading = true;
   constructor(
     private route: ActivatedRoute,
     private postService: PostService,
@@ -44,6 +46,7 @@ export class PostDetailUserComponent implements OnInit {
   }
 
   loadPosts() {
+    this.isLoading = true;
     const slug = this.route.snapshot.paramMap.get('slug');
     console.log(slug);
     if (slug) {
@@ -53,7 +56,13 @@ export class PostDetailUserComponent implements OnInit {
           console.log(this.post);
           this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(this.post.content);
         },
-        error: (err) => console.error("Lỗi tải chi tiết bài viết", err)
+        error: (err) => {
+          console.error("Lỗi tải chi tiết bài viết", err);
+          this.isLoading = false;
+        },
+        complete: () => {
+          this.isLoading = false;
+        }
       });
     } else {
       console.error("Không có bài viết này");

@@ -15,10 +15,11 @@ import { CategoryService } from '../../../services/category/category.service';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { PostService } from '../../../services/posts/post.service';
 import { FooterComponent } from "../footer/footer.component";
+import { LoadingComponent } from "../../../shared/loading/loading.component";
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [ProgressSpinner, FormsModule, InputGroup, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, UsersComponent, PostListComponent, RouterOutlet, RouterLink, RouterLinkActive, ButtonComponent, FooterComponent],
+  imports: [ProgressSpinner, FormsModule, InputGroup, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, UsersComponent, PostListComponent, RouterOutlet, RouterLink, RouterLinkActive, ButtonComponent, FooterComponent, LoadingComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
