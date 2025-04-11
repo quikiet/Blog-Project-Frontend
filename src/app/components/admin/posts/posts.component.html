@@ -298,18 +298,29 @@
         </select>
       </label>
 
-      <label class="form-control w-full max-w-xs">
+      <label class="form-control w-full max-w-xs" *ngIf="role === 'admin'">
         <div class="label">
           <span class="label-text">Trạng thái</span>
         </div>
-        <p-select
-          formControlName="status"
+        <!-- <p-select
           [options]="statuses"
           [disabled]="role !== 'admin'"
           (onChange)="updateStatus($event.value)"
           placeholder="Chọn trạng thái"
           optionLabel="label"
-        />
+          formControlName="status"
+        /> -->
+        <select
+          class="select select-bordered"
+          formControlName="status"
+          [disabled]="role !== 'admin'"
+        >
+          <option disabled selected value="">Chọn trạng thái</option>
+          <option value="pending">Đang chờ</option>
+          <option value="published">Công khai</option>
+          <option value="scheduled">Lên lịch</option>
+          <option value="archived">Lưu trữ</option>
+        </select>
       </label>
 
       <!-- Ngày đăng -->

@@ -335,7 +335,10 @@ export class PostsComponent implements OnInit {
         } else {
           this.router.navigate(['user-posts']);
         }
+        this.isLoading = false;
+
       }, error: (error) => {
+        this.isLoading = false;
         this.toastr.error("Lỗi: " + error, "Thất bại");
       },
       complete: () => {

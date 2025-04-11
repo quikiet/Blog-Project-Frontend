@@ -58,11 +58,19 @@
       <div class="fr-view">
         <div [innerHTML]="sanitizedContent"></div>
       </div>
-      <a
-        routerLink="/admin/list-post/all"
-        class="text-blue-500 mt-4 inline-block"
-        >⬅ Quay lại danh sách</a
-      >
+      <div class="flex w-full items-center justify-between">
+        <a
+          routerLink="/admin/list-post/all"
+          class="text-blue-500 mt-4 inline-block"
+          >⬅ Quay lại danh sách</a
+        >
+        <app-button
+          [variant]="'success'"
+          *ngIf="userRole === 'admin'"
+          (clicked)="browsePost(post)"
+          >Duyệt bài</app-button
+        >
+      </div>
     </div>
 
     <div *ngIf="isLoading" class="overlay">

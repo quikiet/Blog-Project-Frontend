@@ -342,8 +342,6 @@ export class PostDetailComponent implements OnInit {
       }
     });
   }
-
-
   savePost(slug: string) {
     if (this.post.published_at instanceof Date) {
       this.post.published_at = this.formatDate(this.post.published_at);
@@ -368,15 +366,20 @@ export class PostDetailComponent implements OnInit {
         this.refuseService.update(this.selectedRefuseId, this.refuses).subscribe({
           next: (respone) => {
             console.log(respone.message);
+            this.isLoading = false;
+
           }, error: (error) => {
             console.log("Lỗi cập nhật ràng buộc từ chối: " + error.message);
+            this.isLoading = false;
           }
         });
       } else {
         this.refuseService.create(this.refuses).subscribe({
           next: (respone) => {
+            this.isLoading = false;
             console.log(respone.message);
           }, error: (error) => {
+            this.isLoading = false;
             console.log("Lỗi tạo ràng buộc từ chối: " + error.message);
           }
         });
@@ -385,11 +388,18 @@ export class PostDetailComponent implements OnInit {
 
     this.postService.update((oldSlug), this.post).subscribe({
       next: () => {
-        this.toastr.success("Cập nhật bài báo thành công", "Thành công");
+        if (this.post.status === 'scheduled') {
+          this.toastr.info("Bài báo đã được xét duyệt", "Thông báo");
+          this.router.navigate(['admin/list-post/all']);
+        } else {
+          this.toastr.success("Cập nhật bài báo thành công", "Thành công");
+        }
+        this.isLoading = false;
         this.isEditting = false;
       },
       error: (err) => {
         this.toastr.error("Đã có lỗi xảy ra trong quá trình cập nhật", "Lỗi");
+        this.isLoading = false;
         throwError("Lỗi: ", err);
       },
       complete: () => {
@@ -444,6 +454,16 @@ export class PostDetailComponent implements OnInit {
   editPost() {
     this.isEditting = !this.isEditting;
     this.setLatestRefuseReason(this.post);
+  }
+
+  browsePost(post: any) {
+    this.isLoading = true;
+    post.status = 'scheduled';
+    if (post.status === 'scheduled') {
+      this.isLoading = false;
+      this.savePost(post.slug);
+    }
+
   }
 
   deleteModal(slug: string) {
