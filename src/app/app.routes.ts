@@ -20,6 +20,7 @@ import { HomeContentComponent } from './components/customer/home/home-content/ho
 import { UserPostsComponent } from './components/customer/home/user-posts/user-posts.component';
 import { PostDetailUserComponent } from './components/customer/post-detail-user/post-detail-user.component';
 import { filter } from 'rxjs';
+import { PageNotFould404Component } from './shared/page-not-fould-404/page-not-fould-404.component';
 
 export const routes: Routes = [
 
@@ -53,11 +54,14 @@ export const routes: Routes = [
             { path: 'authors', component: AuthorsComponent },
             { path: 'tags/:slug', component: TagsComponent },
             { path: 'user-statistics', component: UserStatisticsComponent },
+            { path: "**", component: PageNotFould404Component },
         ]
     },
     { path: 'post-detail-user/:slug', component: PostDetailUserComponent },
     { path: 'post-detail/:slug', component: PostDetailComponent },
+    { path: "**", component: PageNotFould404Component },
 
-    { path: "**", redirectTo: "", pathMatch: 'full' },
+
+    { path: '404', component: PageNotFould404Component },
 
 ];

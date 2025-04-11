@@ -37,7 +37,7 @@ export class PostDetailUserComponent implements OnInit {
     private postService: PostService,
     private sanitizer: DomSanitizer,
     private categoryService: CategoryService,
-
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -58,6 +58,7 @@ export class PostDetailUserComponent implements OnInit {
         },
         error: (err) => {
           console.error("Lỗi tải chi tiết bài viết", err);
+          this.router.navigate(['/404']);
           this.isLoading = false;
         },
         complete: () => {
@@ -66,6 +67,7 @@ export class PostDetailUserComponent implements OnInit {
       });
     } else {
       console.error("Không có bài viết này");
+      this.router.navigate(['/404']);
     }
   }
 

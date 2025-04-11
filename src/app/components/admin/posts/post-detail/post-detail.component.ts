@@ -157,10 +157,14 @@ export class PostDetailComponent implements OnInit {
           this.selectedStatus = foundedStatus ? foundedStatus : '';
           console.log(this.selectedStatus);
         },
-        error: (err) => console.error("Lỗi tải chi tiết bài viết", err)
+        error: (err) => {
+          console.error("Lỗi tải chi tiết bài viết", err);
+          this.router.navigate(['/404']);
+        }
       });
     } else {
       console.error("Không có bài viết này");
+      this.router.navigate(['/404']);
     }
   }
 
