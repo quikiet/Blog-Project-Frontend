@@ -200,9 +200,6 @@
     </div>
   </div>
   <form [formGroup]="postForm" (ngSubmit)="createPost()">
-    <div *ngIf="isLoading" class="overlay"></div>
-    <mat-progress-bar mode="query" *ngIf="isLoading"></mat-progress-bar>
-
     <!-- Upload ảnh thumbnail -->
     <input type="file" (change)="onFileSelected($event)" />
     <p-select
@@ -301,6 +298,20 @@
         </select>
       </label>
 
+      <label class="form-control w-full max-w-xs">
+        <div class="label">
+          <span class="label-text">Trạng thái</span>
+        </div>
+        <p-select
+          formControlName="status"
+          [options]="statuses"
+          [disabled]="role !== 'admin'"
+          (onChange)="updateStatus($event.value)"
+          placeholder="Chọn trạng thái"
+          optionLabel="label"
+        />
+      </label>
+
       <!-- Ngày đăng -->
       <label class="form-control w-full max-w-xs">
         <div class="label">
@@ -326,4 +337,16 @@
       </app-button>
     </div>
   </form>
+</div>
+
+<div *ngIf="isLoading" class="overlay">
+  <p-progress-spinner
+    *ngIf="isLoading"
+    ariaLabel="loading"
+    strokeWidth="8"
+    fill="transparent"
+    animationDuration=".7s"
+    [style]="{ width: '50px', height: '50px' }"
+    class="spinner"
+  />
 </div>

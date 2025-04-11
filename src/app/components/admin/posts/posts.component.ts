@@ -36,12 +36,13 @@ import { StepperModule } from 'primeng/stepper';
 import { AvatarModule } from 'primeng/avatar';
 import { SelectModule } from 'primeng/select';
 import { AuthorsService } from '../../../services/authors/authors.service';
+import { ProgressSpinner } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-posts',
   standalone: true,
   providers: [provideNativeDateAdapter()],
-  imports: [SelectModule, FroalaViewModule, AvatarModule, StepperModule, PanelModule, Dialog, ButtonModule, DatePicker, Fluid, MatProgressBarModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, FormsModule, CommonModule, FroalaEditorModule, FroalaViewModule, ButtonComponent],
+  imports: [ProgressSpinner, SelectModule, FroalaViewModule, AvatarModule, StepperModule, PanelModule, Dialog, ButtonModule, DatePicker, Fluid, MatProgressBarModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, FormsModule, CommonModule, FroalaEditorModule, FroalaViewModule, ButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './posts.component.html',
   styleUrl: './posts.component.css'
@@ -60,8 +61,9 @@ export class PostsComponent implements OnInit {
   minDate: Date | undefined;
   maxDate: Date | undefined;
   visiblePreview: boolean = false;
-
   authors: any[] | undefined;
+  statuses: any[] = [];
+  role: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -93,7 +95,6 @@ export class PostsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCategory();
-
     this.loginService.getUser().subscribe({
       next: (res) => {
         console.log("Dữ liệu người dùng:", res);
@@ -101,14 +102,17 @@ export class PostsComponent implements OnInit {
           this.authorId = res.user.id;
           this.userName = res.user.name;
           this.authorAvatar = res.user.avatar;
+          this.role = res.user.role;
           this.postForm.controls['user_id'].setValue(this.authorId);
-
+          this.isLoading = false;
         } else {
+          this.isLoading = false;
           console.error("Không tìm thấy user ID trong response");
         }
       },
       error: (err) => {
         console.error("Lỗi khi lấy thông tin người dùng:", err);
+        this.isLoading = false;
       }
     });
     this.loadAuthors();
@@ -127,16 +131,34 @@ export class PostsComponent implements OnInit {
     this.maxDate.setMonth(nextMonth);
     this.maxDate.setFullYear(nextYear);
 
+    this.statuses = [
+      // { label: 'Nháp', value: 'draft' },
+      { label: 'Đang chờ', value: 'pending' },
+      { label: 'Công khai', value: 'published' },
+      { label: 'Lên lịch', value: 'scheduled' },
+      { label: 'Lưu trữ', value: 'archived' },
+      // { label: 'Từ chối', value: 'rejected' },
+      // { label: 'Đã xoá', value: 'deleted' }
+    ];
   }
 
   loadAuthors() {
+    this.isLoading = false;
     this.authorService.getAllAuthors().subscribe({
       next: (data) => {
         this.authors = data;
+        this.isLoading = false;
       }, error: (error) => {
         console.log("Lỗi tải tác giả: " + error);
+        this.isLoading = false;
+      }, complete: () => {
+        this.isLoading = false;
       }
     })
+  }
+
+  updateStatus(value: any) {
+    this.postForm.patchValue({ status: value.value });
   }
 
   updateErrorMessage() {
@@ -175,11 +197,16 @@ export class PostsComponent implements OnInit {
 
 
   loadCategory() {
+    this.isLoading = true;
     this.cateServices.getAll().subscribe({
       next: (data) => {
         this.categories = data;
+        this.isLoading = false;
       }, error: (error) => {
+        this.isLoading = false;
         console.error("Lỗi tải danh mục", error);
+      }, complete: () => {
+        this.isLoading = false;
       }
     })
   }
@@ -204,15 +231,14 @@ export class PostsComponent implements OnInit {
   };
 
   createPost() {
+    this.isLoading = true;
     if (this.postForm.invalid) {
       this.toastr.warning("Vui lòng điền đầy đủ thông tin", "Cảnh báo");
       return;
     }
-
     const role = this.loginService.getRole();
     // console.log(role);
     let isDraft = false;
-
     if (role !== 'admin' && role !== 'author') {
       this.toastr.warning("Bạn không có quyền tạo bài viết", "Truy cập bị từ chối");
       return;
@@ -221,9 +247,7 @@ export class PostsComponent implements OnInit {
     if (this.selectedFile) {
       this.uploadService.uploadImage(this.selectedFile).subscribe({
         next: (response: any) => {
-
           this.postForm.patchValue({ thumbnail: response.secure_url });
-
           setTimeout(() => {
             this.submitCreate(this.postForm.value, role, isDraft);
           }, 100);
@@ -292,7 +316,7 @@ export class PostsComponent implements OnInit {
       postData.status = 'draft';
     } else {
       if (postData.status !== 'deleted') {
-        postData.status = role === 'admin' ? 'scheduled' : 'pending';
+        postData.status = role !== 'admin' ? 'pending' : postData.status;
       } else {
         postData.status = 'deleted';
       }

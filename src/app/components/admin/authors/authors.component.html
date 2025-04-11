@@ -87,52 +87,181 @@
           Tên
           <p-sortIcon field="name" />
         </th>
-        <th class="hidden lg:block">Hình ảnh</th>
         <th pSortableColumn="email">
           Địa chỉ email
           <p-sortIcon field="email" />
         </th>
-        <th class="hidden lg:block">Tiểu sử</th>
-
-        <th>Hành động</th>
       </tr>
     </ng-template>
     <ng-template #body let-author>
-      <tr>
+      <tr (click)="showAuthor(author)">
         <td style="width: 3rem">
           <p-tableCheckbox [value]="author" />
         </td>
         <td class="hidden lg:table-cell">{{ author.id }}</td>
         <td>{{ author.name }}</td>
-        <td class="hidden lg:table-cell">
-          <img
-            [src]="author.avatar"
-            [alt]="author.name"
-            style="width: 64px"
-            class="rounded"
-          />
-        </td>
         <td>{{ author.email }}</td>
-        <td class="hidden lg:table-cell">{{ author.bio }}</td>
-        <td>
-          <p-button
-            icon="pi pi-pencil"
-            class="mr-2"
-            [rounded]="true"
-            [outlined]="true"
-            (click)="editAuthor(author)"
-          />
-          <p-button
-            icon="pi pi-trash"
-            severity="danger"
-            [rounded]="true"
-            [outlined]="true"
-            (click)="deleteAuthor(author)"
-          />
-        </td>
       </tr>
     </ng-template>
   </p-table>
+
+  <p-drawer
+    [(visible)]="visibleDrawer"
+    position="right"
+    [dismissible]="false"
+    (onHide)="visibleDrawer = false"
+    modal="false"
+    styleClass="!w-full lg:!w-[30rem]"
+  >
+    <ng-template #header>
+      <div class="flex items-center gap-2">
+        <p-avatar [image]="author.avatar" shape="circle" />
+        <span>{{ author.name }}</span>
+      </div>
+    </ng-template>
+    <ng-template #content>
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center gap-5">
+          <img
+            [src]="author.avatar"
+            [alt]="author.avatar"
+            class="block w-32 h-32 md:w-64 md:h-64 lg:h-28 lg:w-28 border rounded-md"
+            *ngIf="author.avatar"
+          />
+
+          <div class="flex h-full w-full flex-col justify-between gap-5">
+            <div>
+              <label class="text-sm block">Họ và tên</label>
+              <span class="text-sm text-secondary" *ngIf="!isEditting">{{
+                author.name
+              }}</span>
+              <input
+                type="text"
+                [(ngModel)]="author.name"
+                name="name"
+                *ngIf="isEditting"
+                class="rounded-none p-0 m-0 border w-full"
+                pSize="small"
+              />
+            </div>
+            <div>
+              <label class="text-sm block">Địa chỉ email</label>
+              <span class="text-sm text-secondary" *ngIf="!isEditting">{{
+                author.email
+              }}</span>
+              <input
+                type="text"
+                [(ngModel)]="author.email"
+                name="email"
+                *ngIf="isEditting"
+                class="rounded-none p-0 m-0 border w-full"
+                pSize="small"
+              />
+            </div>
+          </div>
+        </div>
+        <input
+          type="file"
+          (change)="onFileSelected($event)"
+          *ngIf="isEditting"
+        />
+        <div>
+          <label for="bio" class="block font-semibold mb-2">Tiểu sử</label>
+          <textarea
+            id="bio"
+            pTextarea
+            [(ngModel)]="author.bio"
+            required
+            rows="3"
+            cols="20"
+            fluid
+            placeholder="Ông tên thật là..."
+            [disabled]="!isEditting"
+          ></textarea>
+        </div>
+        <div
+          class="flex gap-5 items-center justify-end border border-t-secondary-content border-b-secondary-content border-l-0 border-r-0 py-2"
+        >
+          <app-button (clicked)="editAuthor()">{{
+            !isEditting ? "Sửa" : "Lưu"
+          }}</app-button>
+          <app-button
+            (clicked)="isEditting = false"
+            *ngIf="isEditting"
+            [variant]="'none'"
+            >Huỷ bỏ</app-button
+          >
+        </div>
+        <p-accordion
+          [value]="['0']"
+          [multiple]="true"
+          *ngFor="let post of author.posts"
+        >
+          <p-accordion-panel [disabled]="post.status === 'draft'">
+            <p-accordion-header #header style="background-color: #fff">
+              <span class="text-sm font-normal text-black">{{
+                post.title
+              }}</span>
+            </p-accordion-header>
+            <p-accordion-content>
+              <div class="m-0">
+                <div *ngIf="post.thumbnail">
+                  <div
+                    class="w-72 h-72 md:w-96 md:h-96 lg:h-52 m-auto relative image-container"
+                  >
+                    <div *ngIf="post.thumbnail">
+                      <img
+                        class="w-72 h-72 md:w-96 md:h-96 lg:h-52 object-cover image-card"
+                        alt="Thumbnail"
+                        [src]="post.thumbnail"
+                      />
+                    </div>
+                    <div class="text-overlay">
+                      <p class="text-lg font-medium">
+                        {{ cutText(post.title || "Chưa nhập tiêu đề", 20) }}
+                      </p>
+                      <p class="text-xs text-primary-content">
+                        Bởi <span class="mr-2">{{ author.name }}</span>
+                        {{ post.published_at | date : "dd MMMM, YYYY" }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="!post.thumbnail">
+                  <div class="p-6 shadow-md border">
+                    <div class="text-xl font-bold">
+                      {{ cutText(post.title || "Chưa nhập tiêu đề", 35) }}
+                      <div
+                        class="flex justify-between py-2 items-center border-b-2 border-secondary-content"
+                      >
+                        <div>
+                          <span class="font-normal text-primary text-xs">
+                            <span class="pr-2 border-r border-primary-content">
+                              Bởi {{ author.name }}</span
+                            >
+                            <span class="pl-2">
+                              {{ post.published_at | date : "dd MMMM, YYYY" }}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="pt-5">
+                      <div class="text-primary">
+                        <a class="cursor-pointer hover:link">
+                          {{ cutText(post.summary) }}</a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </p-accordion-content>
+          </p-accordion-panel>
+        </p-accordion>
+      </div>
+    </ng-template>
+  </p-drawer>
   <p-dialog
     [(visible)]="authorDialog"
     [style]="{ width: '450px' }"

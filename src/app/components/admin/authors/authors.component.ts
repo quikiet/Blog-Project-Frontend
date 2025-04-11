@@ -23,6 +23,11 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { UploadService } from '../../../services/upload.service';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { DrawerModule } from 'primeng/drawer';
+import { AvatarModule } from 'primeng/avatar';
+import { AccordionModule } from 'primeng/accordion';
+import { PostDetailComponent } from "../posts/post-detail/post-detail.component";
+import { PostDetailUserComponent } from "../../customer/post-detail-user/post-detail-user.component";
 interface Column {
   field: string;
   header: string;
@@ -37,7 +42,7 @@ interface ExportColumn {
 @Component({
   selector: 'app-authors',
   standalone: true,
-  imports: [ProgressSpinner, FileUpload, InputGroupModule, InputGroupAddonModule, ConfirmDialogModule, ButtonModule, TableModule, DialogModule, Ripple, SelectModule, ToastModule, ToolbarModule, InputTextModule, TextareaModule, CommonModule, DropdownModule, InputTextModule, FormsModule, IconFieldModule, InputIconModule, ButtonComponent],
+  imports: [AccordionModule, TextareaModule, AvatarModule, DrawerModule, ProgressSpinner, FileUpload, InputGroupModule, InputGroupAddonModule, ConfirmDialogModule, ButtonModule, TableModule, DialogModule, Ripple, SelectModule, ToastModule, ToolbarModule, InputTextModule, TextareaModule, CommonModule, DropdownModule, InputTextModule, FormsModule, IconFieldModule, InputIconModule, ButtonComponent, PostDetailComponent, PostDetailUserComponent],
   providers: [ConfirmationService, MessageService],
   templateUrl: './authors.component.html',
   styleUrl: './authors.component.css'
@@ -53,6 +58,8 @@ export class AuthorsComponent implements OnInit {
   searchValue: string | undefined;
   submitted: boolean = false;
   isLoading = true;
+  visibleDrawer: boolean = false;
+
   @ViewChild('tableAuthor') dt!: Table;
 
   cols!: Column[];
@@ -70,6 +77,7 @@ export class AuthorsComponent implements OnInit {
   ngOnInit(): void {
     this.loadAuthorData();
   }
+
 
   searchGlobal(event: any) {
     if (this.dt) {
@@ -118,13 +126,23 @@ export class AuthorsComponent implements OnInit {
     this.authorDialog = true;
   }
 
-  editAuthor(author: any) {
+  showAuthor(author: any) {
     this.author = { ...author };
     this.originalAuthor = { ...author };
-    this.authorDialog = true;
-    this.isEditting = true;
+    this.visibleDrawer = true;
+    this.isEditting = false;
     this.selectedFile = null;
+    console.log(this.author);
+
   }
+
+  editAuthor() {
+    if (this.isEditting) {
+      this.updateAuthor();
+    }
+    this.isEditting = true;
+  }
+
 
   updateAuthor() {
     this.isLoading = true;
@@ -377,4 +395,15 @@ export class AuthorsComponent implements OnInit {
     this.selectedFile = event.target.files[0];
     console.log(this.selectedFile);
   }
+
+
+  cutText(text: string, wordLimit: number = 50): string {
+    if (!text) return '';
+    const words = text.split(' ');
+    if (words.length <= wordLimit) return text;
+
+    return words.slice(0, wordLimit).join(' ') + '...';
+  }
+
+
 }
