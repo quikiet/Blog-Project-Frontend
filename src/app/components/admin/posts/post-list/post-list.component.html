@@ -82,11 +82,37 @@
                   showClearButton="false"
                   [showMatchModes]="false"
                   [showOperator]="false"
+                  [showApplyButton]="false"
                   [showAddButton]="false"
                 >
                   <ng-template #filter let-value let-filter="filterCallback">
                     <p-dropdown
                       [options]="authors"
+                      (onChange)="filter($event.value)"
+                      placeholder="Tác giả"
+                    >
+                      <ng-template let-option #item>
+                        <p-tag [value]="option.value" />
+                      </ng-template>
+                    </p-dropdown>
+                  </ng-template>
+                </p-columnFilter>
+              </div>
+              <div class="flex items-center">
+                Danh mục
+                <p-columnFilter
+                  field="category.id"
+                  matchMode="equals"
+                  display="menu"
+                  showClearButton="false"
+                  [showMatchModes]="false"
+                  [showOperator]="false"
+                  [showAddButton]="false"
+                  [showApplyButton]="false"
+                >
+                  <ng-template #filter let-value let-filter="filterCallback">
+                    <p-dropdown
+                      [options]="categories"
                       (onChange)="filter($event.value)"
                       placeholder="Tác giả"
                     >
@@ -167,6 +193,11 @@
                           }}
                         </span>
                       </p>
+
+                      <p-tag
+                        [value]="post.category.name"
+                        severity="secondary"
+                      />
                       <p>
                         {{ post.published_at | date : "dd MMMM, YYYY HH:mm" }}
                       </p>

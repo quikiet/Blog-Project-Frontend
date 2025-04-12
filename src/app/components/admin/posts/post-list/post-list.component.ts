@@ -39,6 +39,7 @@ export class PostListComponent implements OnInit {
   ) { }
   posts: any[] = [];
   authors: any[] = [];
+  categories: any[] = [];
   status: any[] = [];
   filterMenu: boolean = false;
   loading: boolean = true;
@@ -88,6 +89,13 @@ export class PostListComponent implements OnInit {
           data
             .filter(post => post.posts_user)
             .map(post => [post.posts_user?.id, { label: post.posts_user?.name, value: post.posts_user?.id }])
+        ).values()
+      );
+      this.categories = Array.from(
+        new Map(
+          data
+            .filter(post => post.category)
+            .map(post => [post.category?.id, { label: post.category?.name, value: post.category?.id }])
         ).values()
       );
       this.loading = false;

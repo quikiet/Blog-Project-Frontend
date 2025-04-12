@@ -92,7 +92,7 @@ export class CategoryComponent implements AfterViewInit, OnInit {
           this.toastr.success("Xoá danh mục thành công", "Thành công");
           this.isDeleted = false;
         }, error: (error) => {
-          this.toastr.error("Không thể xoá", "Lỗi xoá");
+          this.toastr.error("Danh mục này hiện đang có bài báo", "Lỗi xoá");
           console.log(error);
           this.isLoading = false;
         }, complete: () => {

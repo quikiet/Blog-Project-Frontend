@@ -234,6 +234,7 @@ export class PostsComponent implements OnInit {
     this.isLoading = true;
     if (this.postForm.invalid) {
       this.toastr.warning("Vui lòng điền đầy đủ thông tin", "Cảnh báo");
+      this.isLoading = false;
       return;
     }
     const role = this.loginService.getRole();
