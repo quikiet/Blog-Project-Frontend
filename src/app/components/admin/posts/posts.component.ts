@@ -63,6 +63,7 @@ export class PostsComponent implements OnInit {
   visiblePreview: boolean = false;
   authors: any[] | undefined;
   statuses: any[] = [];
+  currentStatus: string = '';
   role: string = '';
 
   constructor(
@@ -159,6 +160,9 @@ export class PostsComponent implements OnInit {
 
   updateStatus(value: any) {
     this.postForm.patchValue({ status: value.value });
+    this.currentStatus = value.value;
+    console.log(this.currentStatus);
+
   }
 
   updateErrorMessage() {
@@ -231,7 +235,7 @@ export class PostsComponent implements OnInit {
   };
 
   createPost() {
-    this.isLoading = true;
+    // this.isLoading = true;
     if (this.postForm.invalid) {
       this.toastr.warning("Vui lòng điền đầy đủ thông tin", "Cảnh báo");
       this.isLoading = false;
@@ -242,6 +246,7 @@ export class PostsComponent implements OnInit {
     let isDraft = false;
     if (role !== 'admin' && role !== 'author') {
       this.toastr.warning("Bạn không có quyền tạo bài viết", "Truy cập bị từ chối");
+      this.isLoading = false;
       return;
     }
     console.log(this.postForm);
@@ -255,6 +260,7 @@ export class PostsComponent implements OnInit {
         },
         error: (error) => {
           this.toastr.error("Lỗi upload ảnh: " + error, "Thất bại");
+          this.isLoading = false;
         },
         complete: () => {
           this.isLoading = false;
@@ -305,7 +311,7 @@ export class PostsComponent implements OnInit {
   }
 
   submitCreate(postData: any, role: string, isDraft: boolean) {
-    this.isLoading = true;
+    // this.isLoading = true;
     postData.published_at = postData.published_at
       ? new Date(postData.published_at.getTime() - new Date().getTimezoneOffset() * 60000)
         .toISOString()
@@ -332,22 +338,22 @@ export class PostsComponent implements OnInit {
         }
         this.postForm.reset();
         if (role === 'admin') {
+          this.isLoading = false;
           this.router.navigate(['admin/list-post/all']);
         } else {
+          this.isLoading = false;
           this.router.navigate(['user-posts']);
         }
-        this.isLoading = false;
-
       }, error: (error) => {
+        this.toastr.error(error, "Thất bại");
         this.isLoading = false;
-        this.toastr.error("Lỗi: " + error, "Thất bại");
       },
       complete: () => {
         this.isLoading = false;
       }
     })
     this.isLoading = false;
-    console.log(postData);
+    // console.log(postData);
   }
 
 

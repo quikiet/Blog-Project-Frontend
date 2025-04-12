@@ -134,6 +134,16 @@
           </div>
         </div>
       </div>
+      <div>
+        <ul
+          class="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box"
+          *ngFor="let cate of listCategory"
+        >
+          <li>
+            <a>{{ cate.name }}</a>
+          </li>
+        </ul>
+      </div>
     </ng-template>
 
     <ng-template pTemplate="body" let-post>

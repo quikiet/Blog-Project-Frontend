@@ -324,14 +324,27 @@
       </label>
 
       <!-- Ngày đăng -->
-      <label class="form-control w-full max-w-xs">
-        <div class="label">
+      <label
+        class="form-control w-full max-w-xs"
+        *ngIf="
+          postForm.get('status')?.value === 'scheduled' || role === 'author'
+        "
+      >
+        <div
+          class="label"
+          *ngIf="
+            postForm.get('status')?.value === 'scheduled' || role === 'author'
+          "
+        >
           <span class="label-text">Ngày đăng tải</span>
         </div>
         <p-datepicker
           [minDate]="minDate"
           [maxDate]="maxDate"
           [readonlyInput]="true"
+          *ngIf="
+            postForm.get('status')?.value === 'scheduled' || role === 'author'
+          "
           [showIcon]="true"
           [showOnFocus]="false"
           inputId="calendar-24h"

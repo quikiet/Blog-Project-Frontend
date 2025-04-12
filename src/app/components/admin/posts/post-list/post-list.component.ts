@@ -15,6 +15,7 @@ import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { DrawerModule } from 'primeng/drawer';
 import { FormsModule } from '@angular/forms';
+import { CategoryService } from '../../../../services/category/category.service';
 
 @Component({
   selector: 'app-post-list',
@@ -35,10 +36,12 @@ export class PostListComponent implements OnInit {
 
   constructor(
     private postService: PostService,
+    private categoryService: CategoryService,
     private route: ActivatedRoute,
   ) { }
   posts: any[] = [];
   authors: any[] = [];
+  listCategory: any[] = [];
   categories: any[] = [];
   status: any[] = [];
   filterMenu: boolean = false;
@@ -63,6 +66,7 @@ export class PostListComponent implements OnInit {
       { label: 'Bị xoá', value: 'rejected' },
       { label: 'Đã xoá', value: 'deleted' }
     ];
+    this.loadCategories();
   }
 
   clear(table: Table) {
@@ -78,6 +82,7 @@ export class PostListComponent implements OnInit {
   loadPosts() {
 
     const postObservable = this.filterType === 'pending' ? this.postService.getPendingPosts() : this.postService.getAllPosts();
+    // const cateObservable = this.filterType === 'pending' ? this.categoryService.countCategoryByPending() : this.categoryService.countCategoryByAll();
 
     postObservable.subscribe((data) => {
       this.posts = data.map(post => ({
@@ -110,6 +115,14 @@ export class PostListComponent implements OnInit {
       { label: 'Bị xoá', value: 'rejected' },
       { label: 'Đã xoá', value: 'deleted' }
     ];
+  }
+
+  loadCategories() {
+    this.categoryService.getAll().subscribe((data) => {
+      this.listCategory = data;
+      console.log(this.listCategory);
+
+    })
   }
 
   getStatusLabel(status: string) {

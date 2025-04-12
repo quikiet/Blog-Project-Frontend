@@ -54,6 +54,8 @@ export class HomeContentComponent implements OnInit {
 
   loadData() {
     this.isLoading = true;
+    this.loadCategory();
+
     forkJoin({
       // posts: this.postService.getAllPosts(),
       featurePost: this.postService.getFeaturePost(),
@@ -63,7 +65,6 @@ export class HomeContentComponent implements OnInit {
       archivedPosts: this.postService.getArchivedPosts()
     }).subscribe({
       next: (res) => {
-        this.loadCategory();
         // this.posts = res.posts.map(post => ({
         //   ...post,
         //   published_at: post.published_at ? new Date(post.published_at) : null
@@ -171,24 +172,36 @@ export class HomeContentComponent implements OnInit {
   // }
 
   loadCategory() {
-    const cachedData = localStorage.getItem('categories');
-    const cachedTime = localStorage.getItem('categories_cache_time');
-    const cacheExpiration = 60 * 60 * 1000; // 1 giờ
+    // const cachedData = localStorage.getItem('categories');
+    // const cachedTime = localStorage.getItem('categories_cache_time');
+    // const cacheExpiration = 60 * 60 * 1000; // 1 giờ
 
-    if (cachedData && cachedTime && (Date.now() - Number(cachedTime)) < cacheExpiration) {
-      this.categories = JSON.parse(cachedData);
-    } else {
-      this.categoryService.getAll().subscribe({
-        next: (data) => {
-          this.categories = data;
-          localStorage.setItem('categories', JSON.stringify(data)); // Lưu vào cache
-          localStorage.setItem('categories_cache_time', Date.now().toString()); // Lưu thời gian cache
-        },
-        error: (error) => {
-          console.error("Lỗi tải danh mục", error);
-        }
-      });
-    }
+    // if (cachedData && cachedTime && (Date.now() - Number(cachedTime)) < cacheExpiration) {
+    //   this.categories = JSON.parse(cachedData);
+    // } else {
+    //   this.categoryService.getAll().subscribe({
+    //     next: (data) => {
+    //       this.categories = data;
+    //       // localStorage.setItem('categories', JSON.stringify(data)); // Lưu vào cache
+    //       // localStorage.setItem('categories_cache_time', Date.now().toString()); // Lưu thời gian cache
+    //     },
+    //     error: (error) => {
+    //       console.error("Lỗi tải danh mục", error);
+    //     }
+    //   });
+    // }
+    this.categoryService.getAll().subscribe({
+      next: (data) => {
+        this.categories = data;
+        console.log(this.categories);
+
+        // localStorage.setItem('categories', JSON.stringify(data)); // Lưu vào cache
+        // localStorage.setItem('categories_cache_time', Date.now().toString()); // Lưu thời gian cache
+      },
+      error: (error) => {
+        console.error("Lỗi tải danh mục", error);
+      }
+    });
   }
 
 
