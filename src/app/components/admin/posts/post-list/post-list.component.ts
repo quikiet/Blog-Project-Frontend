@@ -16,11 +16,12 @@ import { DropdownModule } from 'primeng/dropdown';
 import { DrawerModule } from 'primeng/drawer';
 import { FormsModule } from '@angular/forms';
 import { CategoryService } from '../../../../services/category/category.service';
-
+import { ScrollTop } from 'primeng/scrolltop';
 @Component({
   selector: 'app-post-list',
   standalone: true,
   imports: [
+    ScrollTop,
     Tag, Image,
     CommonModule, RouterLink,
     FormsModule, DrawerModule,

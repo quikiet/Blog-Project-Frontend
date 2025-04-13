@@ -7,10 +7,12 @@ import { PostService } from '../../../../services/posts/post.service';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
+import { Tag } from 'primeng/tag';
 @Component({
   selector: 'app-charts',
   standalone: true,
-  imports: [FullCalendarModule, RouterLink, CommonModule, FormsModule],
+  imports: [FullCalendarModule, RouterLink, CommonModule, FormsModule, Tag],
   templateUrl: './charts.component.html',
   styleUrl: './charts.component.css'
 })
@@ -22,15 +24,7 @@ export class ChartsComponent implements OnInit {
   showModal: boolean = false;
   filterStatus: string = 'all';
   isLoading = true;
-  statusColors: { status: string; color: string; label: string }[] = [
-    { status: 'scheduled', color: '#3b82f6', label: 'Đã lên lịch' },
-    { status: 'published', color: '#10b981', label: 'Đã xuất bản' },
-    { status: 'deleted', color: '#F87272', label: 'Đã xóa' },
-    { status: 'rejected', color: '#F87272', label: 'Bị từ chối' },
-    { status: 'pending', color: '#F59E0B', label: 'Đang chờ duyệt' },
-    { status: 'archived', color: '#804544', label: 'Đã lưu trữ' },
-    { status: 'default', color: '#6B7280', label: 'Nháp' },
-  ];
+  totalPost: number = 0;
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
     plugins: [dayGridPlugin, interactionPlugin],
@@ -38,6 +32,16 @@ export class ChartsComponent implements OnInit {
     eventClick: (arg) => this.handleEventClick(arg),
     events: [],
   };
+  statusColors: { status: string; color: string; label: string; count?: number }[] = [
+    { status: 'scheduled', color: '#3b82f6', label: 'Đã lên lịch' },
+    { status: 'published', color: '#10b981', label: 'Đã xuất bản' },
+    { status: 'deleted', color: '#F87272', label: 'Đã xóa' },
+    { status: 'rejected', color: '#F87272', label: 'Bị từ chối' },
+    { status: 'pending', color: '#F59E0B', label: 'Đang chờ duyệt' },
+    { status: 'archived', color: '#804544', label: 'Đã lưu trữ' },
+    { status: 'draft', color: '#6B7280', label: 'Nháp' },
+  ];
+  statusCounts: { [key: string]: number } = {};
 
   handleDateClick(arg: any) {
     alert('date click! ' + arg.dateStr)
@@ -77,6 +81,19 @@ export class ChartsComponent implements OnInit {
         this.isLoading = false;
         console.log('Completed fetching scheduled posts');
       },
+    });
+    this.postService.countPost().subscribe(count => {
+      this.totalPost = count;
+    })
+    const statuses = this.statusColors.map(item => item.status);
+    forkJoin(statuses.map(status => this.postService.countPostByStatus(status))).subscribe({
+      next: (counts: any[]) => {
+        this.statusColors = this.statusColors.map((item, index) => ({
+          ...item,
+          count: counts[index]?.count ?? 0
+        }));
+      },
+      error: (error) => console.error('Error fetching status counts:', error)
     });
   }
 

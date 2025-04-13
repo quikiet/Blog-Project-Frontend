@@ -128,6 +128,7 @@ export class RefuseReasonsComponent implements OnInit {
       if (!hasChanges) {
         this.reasonDialog = false;
         this.isEditting = false;
+        this.isLoading = false;
         return;
       }
       this.reasonService.update(id, reason).subscribe({

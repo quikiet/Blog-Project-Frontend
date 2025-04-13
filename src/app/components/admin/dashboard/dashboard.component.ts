@@ -16,7 +16,7 @@ import { DividerModule } from 'primeng/divider';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [DividerModule, RelativeTimePipe, AvatarModule, BadgeModule, OverlayBadgeModule, RouterOutlet, RouterLink, RouterLinkActive, CommonModule, FormsModule, MatIconModule],
+  imports: [RouterLinkActive, DividerModule, RelativeTimePipe, AvatarModule, BadgeModule, OverlayBadgeModule, RouterOutlet, RouterLink, RouterLinkActive, CommonModule, FormsModule, MatIconModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -36,12 +36,13 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   pendingPost: number = 0;
   disableDot: boolean = false;
   notifyDot: boolean = false;
-
+  isListPostAllRoute = false;
   notifications: any = [];
   unReadNotificationsCount: number = 0;
 
 
   ngOnInit(): void {
+
     this.loginService.getUser().subscribe({
       next: (res) => {
         this.username = res.user.name;
@@ -62,6 +63,14 @@ export class DashboardComponent implements AfterViewInit, OnInit {
       this.loadNotifications();
       this.loadUnReadNotifications();
     }, 30000)
+
+    this.isListPostAllRoute = this.router.url === '/admin/list-post/all';
+
+    this.router.events.subscribe(() => {
+      this.isListPostAllRoute = this.router.url === '/admin/list-post/all';
+    });
+
+
   }
 
   deleteAllNotifications() {
@@ -74,7 +83,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   loadNotifications() {
     this.notificationService.getNotifications().subscribe(data => {
       this.notifications = data;
-      console.log(this.notifications);
+      // console.log(this.notifications);
     });
   }
 

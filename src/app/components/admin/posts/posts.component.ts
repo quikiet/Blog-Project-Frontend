@@ -184,8 +184,8 @@ export class PostsComponent implements OnInit {
 
     if (!file) return; // Nếu không có file, thoát ngay
 
-    if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
-      this.toastr.warning("Chỉ chấp nhận ảnh JPEG, JPG, PNG", "Cảnh báo");
+    if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type)) {
+      this.toastr.warning("Chỉ chấp nhận ảnh JPEG, JPG, PNG, Webp", "Cảnh báo");
       return;
     }
 

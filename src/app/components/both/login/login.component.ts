@@ -56,6 +56,7 @@ export class LoginComponent {
 
   register() {
     try {
+
       this.registerService.register(this.userData).subscribe({
         next: (response) => {
           console.log("Đăng ký thành công!", response);
@@ -63,6 +64,15 @@ export class LoginComponent {
           this.tab = 'login';
         },
         error: (error) => {
+          if (this.userData.password !== this.userData.password_confirmation) {
+            this.toastr.warning("Mật khẩu không trùng khớp", 'Cảnh báo');
+          } else {
+            if (error.error.error === 'The email field must be lowercase.') {
+              this.toastr.error("Email phải viết thường", 'Lỗi');
+            } else {
+              this.toastr.error("Email đã tồn tại", 'Lỗi');
+            }
+          }
           console.log("Đăng ký thất bại", error);
         }
       });

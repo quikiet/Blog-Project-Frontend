@@ -207,7 +207,10 @@
               optionLabel="label"
             />
           </label>
-          <label class="form-control w-full max-w-xs">
+          <label
+            class="form-control w-full max-w-xs"
+            *ngIf="post.status !== 'published'"
+          >
             <div class="label">
               <span class="label-text">Ngày đăng tải</span>
             </div>
@@ -220,7 +223,6 @@
               [showTime]="true"
               name="published_at"
               dateFormat="yy-mm-dd"
-              [disabled]="post.status !== 'pending'"
             />
           </label>
         </div>

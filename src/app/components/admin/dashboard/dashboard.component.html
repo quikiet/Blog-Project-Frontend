@@ -406,6 +406,13 @@
 
     <main class="flex-1 p-4">
       <router-outlet></router-outlet>
+      <a
+        *ngIf="isListPostAllRoute"
+        class="fixed right-12 top-52 bg-secondary-content rounded-full overflow-hidden cursor-pointer"
+        [routerLink]="['settings']"
+      >
+        <i class="pi pi-calendar" style="font-size: 2.5rem"></i>
+      </a>
     </main>
   </div>
 </div>

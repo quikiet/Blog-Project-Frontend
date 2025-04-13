@@ -12,11 +12,12 @@ import { MatInputModule } from '@angular/material/input';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { ModalSubmitDeleteComponent } from "../../../shared/components/modal-submit-delete/modal-submit-delete.component";
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { Tag } from 'primeng/tag';
 
 @Component({
   selector: 'app-category',
   standalone: true,
-  imports: [ProgressSpinner, FormsModule, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, CommonModule, FormsModule, MatPaginatorModule, ButtonComponent, ModalSubmitDeleteComponent],
+  imports: [Tag, ProgressSpinner, FormsModule, MatFormFieldModule, MatInputModule, MatTableModule, MatSortModule, CommonModule, FormsModule, MatPaginatorModule, ButtonComponent, ModalSubmitDeleteComponent],
   templateUrl: './category.component.html',
   styleUrl: './category.component.css'
 })
@@ -24,7 +25,7 @@ export class CategoryComponent implements AfterViewInit, OnInit {
 
   constructor(private categoryService: CategoryService, private toastr: ToastrService) { }
   private _liveAnnouncer = inject(LiveAnnouncer);
-  displayedColumns: string[] = ['id', 'name', 'slug', 'actions'];
+  displayedColumns: string[] = ['id', 'name', 'categories_posts_count', 'slug', 'actions'];
   categories = new MatTableDataSource<Category>;
   isLoading = true;
   newCategory: Category = {
@@ -43,6 +44,8 @@ export class CategoryComponent implements AfterViewInit, OnInit {
   isDeleted = false;
   filterValue = '';
   slugSelected: string = '';
+  categoriesCount: any = [];
+
   @ViewChild('cateModal') cateModal!: ElementRef;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;

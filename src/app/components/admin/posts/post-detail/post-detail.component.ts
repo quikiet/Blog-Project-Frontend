@@ -121,7 +121,7 @@ export class PostDetailComponent implements OnInit {
     imageUploadURL: 'http://127.0.0.1:8000/api/upload-image',
     imageUploadParams: { file: 'file' }, // Đặt đúng tên tham số
     imageUploadMethod: 'POST',
-    imageAllowedTypes: ['jpeg', 'jpg', 'png'],
+    imageAllowedTypes: ['jpeg', 'jpg', 'png', 'webp'],
     events: {
       'image.uploaded': function (response: any) {
         let jsonResponse = JSON.parse(response);
@@ -195,8 +195,8 @@ export class PostDetailComponent implements OnInit {
 
     if (!file) return; // Nếu không có file, thoát ngay
 
-    if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
-      this.toastr.warning("Chỉ chấp nhận ảnh JPEG, JPG, PNG", "Cảnh báo");
+    if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type)) {
+      this.toastr.warning("Chỉ chấp nhận ảnh JPEG, JPG, PNG, Webp", "Cảnh báo");
       return;
     }
     this.selectedFile = file;
@@ -347,10 +347,10 @@ export class PostDetailComponent implements OnInit {
     });
   }
   savePost(slug: string) {
+    this.isLoading = true;
     if (this.post.published_at instanceof Date) {
       this.post.published_at = this.formatDate(this.post.published_at);
     }
-    this.isLoading = true;
     const oldSlug = slug;
     if (this.userRole === 'author') {
       this.selectedRefuseId = null;
@@ -389,7 +389,9 @@ export class PostDetailComponent implements OnInit {
         });
       }
     }
-
+    if (this.post.status === 'published') {
+      this.post.published_at = new Date().toISOString().replace('T', ' ').split('.')[0];
+    }
     this.postService.update((oldSlug), this.post).subscribe({
       next: () => {
         if (this.post.status === 'scheduled') {
