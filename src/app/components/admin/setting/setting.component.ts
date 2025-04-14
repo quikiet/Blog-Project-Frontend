@@ -19,7 +19,6 @@ import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ChartsComponent } from "./charts/charts.component";
-
 @Component({
   selector: 'app-setting',
   standalone: true,
@@ -48,6 +47,7 @@ export class SettingComponent {
 
   ngOnInit() {
     this.loadCount();
+
   }
 
   loadCount() {

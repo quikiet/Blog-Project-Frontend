@@ -1,4 +1,4 @@
-<div *ngIf="isLoading" class="overlay">
+<!-- <div *ngIf="isLoading" class="overlay">
   <p-progress-spinner
     *ngIf="isLoading"
     ariaLabel="loading"
@@ -8,8 +8,10 @@
     [style]="{ width: '50px', height: '50px' }"
     class="spinner"
   />
-</div>
+</div> -->
 <div
+  data-aos="fade-right"
+  data-aos-duration="1000"
   class="flex w-full justify-between pb-5 border-b border-gray-700 items-center"
 >
   <span class="text-black text-2xl font-bold">Danh sách danh mục</span>
@@ -85,7 +87,9 @@
 </div>
 
 <div>
-  <mat-form-field class="w-full">
+  <p *ngIf="isLoading">Đang tải...</p>
+
+  <mat-form-field class="w-full" *ngIf="!isLoading">
     <mat-label>Bộ lọc</mat-label>
     <input
       matInput
@@ -96,6 +100,9 @@
     />
   </mat-form-field>
   <table
+    *ngIf="!isLoading"
+    data-aos="fade-up"
+    data-aos-duration="1000"
     mat-table
     [dataSource]="categories"
     matSort

@@ -28,7 +28,7 @@ export class LoginComponent {
     password: '',
     password_confirmation: ''
   };
-
+  userRole: string = '';
   tab: string = 'login';
   login(): void {
     if (this.loginFields.email === '' || this.loginFields.password === '') {
@@ -38,20 +38,27 @@ export class LoginComponent {
 
     this.loginService.login(this.loginFields).subscribe({
       next: (res) => {
-        console.log(res);
+        // console.log(res);
         this.toastr.success('Đăng nhập thành công', 'Thành công');
         // Lưu token vào LocalStorage
         localStorage.setItem('token', res.token);
         localStorage.setItem('user', JSON.stringify(res.user));
         localStorage.setItem('token_expiration', res.expires_at.toString());
+        this.userRole = this.loginService.getRole();
+        // console.log('role' + this.userRole);
 
-        this.router.navigate(['/']);
+        if (this.userRole !== 'admin') {
+          this.router.navigate(['/']);
+        } else {
+          this.router.navigate(['/admin']);
+        }
       },
       error: (error) => {
         console.error(error);
         this.toastr.error(error.error.message, 'Lỗi');
       }
     });
+
   }
 
   register() {
