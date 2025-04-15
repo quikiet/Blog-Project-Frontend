@@ -136,5 +136,8 @@ export class PostService {
     return this.http.delete<Post>(`${this.apiUrl}/${slug}`, { headers });
   }
 
+  search(keyword: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/search?keyword=${keyword}`);
+  }
 
 }
