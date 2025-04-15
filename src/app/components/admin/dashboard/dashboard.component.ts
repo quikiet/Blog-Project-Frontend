@@ -13,10 +13,11 @@ import { NotificationsService } from '../../../services/users/notifications.serv
 import { AvatarModule } from 'primeng/avatar';
 import { RelativeTimePipe } from '../../../pipe/relative-time.pipe';
 import { DividerModule } from 'primeng/divider';
+import { Tooltip } from 'primeng/tooltip';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLinkActive, DividerModule, RelativeTimePipe, AvatarModule, BadgeModule, OverlayBadgeModule, RouterOutlet, RouterLink, RouterLinkActive, CommonModule, FormsModule, MatIconModule],
+  imports: [Tooltip, RouterLinkActive, DividerModule, RelativeTimePipe, AvatarModule, BadgeModule, OverlayBadgeModule, RouterOutlet, RouterLink, RouterLinkActive, CommonModule, FormsModule, MatIconModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })

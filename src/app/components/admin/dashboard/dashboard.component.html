@@ -340,6 +340,7 @@
         class="bg-white rounded-xl shadow-lg mt-6 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
         data-aos="fade-right"
         data-aos-duration="1100"
+        data-aos-offset="0"
         once="false"
       >
         <a
@@ -415,8 +416,10 @@
       <router-outlet></router-outlet>
       <a
         *ngIf="isListPostAllRoute"
-        class="fixed right-12 top-52 bg-secondary-content rounded-full overflow-hidden cursor-pointer"
+        class="fixed right-12 top-52 bg-secondary-content rounded-full overflow-hidden cursor-pointer hover:text-primary"
         [routerLink]="['settings']"
+        pTooltip="Lịch trình"
+        tooltipPosition="top"
       >
         <i class="pi pi-calendar" style="font-size: 2.5rem"></i>
       </a>

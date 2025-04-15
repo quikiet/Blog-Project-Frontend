@@ -28,6 +28,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { AccordionModule } from 'primeng/accordion';
 import { PostDetailComponent } from "../posts/post-detail/post-detail.component";
 import { PostDetailUserComponent } from "../../customer/post-detail-user/post-detail-user.component";
+import { Popover } from 'primeng/popover';
 interface Column {
   field: string;
   header: string;
@@ -42,7 +43,7 @@ interface ExportColumn {
 @Component({
   selector: 'app-authors',
   standalone: true,
-  imports: [AccordionModule, TextareaModule, AvatarModule, DrawerModule, ProgressSpinner, FileUpload, InputGroupModule, InputGroupAddonModule, ConfirmDialogModule, ButtonModule, TableModule, DialogModule, Ripple, SelectModule, ToastModule, ToolbarModule, InputTextModule, TextareaModule, CommonModule, DropdownModule, InputTextModule, FormsModule, IconFieldModule, InputIconModule, ButtonComponent, PostDetailComponent, PostDetailUserComponent],
+  imports: [Popover, AccordionModule, TextareaModule, AvatarModule, DrawerModule, ProgressSpinner, FileUpload, InputGroupModule, InputGroupAddonModule, ConfirmDialogModule, ButtonModule, TableModule, DialogModule, Ripple, SelectModule, ToastModule, ToolbarModule, InputTextModule, TextareaModule, CommonModule, DropdownModule, InputTextModule, FormsModule, IconFieldModule, InputIconModule, ButtonComponent, PostDetailComponent, PostDetailUserComponent],
   providers: [ConfirmationService, MessageService],
   templateUrl: './authors.component.html',
   styleUrl: './authors.component.css'
@@ -51,11 +52,12 @@ export class AuthorsComponent implements OnInit {
   authorDialog: boolean = false;
   selectedFile: File | null = null;
   authors!: any[];
+  deletedAuthors: any = [];
   originalAuthor: any = {};
   author!: any;
   isEditting = false;
   selectedAuthors: any[] = [];
-  searchValue: string | undefined;
+  searchValue: string | undefined = '';
   submitted: boolean = false;
   isLoading = true;
   visibleDrawer: boolean = false;
@@ -76,6 +78,7 @@ export class AuthorsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadAuthorData();
+    this.showDeletedAuthor();
   }
 
 
@@ -133,7 +136,6 @@ export class AuthorsComponent implements OnInit {
     this.isEditting = false;
     this.selectedFile = null;
     console.log(this.author);
-
   }
 
   editAuthor() {
@@ -283,6 +285,7 @@ export class AuthorsComponent implements OnInit {
               })
               this.messageService.add({ severity: 'success', summary: 'Thành công', detail: response.message });
               this.loadAuthorData();
+              this.showDeletedAuthor();
             },
             error: (error) => {
               this.messageService.add({ severity: 'error', summary: 'Lỗi', detail: error.message });
@@ -405,5 +408,23 @@ export class AuthorsComponent implements OnInit {
     return words.slice(0, wordLimit).join(' ') + '...';
   }
 
+  showDeletedAuthor() {
+    this.authorServices.showAuthorDeleted().subscribe((data) => {
+      this.deletedAuthors = data;
+      // console.log(this.deletedAuthors);
+    })
+  }
+
+  restoreAuthor(slug: string) {
+    this.authorServices.restoreAuthor(slug).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Thành công', detail: 'Đã khôi phục tác giả thành công' });
+        this.loadAuthorData();
+        this.showDeletedAuthor();
+      }, error: (error) => {
+        this.messageService.add({ severity: 'error', summary: 'Thất bại', detail: 'Lỗi: ' + error.error?.error });
+      }
+    });
+  }
 
 }

@@ -57,4 +57,16 @@ export class AuthorsService {
     return this.http.put<any>(`${this.apiUrl}/${slug}`, author, { headers });
   }
 
+  showAuthorDeleted(): Observable<any[]> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<any[]>(`${this.apiUrl}/deleted`, { headers });
+  }
+
+  restoreAuthor(slug: string): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.put<any>(`${this.apiUrl}/restore/${slug}`, { headers });
+  }
+
 }
