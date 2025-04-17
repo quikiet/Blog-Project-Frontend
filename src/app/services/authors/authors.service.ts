@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +15,16 @@ export class AuthorsService {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`)
     return this.http.get<any[]>(this.apiUrl, { headers }).pipe(
+      catchError(error => {
+        console.error("error fetching authors", error);
+        return throwError(() => new Error("Failed to fetch authors"));
+      })
+    );
+  }
+
+  countAuthors(): Observable<any> {
+    return this.http.get<any>(this.apiUrl).pipe(
+      map((author) => author.length),
       catchError(error => {
         console.error("error fetching authors", error);
         return throwError(() => new Error("Failed to fetch authors"));

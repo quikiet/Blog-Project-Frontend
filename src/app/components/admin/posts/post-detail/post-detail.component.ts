@@ -82,7 +82,6 @@ export class PostDetailComponent implements OnInit {
   minDate: Date | undefined;
   maxDate: Date | undefined;
   visiblePreview: boolean = false;
-
   ngOnInit(): void {
     if (this.post && this.post.status === 'rejected') {
       this.setLatestRefuseReason(this.post);

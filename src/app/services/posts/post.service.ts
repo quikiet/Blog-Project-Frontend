@@ -28,8 +28,6 @@ export class PostService {
   // apiUrl = "http://127.0.0.1:8000/api/posts";
   constructor(private http: HttpClient) { }
 
-
-
   countPost(): Observable<number> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
@@ -50,6 +48,10 @@ export class PostService {
     return this.http.get<Post[]>(`${this.apiUrl}/pending`, { headers }).pipe(
       map((post) => post.length)
     );
+  }
+
+  getPostByMonth(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/by-month`);
   }
 
   getAllPosts(): Observable<Post[]> {
@@ -138,6 +140,18 @@ export class PostService {
 
   search(keyword: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/search?keyword=${keyword}`);
+  }
+
+  recordView(postId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${postId}/view`, {});
+  }
+
+  getPostView(postId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${postId}/view`);
+  }
+
+  getTotalView(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/total-view`);
   }
 
 }

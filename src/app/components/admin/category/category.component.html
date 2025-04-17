@@ -99,10 +99,8 @@
       #input
     />
   </mat-form-field>
+
   <table
-    *ngIf="!isLoading"
-    data-aos="fade-up"
-    data-aos-duration="1000"
     mat-table
     [dataSource]="categories"
     matSort
@@ -117,7 +115,7 @@
         mat-sort-header
         sortActionDescription="Sort by number"
       >
-        No.
+        Mã.
       </th>
       <td mat-cell *matCellDef="let element">{{ element.id }}</td>
     </ng-container>
@@ -128,9 +126,9 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        sortActionDescription="Sort by name"
+        sortActionDescription="Sort by string"
       >
-        Name
+        Loại
       </th>
       <td mat-cell *matCellDef="let element">{{ element.name }}</td>
     </ng-container>
@@ -141,7 +139,7 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        sortActionDescription="Sort by categories_posts_count"
+        sortActionDescription="Sort by number"
       >
         Số lượng bài báo
       </th>
@@ -156,14 +154,7 @@
 
     <!-- Slug Column -->
     <ng-container matColumnDef="slug">
-      <th
-        mat-header-cell
-        *matHeaderCellDef
-        mat-sort-header
-        sortActionDescription="Sort by slug"
-      >
-        Slug
-      </th>
+      <th mat-header-cell *matHeaderCellDef>Slug</th>
       <td mat-cell *matCellDef="let element">{{ element.slug }}</td>
     </ng-container>
     <ng-container matColumnDef="actions">
@@ -190,6 +181,7 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
+
   <mat-paginator
     class="shadow"
     [pageSizeOptions]="[5, 10, 20]"

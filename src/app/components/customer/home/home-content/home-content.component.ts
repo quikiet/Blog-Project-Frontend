@@ -1,13 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
-import { InputGroup } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { ProgressSpinner } from 'primeng/progressspinner';
 import { LoginService } from '../../../../services/Auth/login.service';
 import { CategoryService } from '../../../../services/category/category.service';
 import { PostService } from '../../../../services/posts/post.service';
@@ -16,7 +14,7 @@ import { forkJoin } from 'rxjs';
 @Component({
   selector: 'app-home-content',
   standalone: true,
-  imports: [ButtonComponent, ProgressSpinner, FormsModule, InputGroup, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, RouterOutlet, RouterLink, RouterLinkActive, ButtonComponent],
+  imports: [ButtonComponent, FormsModule, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, RouterLink, ButtonComponent],
   templateUrl: './home-content.component.html',
   styleUrl: './home-content.component.css'
 })
@@ -172,31 +170,31 @@ export class HomeContentComponent implements OnInit {
   // }
 
   loadCategory() {
-    // const cachedData = localStorage.getItem('categories');
-    // const cachedTime = localStorage.getItem('categories_cache_time');
-    // const cacheExpiration = 60 * 60 * 1000; // 1 giờ
+    const cachedData = localStorage.getItem('categories');
+    const cachedTime = localStorage.getItem('categories_cache_time');
+    const cacheExpiration = 60 * 60 * 1000; // 1 giờ
 
-    // if (cachedData && cachedTime && (Date.now() - Number(cachedTime)) < cacheExpiration) {
-    //   this.categories = JSON.parse(cachedData);
-    // } else {
-    //   this.categoryService.getAll().subscribe({
-    //     next: (data) => {
-    //       this.categories = data;
-    //       // localStorage.setItem('categories', JSON.stringify(data)); // Lưu vào cache
-    //       // localStorage.setItem('categories_cache_time', Date.now().toString()); // Lưu thời gian cache
-    //     },
-    //     error: (error) => {
-    //       console.error("Lỗi tải danh mục", error);
-    //     }
-    //   });
-    // }
+    if (cachedData && cachedTime && (Date.now() - Number(cachedTime)) < cacheExpiration) {
+      this.categories = JSON.parse(cachedData);
+    } else {
+      this.categoryService.getAll().subscribe({
+        next: (data) => {
+          this.categories = data;
+          localStorage.setItem('categories', JSON.stringify(data)); // Lưu vào cache
+          localStorage.setItem('categories_cache_time', Date.now().toString()); // Lưu thời gian cache
+        },
+        error: (error) => {
+          console.error("Lỗi tải danh mục", error);
+        }
+      });
+    }
     this.categoryService.getAll().subscribe({
       next: (data) => {
         this.categories = data;
         console.log(this.categories);
 
-        // localStorage.setItem('categories', JSON.stringify(data)); // Lưu vào cache
-        // localStorage.setItem('categories_cache_time', Date.now().toString()); // Lưu thời gian cache
+        localStorage.setItem('categories', JSON.stringify(data)); // Lưu vào cache
+        localStorage.setItem('categories_cache_time', Date.now().toString()); // Lưu thời gian cache
       },
       error: (error) => {
         console.error("Lỗi tải danh mục", error);

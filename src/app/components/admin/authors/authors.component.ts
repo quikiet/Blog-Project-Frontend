@@ -29,6 +29,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { PostDetailComponent } from "../posts/post-detail/post-detail.component";
 import { PostDetailUserComponent } from "../../customer/post-detail-user/post-detail-user.component";
 import { Popover } from 'primeng/popover';
+import { Divider } from 'primeng/divider';
 interface Column {
   field: string;
   header: string;
@@ -43,7 +44,7 @@ interface ExportColumn {
 @Component({
   selector: 'app-authors',
   standalone: true,
-  imports: [Popover, AccordionModule, TextareaModule, AvatarModule, DrawerModule, ProgressSpinner, FileUpload, InputGroupModule, InputGroupAddonModule, ConfirmDialogModule, ButtonModule, TableModule, DialogModule, Ripple, SelectModule, ToastModule, ToolbarModule, InputTextModule, TextareaModule, CommonModule, DropdownModule, InputTextModule, FormsModule, IconFieldModule, InputIconModule, ButtonComponent, PostDetailComponent, PostDetailUserComponent],
+  imports: [Divider, Popover, AccordionModule, TextareaModule, AvatarModule, DrawerModule, ProgressSpinner, FileUpload, InputGroupModule, InputGroupAddonModule, ConfirmDialogModule, ButtonModule, TableModule, DialogModule, Ripple, SelectModule, ToastModule, ToolbarModule, InputTextModule, TextareaModule, CommonModule, DropdownModule, InputTextModule, FormsModule, IconFieldModule, InputIconModule, ButtonComponent, PostDetailComponent, PostDetailUserComponent],
   providers: [ConfirmationService, MessageService],
   templateUrl: './authors.component.html',
   styleUrl: './authors.component.css'
@@ -273,16 +274,16 @@ export class AuthorsComponent implements OnInit {
           return;
         } if (confirm(`Bạn có chắc chắn muốn xóa ${this.selectedAuthors.length} tác giả?`)) {
 
-          const avatarsToDelete = this.selectedAuthors.
-            filter(author => author.avatar !== "https://res.cloudinary.com/djk2ys41m/image/upload/v1742972953/lvyrjwewxzjlht1leiqi.jpg")
-            .map(author => this.getCloudinaryPublicId(author.avatar));
+          // const avatarsToDelete = this.selectedAuthors.
+          //   filter(author => author.avatar !== "https://res.cloudinary.com/djk2ys41m/image/upload/v1742972953/lvyrjwewxzjlht1leiqi.jpg")
+          //   .map(author => this.getCloudinaryPublicId(author.avatar));
           const slugs = this.selectedAuthors.map(author => author.slug);
 
           this.authorServices.bulkDeleteAuthors(slugs).subscribe({
             next: (response) => {
-              avatarsToDelete.forEach(publicId => {
-                this.deleteThumbnailInCloudinary(publicId);
-              })
+              // avatarsToDelete.forEach(publicId => {
+              //   this.deleteThumbnailInCloudinary(publicId);
+              // })
               this.messageService.add({ severity: 'success', summary: 'Thành công', detail: response.message });
               this.loadAuthorData();
               this.showDeletedAuthor();

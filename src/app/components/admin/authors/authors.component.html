@@ -44,31 +44,32 @@
       />
       <p-popover #op>
         <div class="lg:w-[25rem] max-h-[20rem] overflow-auto">
-          <div class="px-5">
+          <div class="px-2">
             <span
               class="font-medium text-surface-900 dark:text-surface-0 block mb-2"
               >Tác giả đã bị xoá</span
             >
             <ul class="list-none p-0 m-0 flex flex-col gap-4">
-              <li
-                *ngFor="let deleteAuthor of deletedAuthors"
-                class="flex items-center gap-2"
-              >
-                <img [src]="deleteAuthor.avatar" style="width: 42px" />
-                <div>
-                  <span class="font-medium">{{ deleteAuthor.name }}</span>
-                  <div class="text-sm text-muted-color">
-                    {{ deleteAuthor.email }}
+              <li *ngFor="let deleteAuthor of deletedAuthors">
+                <div class="flex items-center gap-2">
+                  <img [src]="deleteAuthor.avatar" style="width: 42px" />
+                  <div>
+                    <span class="font-medium">{{ deleteAuthor.name }}</span>
+                    <div class="text-sm text-muted-color">
+                      {{ deleteAuthor.email }}
+                    </div>
                   </div>
+                  <a
+                    class="flex items-center gap-2 text-muted-color ml-auto text-sm text-blue-500 cursor-pointer hover:text-blue-700 hover:font-semibold"
+                    (click)="restoreAuthor(deleteAuthor.slug)"
+                  >
+                    <span class="text-xs">Khôi phục</span>
+                    <i class="pi pi-undo"></i>
+                  </a>
                 </div>
-                <a
-                  class="flex items-center gap-2 text-muted-color ml-auto text-sm text-blue-500 cursor-pointer hover:text-blue-700 hover:font-semibold"
-                  (click)="restoreAuthor(deleteAuthor.slug)"
-                >
-                  <span class="text-xs">Khôi phục</span>
-                  <i class="pi pi-undo"></i>
-                </a>
+                <p-divider class="m-0" />
               </li>
+
               <li *ngIf="deletedAuthors.length <= 0" class="text-xs">
                 Không có tác giả nào đã bị xoá trước đó
               </li>

@@ -19,6 +19,8 @@ import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { ChartsComponent } from "./charts/charts.component";
+import { StatisticsService } from "../../../services/websetting/statistics.service";
+import { AuthorsService } from "../../../services/authors/authors.service";
 @Component({
   selector: 'app-setting',
   standalone: true,
@@ -35,9 +37,18 @@ export class SettingComponent {
 
   postService = inject(PostService);
   cateService = inject(CategoryService);
+  userService = inject(StatisticsService);
+  authorService = inject(AuthorsService);
 
+  dataPostByMonth: any;
+  getDataPostByMonth: any;
+  labelsPostByMonth: any;
+
+  totalUser = 0;
   totalPost = 0;
+  totalAuthor = 0;
   totalCategory = 0;
+  totalView = 0;
 
   constructor(private cd: ChangeDetectorRef) { }
 
@@ -47,29 +58,68 @@ export class SettingComponent {
 
   ngOnInit() {
     this.loadCount();
+    this.getPostByMonth();
+  }
 
+  getPostByMonth() {
+    if (isPlatformBrowser(this.platformId)) {
+      const documentStyle = getComputedStyle(document.documentElement);
+      this.postService.getPostByMonth().subscribe(
+        (res) => {
+          this.labelsPostByMonth = res.labels;
+          this.getDataPostByMonth = res.data;
+          this.dataPostByMonth = {
+            labels: this.labelsPostByMonth,
+            datasets: [
+              {
+                label: 'Số bài viết được tạo',
+                data: this.getDataPostByMonth
+              },
+            ]
+          };
+        }
+      )
+      this.cd.markForCheck()
+    }
   }
 
   loadCount() {
     this.postService.countPost().subscribe((count) => {
-      this.totalPost = count; this.updateChart();
+      this.totalPost = count;
+      this.updateChart();
     });
 
     this.cateService.countCategory().subscribe((count) => {
-      this.totalCategory = count; this.updateChart();
+      this.totalCategory = count;
+      this.updateChart();
     });
+
+    this.authorService.countAuthors().subscribe((count) => {
+      this.totalAuthor = count;
+      this.updateChart();
+    });
+
+    this.userService.getStatistics().subscribe((res) => {
+      this.totalUser = res.userStats.totalUsers;
+      this.postService.getTotalView().subscribe((count) => {
+        this.totalView = count.views;
+      });
+    });
+
+
   }
 
   updateChart() {
     this.basicData = {
-      labels: ['Bài báo', 'Danh mục'],
+      labels: ['Bài báo', 'Danh mục', 'Tác giả'],
       datasets: [
         {
           label: 'Thống kê tổng lượng',
-          data: [this.totalPost, this.totalCategory],
+          data: [this.totalPost, this.totalCategory, this.totalAuthor],
           backgroundColor: [
             'rgba(249, 115, 22, 0.2)',
             'rgba(6, 182, 212, 0.2)',
+            'rgba(125, 255, 125, 0.2)',
           ],
           borderColor: ['rgb(249, 115, 22)', 'rgb(6, 182, 212)'],
           borderWidth: 1,

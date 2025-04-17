@@ -10,11 +10,12 @@ import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
 import { FooterComponent } from "../footer/footer.component";
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { LoadingComponent } from "../../../shared/loading/loading.component";
+import { RelativeTimePipe } from '../../../pipe/relative-time.pipe';
 
 @Component({
   selector: 'app-post-detail-user',
   standalone: true,
-  imports: [ProgressSpinner, FroalaEditorModule, FroalaViewModule, AvatarModule, CommonModule, FooterComponent, RouterLink, LoadingComponent],
+  imports: [RelativeTimePipe, ProgressSpinner, FroalaEditorModule, FroalaViewModule, AvatarModule, CommonModule, FooterComponent, RouterLink, LoadingComponent],
   templateUrl: './post-detail-user.component.html',
   styleUrl: './post-detail-user.component.css'
 })
@@ -29,6 +30,7 @@ export class PostDetailUserComponent implements OnInit {
     category_id: 0,
     user_id: 0
   };
+  postView: number = 0;
   categories: any[] = [];
   sanitizedContent: SafeHtml = '';
   isLoading = true;
@@ -55,6 +57,16 @@ export class PostDetailUserComponent implements OnInit {
           this.post = data
           console.log(this.post);
           this.sanitizedContent = this.sanitizer.bypassSecurityTrustHtml(this.post.content);
+          if (this.post) {
+            this.postService.recordView(this.post.id).subscribe(
+              () => {
+                this.postService.getPostView(this.post.id).subscribe(
+                  (viewRecordResponse) => {
+                    this.postView = viewRecordResponse.views;
+                  }
+                );
+              });
+          }
         },
         error: (err) => {
           console.error("Lỗi tải chi tiết bài viết", err);

@@ -21,7 +21,7 @@ import { Tag } from 'primeng/tag';
   templateUrl: './category.component.html',
   styleUrl: './category.component.css'
 })
-export class CategoryComponent implements AfterViewInit, OnInit {
+export class CategoryComponent implements OnInit, AfterViewInit {
 
   constructor(private categoryService: CategoryService, private toastr: ToastrService) { }
   private _liveAnnouncer = inject(LiveAnnouncer);
@@ -52,15 +52,15 @@ export class CategoryComponent implements AfterViewInit, OnInit {
 
   validateCategoryName = false;
 
+  ngAfterViewInit(): void {
+    this.categories.sort = this.sort;
+    this.categories.paginator = this.paginator;
+  }
+
   ngOnInit(): void {
     this.loadCategories();
   }
 
-
-  ngAfterViewInit() {
-    this.categories.sort = this.sort;
-    this.categories.paginator = this.paginator;
-  }
 
 
   applyFilter() {
@@ -186,6 +186,7 @@ export class CategoryComponent implements AfterViewInit, OnInit {
       next: (data) => {
         this.categories.data = data;
         this.isLoading = false;
+
       }, error: (error) => {
         console.error("Lỗi tải danh mục", error);
         this.isLoading = false;
@@ -193,12 +194,7 @@ export class CategoryComponent implements AfterViewInit, OnInit {
     });
   }
 
-  /** Announce the change in sort state for assistive technology. */
   announceSortChange(sortState: Sort) {
-    // This example uses English messages. If your application supports
-    // multiple language, you would internationalize these strings.
-    // Furthermore, you can customize the message to add additional
-    // details about the values being sorted.
     if (sortState.direction) {
       this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
     } else {

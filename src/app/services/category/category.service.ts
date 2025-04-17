@@ -5,6 +5,7 @@ import { catchError, map, Observable, throwError } from 'rxjs';
 export interface Category {
   id?: number,
   name: string;
+  categories_posts_count?: number;
   slug: string;
 }
 
