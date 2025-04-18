@@ -61,6 +61,11 @@ export class LoginComponent {
 
   }
 
+  loginWithGoogle() {
+    console.log(1);
+    window.location.href = 'http://localhost:8000/api/auth/google/redirect';
+  }
+
   register() {
     try {
 
