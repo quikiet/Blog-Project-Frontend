@@ -41,7 +41,6 @@ export class DashboardComponent implements AfterViewInit, OnInit {
   notifications: any = [];
   unReadNotificationsCount: number = 0;
 
-
   ngOnInit(): void {
 
     this.loginService.getUser().subscribe({

@@ -24,7 +24,7 @@ import { AuthorsService } from "../../../services/authors/authors.service";
 @Component({
   selector: 'app-setting',
   standalone: true,
-  imports: [TagModule, IconFieldModule, InputTextModule, InputIconModule, MultiSelectModule, SelectModule, CarouselModule, ButtonModule, TagModule, ChartModule, ChartsComponent],
+  imports: [CommonModule, TagModule, IconFieldModule, InputTextModule, InputIconModule, MultiSelectModule, SelectModule, CarouselModule, ButtonModule, TagModule, ChartModule, ChartsComponent],
   templateUrl: './setting.component.html',
   styleUrl: './setting.component.css'
 })
@@ -43,6 +43,7 @@ export class SettingComponent {
   dataPostByMonth: any;
   getDataPostByMonth: any;
   labelsPostByMonth: any;
+  trendingPosts: any = [];
 
   totalUser = 0;
   totalPost = 0;
@@ -59,6 +60,13 @@ export class SettingComponent {
   ngOnInit() {
     this.loadCount();
     this.getPostByMonth();
+    this.getTrendingPosts();
+  }
+
+  getTrendingPosts() {
+    this.postService.getTrendingPosts().subscribe((data) => {
+      this.trendingPosts = data;
+    })
   }
 
   getPostByMonth() {
@@ -156,6 +164,11 @@ export class SettingComponent {
 
 
     }
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
 }

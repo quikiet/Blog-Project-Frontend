@@ -119,4 +119,53 @@
       </div>
     </div>
   </div>
+  <div class="col-span-12 lg:col-span-6">
+    <div
+      class="rounded-2xl border border-gray-200 bg-white px-5 pt-5 sm:px-6 sm:py-6"
+    >
+      <div class="flex items-center justify-between">
+        <p class="text-lg text-black">Top 3 bài viết nổi bật</p>
+      </div>
+
+      <div class="space-y-4">
+        <article
+          *ngFor="let post of trendingPosts"
+          class="border-t-2 pt-6 border-newsletter-border flex items-start space-x-15px group"
+        >
+          <a
+            *ngIf="post.thumbnail"
+            class="flex-shrink-0 block w-[140px] h-[120px] overflow-hidden rounded-none"
+          >
+            <img
+              *ngIf="post.thumbnail"
+              [src]="post.thumbnail"
+              alt="Trending
+                post image"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          </a>
+          <div class="flex-grow">
+            <a>
+              <p
+                class="font-body text-body-15 font-normal text-newsletter-bg-dark-alt group-hover:text-newsletter-green mb-10px line-clamp-3"
+              >
+                {{ post.title }}
+              </p>
+            </a>
+            <p
+              class="font-body text-meta-10 text-newsletter-green line-clamp-2 mb-10px"
+            >
+              {{ post.summary }}
+            </p>
+            <div
+              class="font-meta text-meta-9 text-newsletter-gray-text flex justify-between"
+            >
+              <span>By {{ post.authors?.name || "Unknown" }}</span>
+              <span>{{ formatDate(post.published_at) }}</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
 </div>

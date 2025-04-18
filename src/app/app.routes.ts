@@ -21,6 +21,7 @@ import { UserPostsComponent } from './components/customer/home/user-posts/user-p
 import { PostDetailUserComponent } from './components/customer/post-detail-user/post-detail-user.component';
 import { filter } from 'rxjs';
 import { PageNotFould404Component } from './shared/page-not-fould-404/page-not-fould-404.component';
+import { ChartsComponent } from './components/admin/setting/charts/charts.component';
 
 export const routes: Routes = [
 
@@ -45,6 +46,7 @@ export const routes: Routes = [
             { path: '', redirectTo: 'settings', pathMatch: 'full' },
             { path: 'settings', component: SettingComponent },
             { path: 'web-settings', component: WebsiteSettingsComponent },
+            { path: 'scheduled', component: ChartsComponent },
             { path: 'users', component: UsersComponent },
             { path: 'category', component: CategoryComponent },
             { path: 'refuse-reasons', component: RefuseReasonsComponent },
