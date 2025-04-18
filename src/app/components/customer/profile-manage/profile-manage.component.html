@@ -1,0 +1,185 @@
+<div
+  class="min-h-screen bg-gradient-to-br from-indigo-800 via-blue-900 to-purple-900 py-10 px-4"
+>
+  <div
+    class="max-w-4xl mx-auto bg-white/90 shadow-2xl rounded-2xl p-8 backdrop-blur-sm"
+  >
+    <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">
+      🎯 User Management
+    </h2>
+
+    <form (submit)="updateUser()" class="mb-8 flex flex-col gap-4">
+      <input
+        type="text"
+        [(ngModel)]="formData.name"
+        name="name"
+        placeholder="👤 Nhập tên người dùng"
+        class="border border-gray-300 p-3 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+        required
+      />
+      <input
+        type="email"
+        [(ngModel)]="formData.email"
+        name="email"
+        placeholder="📧 Nhập email"
+        class="border border-gray-300 p-3 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+        required
+      />
+      <input
+        type="password"
+        [(ngModel)]="formData.password"
+        name="password"
+        placeholder="🔒 Nhập mật khẩu"
+        class="border border-gray-300 p-3 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+        required
+      />
+
+      <div>
+        <label class="block text-sm font-semibold mb-1 text-gray-700"
+          >🌄 Link ảnh đại diện:</label
+        >
+        <input
+          type="url"
+          [(ngModel)]="formData.avatar"
+          name="avatar"
+          placeholder="Nhập URL ảnh đại diện"
+          class="border border-gray-300 p-3 rounded-lg w-full shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+      </div>
+
+      <select
+        [(ngModel)]="formData.role"
+        name="role"
+        class="border border-gray-300 p-3 rounded-lg bg-white shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+        required
+      >
+        <option value="user">👥 Người dùng</option>
+      </select>
+
+      <div *ngIf="formData.avatar" class="mt-4">
+        <p class="text-sm font-medium text-gray-700 mb-2">📷 Xem trước ảnh:</p>
+        <img
+          [src]="formData.avatar"
+          alt="Avatar preview"
+          class="max-w-[150px] max-h-[150px] rounded-lg shadow"
+          onerror="this.src='https://via.placeholder.com/150'"
+        />
+      </div>
+
+      <div class="flex gap-4 mt-4">
+        <button
+          type="submit"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-all duration-200 shadow-lg"
+          [disabled]="isLoading || isDeleting"
+        >
+          <span *ngIf="isLoading">Đang xử lý...</span>
+          <span *ngIf="!isLoading">✅ Cập nhật</span>
+        </button>
+
+        <button
+          type="button"
+          (click)="resetForm()"
+          class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg transition-all duration-200 shadow-md"
+          [disabled]="isDeleting"
+        >
+          ♻️ Đặt lại
+        </button>
+
+        <button
+          type="button"
+          (click)="initiateDelete()"
+          class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-all duration-200 shadow-md"
+          [disabled]="isLoading || isDeleting || !formData.name"
+        >
+          🗑️ Xoá tài khoản
+        </button>
+      </div>
+    </form>
+
+    <div
+      *ngIf="isDeleteConfirmationVisible"
+      class="mb-8 flex flex-col gap-4 border border-red-400 rounded-lg p-4 bg-red-50"
+    >
+      <h3 class="text-xl font-semibold text-red-700 mb-2">
+        ⚠️ Xác nhận Xóa Tài khoản
+      </h3>
+      <input
+        type="password"
+        [(ngModel)]="deleteConfirmation.password"
+        placeholder="🔒 Nhập mật khẩu"
+        class="border border-gray-300 p-3 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-red-400"
+      />
+      <div class="flex gap-2 mt-2 justify-end">
+        <button
+          type="button"
+          (click)="cancelDelete()"
+          class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg transition-all duration-200 shadow-md"
+          [disabled]="isDeleting"
+        >
+          Huỷ
+        </button>
+        <button
+          type="button"
+          (click)="confirmDeleteUser()"
+          class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-all duration-200 shadow-md"
+        >
+          <span *ngIf="isDeleting">Đang xóa...</span>
+          <span *ngIf="!isDeleting">✅ Xác nhận Xóa</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table
+        class="w-full text-center border border-gray-300 rounded-lg shadow overflow-hidden bg-white"
+      >
+        <thead class="bg-blue-200 text-gray-700">
+          <tr>
+            <th class="p-3">🆔 ID</th>
+            <th class="p-3">👤 Tên</th>
+            <th class="p-3">📧 Email</th>
+            <th class="p-3">🔖 Vai trò</th>
+            <th class="p-3">📷 Avatar</th>
+            <th class="p-3">⚙️ Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="bg-white hover:bg-blue-50 border-t border-gray-200">
+            <td class="p-3">{{ users.id }}</td>
+            <td class="p-3">{{ users.name }}</td>
+            <td class="p-3">{{ users.email }}</td>
+            <td class="p-3 capitalize">{{ users.role }}</td>
+            <td class="p-3">
+              <img
+                *ngIf="users.avatar"
+                [src]="users.avatar"
+                alt="Avatar"
+                class="w-10 h-10 rounded-full mx-auto shadow"
+              />
+            </td>
+            <td class="p-3">
+              <button
+                (click)="editUser(users)"
+                class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded-md transition-colors shadow"
+              >
+                ✏️ Sửa
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div
+      *ngIf="isLoading || isDeleting"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <div class="bg-white p-6 rounded-lg shadow-lg">
+        <p class="text-lg font-semibold text-gray-700">
+          <span *ngIf="isLoading">🔄 Đang tải dữ liệu...</span>
+          <span *ngIf="isDeleting">🗑️ Đang xóa tài khoản...</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
