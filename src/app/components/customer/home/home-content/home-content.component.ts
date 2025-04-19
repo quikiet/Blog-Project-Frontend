@@ -85,6 +85,8 @@ export class HomeContentComponent implements OnInit {
     this.loginService.getUser().subscribe({
       next: (res) => {
         this.username = res.user.name;
+        console.log(res.user);
+
         this.userAvatar = res.user.avatar;
       },
       error: (error) => {

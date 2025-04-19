@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LoginService } from '../../../services/Auth/login.service';
 import { ToastrService } from 'ngx-toastr';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RegisterService } from '../../../services/Auth/register.service';
+import { LoginByGoogleServiceService } from '../../../services/Auth/login-by-google.service.service';
 
 @Component({
   selector: 'app-login',
@@ -14,9 +15,9 @@ import { RegisterService } from '../../../services/Auth/register.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
-  constructor(private registerService: RegisterService, private http: HttpClient, private loginService: LoginService, private toastr: ToastrService, private router: Router) { }
+  constructor(private loginByGoogleService: LoginByGoogleServiceService, private registerService: RegisterService, private http: HttpClient, private loginService: LoginService, private toastr: ToastrService, private router: Router, private route: ActivatedRoute,) { }
   loginFields = {
     email: '',
     password: ''
@@ -30,6 +31,38 @@ export class LoginComponent {
   };
   userRole: string = '';
   tab: string = 'login';
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      if (params['google'] === 'true') {
+        const token = params['token'];
+        const user = params['user']
+          ? JSON.parse(decodeURIComponent(params['user']))
+          : null;
+        const expiresAt = params['expires_at'];
+
+        if (token && user && expiresAt) {
+          // Lưu thông tin vào localStorage
+          localStorage.setItem('token', token);
+          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem('token_expiration', expiresAt);
+
+          this.userRole = this.loginService.getRole();
+
+          this.toastr.success('Đăng nhập bằng Google thành công', 'Thành công');
+
+          if (this.userRole !== 'admin') {
+            this.router.navigate(['/']);
+          } else {
+            this.router.navigate(['/admin']);
+          }
+        } else {
+          this.toastr.error('Đăng nhập bằng Google thất bại', 'Lỗi');
+        }
+      }
+    });
+  }
+
   login(): void {
     if (this.loginFields.email === '' || this.loginFields.password === '') {
       this.toastr.error('Vui lòng nhập đầy đủ thông tin', 'Lỗi');
@@ -61,9 +94,10 @@ export class LoginComponent {
 
   }
 
-  loginWithGoogle() {
+  loginWithGoogle(): void {
     console.log(1);
-    window.location.href = 'http://localhost:8000/api/auth/google/redirect';
+
+    window.location.href = this.loginByGoogleService.getGoogleRedirectUrl();
   }
 
   register() {
