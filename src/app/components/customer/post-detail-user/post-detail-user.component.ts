@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AvatarModule } from 'primeng/avatar';
@@ -11,6 +11,7 @@ import { FooterComponent } from "../footer/footer.component";
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { LoadingComponent } from "../../../shared/loading/loading.component";
 import { RelativeTimePipe } from '../../../pipe/relative-time.pipe';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-post-detail-user',
@@ -39,7 +40,8 @@ export class PostDetailUserComponent implements OnInit {
     private postService: PostService,
     private sanitizer: DomSanitizer,
     private categoryService: CategoryService,
-    private router: Router
+    private router: Router,
+    private toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
@@ -99,4 +101,25 @@ export class PostDetailUserComponent implements OnInit {
     return category ? category.name : 'Chưa có';
   }
 
+  getCurrentPageUrl(): string {
+    if (typeof window !== 'undefined' && window.location) { return window.location.href; }
+    return '';
+  }
+
+  shareOnFacebook(): void {
+    const url = encodeURIComponent(this.getCurrentPageUrl());
+    if (url) { window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400,noopener,noreferrer'); }
+    else { this.toastr.error('Không thể lấy URL để chia sẻ.'); }
+  }
+
+  copyLink(): void {
+
+    const url = this.getCurrentPageUrl();
+    if (!url) { this.toastr.error('Không thể lấy URL để sao chép.'); return; }
+    if (!navigator.clipboard) { this.toastr.error('Trình duyệt không hỗ trợ sao chép tự động.'); return; }
+
+    navigator.clipboard.writeText(url)
+      .then(() => { this.toastr.success('Đã sao chép liên kết!'); })
+      .catch(err => { this.toastr.error('Không thể sao chép liên kết.'); });
+  }
 }
