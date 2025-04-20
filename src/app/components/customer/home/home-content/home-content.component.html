@@ -1,70 +1,128 @@
 <div class="pt-8 pb-10">
-  <main class="container mx-auto px-4">
+  <main>
     <div
-      class="h-[60px] bg-newsletter-bg-dark-alt flex items-center px-4 justify-between gap-5"
+      class="h-[60px] bg-newsletter-bg-dark-alt flex items-center px-4 justify-between gap-2 sm:gap-5 z-30 border-b border-gray-700"
+      #categoryBar
     >
-      <div class="flex items-center overscroll-x-auto">
-        <ul
-          class="menu-category flex space-x-40px overflow-x-auto scrollbar-hide hover:bg-primary p-2"
-          *ngFor="let category of categories"
-        >
-          <li>
+      <div class="flex-grow overflow-x-auto scrollbar-hide hidden md:flex">
+        <ul class="menu-category flex items-center space-x-4">
+          <li *ngFor="let category of categories">
             <a
-              routerLink="/"
-              class="block py-2 font-sans text-newsletter-card-bg hover:text-newsletter-gray-light whitespace-nowrap"
-              >{{ category.name }}</a
+              [routerLink]="['/category', category.slug]"
+              class="block py-2 px-3 text-newsletter-card-bg hover:bg-teal-600 hover:text-white whitespace-nowrap transition-colors duration-200 text-sm sm:text-base"
+              routerLinkActive="!bg-teal-600 !text-white font-semibold"
             >
+              {{ category.name }}
+            </a>
           </li>
         </ul>
       </div>
-      <div class="flex items-center space-x-4 ml-2">
-        <div class="hidden md:block p-3 bg-secondary-content">
-          <span *ngIf="token; else showLogin">
+
+      <div class="flex-shrink-0 flex items-center space-x-2 ml-auto">
+        <div class="hidden md:block">
+          <span *ngIf="token; else showLoginDesktop">
             <div class="flex items-center space-x-2">
               <div class="dropdown dropdown-end">
                 <div
                   tabindex="0"
                   role="button"
-                  class="flex gap-2 items-center z-50"
+                  class="flex gap-2 items-center cursor-pointer"
                 >
                   <img
-                    class="w-10 h-10 rounded-full transition-transform duration-300 hover:scale-110 object-center"
+                    class="w-8 h-8 rounded-full object-cover border border-gray-500"
                     *ngIf="userAvatar"
                     [src]="userAvatar"
                     alt="Avatar"
-                    alt="Profile"
                   />
-                  <span *ngIf="username" class="text-white">{{
-                    username
-                  }}</span>
+                  <span
+                    *ngIf="!userAvatar"
+                    class="inline-block w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-gray-400"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                  </span>
+                  <span
+                    *ngIf="username"
+                    class="text-white hidden lg:inline text-sm"
+                    >{{ username }}</span
+                  >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4 text-white hidden lg:inline"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
                 </div>
                 <ul
                   tabindex="0"
-                  class="dropdown-content menu bg-secondary-content text-black rounded-box w-52 p-2 shadow z-50"
+                  class="dropdown-content menu bg-gray-700 text-white w-52 p-2 z-50 mt-2 border border-gray-600"
                 >
-                  <li><a routerLink="profile">Hồ sơ</a></li>
-                  <li *ngIf="userRole === 'author'" class="z-50">
-                    <a routerLink="posts">Đăng bài</a>
-                    <a routerLink="user-posts">Danh sách đăng bài</a>
+                  <li>
+                    <a class="text-sm block px-2 py-1" routerLink="profile"
+                      >Hồ sơ</a
+                    >
                   </li>
-
-                  <li *ngIf="userRole === 'admin'" class="z-50">
-                    <a routerLink="admin">Trang quản trị</a>
+                  <li class="py-1" *ngIf="userRole === 'author'">
+                    <a routerLink="/user-posts" class="text-sm block px-2 py-1"
+                      >Bài viết của tôi</a
+                    >
                   </li>
-                  <li class="z-50"><a (click)="logout()">Đăng xuất</a></li>
+                  <li class="py-1" *ngIf="userRole === 'author'">
+                    <a routerLink="/posts" class="text-sm block px-2 py-1"
+                      >Đăng bài</a
+                    >
+                  </li>
+                  <li class="py-1" *ngIf="userRole === 'admin'">
+                    <a routerLink="/admin" class="text-sm block px-2 py-1"
+                      >Trang quản trị</a
+                    >
+                  </li>
+                  <li><hr class="border-gray-600 my-1" /></li>
+                  <li>
+                    <a
+                      (click)="logout()"
+                      class="text-sm block px-2 py-1 cursor-pointer"
+                      >Đăng xuất</a
+                    >
+                  </li>
                 </ul>
               </div>
             </div>
           </span>
-
-          <ng-template #showLogin>
-            <a routerLink="/login" class="text-sm font-meta">Login</a>
-            <span class="mx-1">|</span>
-            <a routerLink="/login" class="text-sm font-meta">Register</a>
+          <ng-template #showLoginDesktop>
+            <div class="flex items-center text-sm p-2">
+              <a routerLink="/login" class="font-medium text-white">Login</a>
+              <span class="mx-1 text-gray-400">|</span>
+              <a routerLink="/login" class="font-medium text-white">Register</a>
+            </div>
           </ng-template>
         </div>
+
         <button
-          class="md:hidden text-newsletter-gray-light hover:text-newsletter-offwhite focus:outline-none"
+          class="md:hidden text-newsletter-gray-light focus:outline-none p-1"
+          (click)="toggleMobileMenu()"
+          aria-label="Mở menu"
+          [attr.aria-expanded]="isMobileMenuOpen"
         >
           <svg
             class="w-6 h-6"
@@ -83,244 +141,383 @@
         </button>
       </div>
     </div>
-    <section
-      class="mb-8 relative h-[500px] bg-newsletter-card-bg shadow-md overflow-hidden"
+
+    <div
+      *ngIf="isMobileMenuOpen"
+      class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+      (click)="closeMobileMenu()"
+    ></div>
+    <div
+      *ngIf="isMobileMenuOpen"
+      class="fixed top-0 right-0 h-full w-64 sm:w-80 bg-newsletter-bg-dark-alt border-l border-gray-700 z-50 transform md:hidden"
+      [class.translate-x-0]="isMobileMenuOpen"
+      [class.translate-x-full]="!isMobileMenuOpen"
     >
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-0 h-full">
-        <div class="p-6 bg-white h-fit">
-          <article class="relative h-[350px] group">
+      <div class="p-4">
+        <button
+          (click)="closeMobileMenu()"
+          class="absolute top-4 right-4 text-white"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+        <h2 class="text-white text-lg font-semibold mb-4 mt-2">Menu</h2>
+        <div class="mb-4 p-3 bg-gray-700">
+          <span *ngIf="token; else showLoginMobile">
+            <div class="flex items-center space-x-2 mb-2">
+              <img
+                class="w-8 h-8 rounded-full object-cover border border-gray-500"
+                *ngIf="userAvatar"
+                [src]="userAvatar"
+                alt="Avatar"
+              />
+              <span
+                *ngIf="!userAvatar"
+                class="inline-block w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-gray-400"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  /></svg
+              ></span>
+              <span *ngIf="username" class="text-white font-medium">{{
+                username
+              }}</span>
+            </div>
+            <ul class="space-y-1 text-gray-300 text-sm">
+              <li><a class="block py-1">Hồ sơ</a></li>
+              <li *ngIf="userRole === 'author'">
+                <a
+                  routerLink="/user-posts"
+                  (click)="closeMobileMenu()"
+                  class="block py-1"
+                  >Bài viết của tôi</a
+                >
+              </li>
+              <li *ngIf="userRole === 'admin'">
+                <a
+                  routerLink="/admin"
+                  (click)="closeMobileMenu()"
+                  class="block py-1"
+                  >Trang quản trị</a
+                >
+              </li>
+              <li><hr class="border-gray-600 my-1" /></li>
+              <li>
+                <a
+                  (click)="logout(); closeMobileMenu()"
+                  class="block py-1 cursor-pointer"
+                  >Đăng xuất</a
+                >
+              </li>
+            </ul>
+          </span>
+          <ng-template #showLoginMobile>
+            <div class="flex flex-col space-y-2">
+              <a
+                routerLink="/login"
+                (click)="closeMobileMenu()"
+                class="text-white block py-1.5 px-2 bg-blue-600 text-center text-sm font-medium"
+                >Đăng nhập</a
+              >
+              <a
+                routerLink="/dang-ky"
+                (click)="closeMobileMenu()"
+                class="text-white block py-1.5 px-2 border border-gray-600 text-center text-sm font-medium"
+                >Đăng ký</a
+              >
+            </div>
+          </ng-template>
+        </div>
+        <nav class="flex flex-col space-y-1 text-sm">
+          <a
+            routerLink="/"
+            (click)="closeMobileMenu()"
+            class="block py-2 px-3 text-gray-300"
+            routerLinkActive="bg-gray-700 font-semibold !text-white"
+          >
+            Trang chủ
+          </a>
+          <a
+            *ngFor="let category of categories"
+            [routerLink]="['/category', category.slug]"
+            (click)="closeMobileMenu()"
+            class="block py-2 px-3 text-gray-300"
+            routerLinkActive="bg-gray-700 font-semibold !text-white"
+          >
+            {{ category.name }}
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <section
+      class="mb-8 relative bg-newsletter-card-bg border border-gray-200 h-auto"
+    >
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 md:p-6">
+        <div class="bg-white flex flex-col gap-4 md:gap-6">
+          <article class="relative h-[250px] sm:h-[300px] md:h-[350px] w-full">
             <div
               class="absolute inset-0 bg-cover bg-center"
               [style.backgroundImage]="
-                featurePost.thumbnail
+                featurePost?.thumbnail
                   ? 'url(' + featurePost.thumbnail + ')'
-                  : 'url()'
+                  : 'url(assets/images/placeholder_large.png)'
               "
             ></div>
-            <div
-              class="absolute inset-0 bg-gradient-to-t from-newsletter-bg-dark-alt via-black/50 to-transparent"
-            ></div>
+            <div class="absolute inset-0 bg-black/60"></div>
             <a
-              [routerLink]="['/post-detail-user', featurePost.slug]"
-              class="absolute bottom-0 left-0 p-6 text-newsletter-offwhite block"
+              [routerLink]="['/post-detail-user', featurePost?.slug]"
+              class="absolute bottom-0 left-0 p-4 md:p-6 text-newsletter-offwhite block w-full z-10"
             >
-              <p class="font-body text-lg mb-2 group-hover:underline">
-                {{ featurePost.title || "Unknown" }}
+              <p
+                class="text-base sm:text-lg md:text-xl mb-1 sm:mb-2 line-clamp-3"
+              >
+                {{ featurePost?.title || "..." }}
               </p>
-              <div class="font-meta text-meta-10">
-                Bởi {{ featurePost.authors?.name || "Unknown" }} |
-                {{ formatDate(featurePost.published_at) }}
+              <div class="text-xs sm:text-meta-10">
+                Bởi {{ featurePost?.authors?.name || "..." }} |
+                {{
+                  featurePost?.published_at
+                    ? formatDate(featurePost.published_at)
+                    : "..."
+                }}
               </div>
             </a>
           </article>
-          <article class="relative h-[100px] group">
+          <article class="relative">
             <a
-              [routerLink]="['/post-detail-user', featurePost.slug]"
-              class="bottom-0 left-0 pt-6 text-newsletter-black block"
+              [routerLink]="['/post-detail-user', featurePost?.slug]"
+              class="text-newsletter-black block bg-gray-50 p-3 sm:p-4 md:bg-transparent md:p-0"
             >
               <div
-                class="flex items-center gap-5 justify-between w-full h-full"
+                class="flex items-center gap-3 sm:gap-4 justify-between w-full"
               >
-                <div>
+                <div class="flex-grow min-w-0">
                   <p
-                    class="font-body font-semibold text-lg mb-2 group-hover:underline"
+                    class="font-semibold text-sm sm:text-base mb-1 line-clamp-2"
                   >
-                    {{ featurePost.title || "Unknown" }}
+                    {{ featurePost?.title || "..." }}
                   </p>
-                  <div class="font-meta text-meta-10 text-primary">
-                    {{ featurePost.description || "Mô tả" }}
+                  <div class="text-xs sm:text-sm text-gray-600 line-clamp-2">
+                    {{ featurePost?.description || "..." }}
                   </div>
                 </div>
                 <div
-                  class="w-28 h-16 inset-0 bg-cover bg-center"
+                  class="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-cover bg-center border border-gray-100"
                   [style.backgroundImage]="
-                    featurePost.thumbnail
+                    featurePost?.thumbnail
                       ? 'url(' + featurePost.thumbnail + ')'
-                      : 'url(' +
-                        'https://cdn-media.sforum.vn/storage/app/media/anh-dep-16.jpg' +
-                        ')'
+                      : 'url(assets/images/placeholder.png)'
                   "
                 ></div>
               </div>
             </a>
           </article>
         </div>
-        <div
-          class="md:col-span-1 bg-newsletter-bg-dark-alt text-newsletter-offwhite flex flex-col h-full"
-        >
+        <div class="md:col-start-2 flex flex-col gap-4 md:gap-6">
           <article
-            class="relative flex-1 border-b border-gray-700 group overflow-hidden h-2/3"
+            class="relative h-[231px] bg-black text-newsletter-offwhite border-b border-gray-700 flex-shrink-0"
           >
             <div
               [style.backgroundImage]="
-                subFeaturePosts[0].thumbnail
+                subFeaturePosts[0]?.thumbnail
                   ? 'url(' + subFeaturePosts[0].thumbnail + ')'
-                  : 'url()'
+                  : 'url(assets/images/placeholder.png)'
               "
-              class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition-opacity duration-300"
+              class="absolute inset-0 bg-cover bg-center opacity-40 z-0"
             ></div>
             <a
-              [routerLink]="['/post-detail-user', subFeaturePosts[0].slug]"
-              class="relative p-4 flex flex-col justify-end"
+              [routerLink]="['/post-detail-user', subFeaturePosts[0]?.slug]"
+              class="relative z-10 p-4 flex flex-col justify-end h-full"
             >
-              <p
-                class="font-body font-bold text-display-20 mb-1 group-hover:underline"
-              >
-                {{ subFeaturePosts[0].title || "Unknown" }}
+              <p class="font-bold text-display-20 mb-1">
+                {{ subFeaturePosts[0]?.title || "..." }}
               </p>
-              <p
-                class="font-body text-newsletter-gray-light line-clamp-3 text-sm"
-              >
+              <p class="text-newsletter-gray-light line-clamp-3 text-sm">
                 {{
-                  subFeaturePosts[0].summary
+                  subFeaturePosts[0]?.summary
                     ? cutText(subFeaturePosts[0].summary, 20)
-                    : "Unknown"
+                    : "..."
                 }}
               </p>
             </a>
           </article>
-          <article class="relative flex-1 group overflow-hidden bg-white h-1/3">
-            <div class="grid grid-cols-3 w-full py-6 h-full gap-5">
-              <div class="col-span-1 w-full h-full relative">
-                <div
-                  [style.backgroundImage]="
-                    subFeaturePosts[1]?.thumbnail
-                      ? 'url(' + subFeaturePosts[1].thumbnail + ')'
-                      : 'url(https://via.placeholder.com/400x250/cccccc/ffffff?text=Sub+Feature+2+Image)'
+          <article
+            class="relative bg-white md:text-black flex-1 min-h-0 border border-gray-200"
+          >
+            <a
+              [routerLink]="['/post-detail-user', subFeaturePosts[1]?.slug]"
+              class="flex items-stretch gap-4 h-full"
+            >
+              <div
+                class="w-1/3 relative flex-shrink-0 bg-gray-200 border-r border-gray-100"
+              >
+                <img
+                  [src]="
+                    subFeaturePosts[1]?.thumbnail ||
+                    'assets/images/placeholder_small.png'
                   "
-                  class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition-opacity duration-300 h-fit"
-                ></div>
-                <div
-                  class="absolute inset-0 bg-gradient-to-b from-newsletter-bg-dark-alt via-black/20 to-transparent"
-                ></div>
-                <a
-                  [routerLink]="['/post-detail-user', subFeaturePosts[1]?.slug]"
-                  class="relative p-4 flex flex-col justify-start"
-                >
-                  <p
-                    class="font-body font-bold text-display-17 group-hover:underline"
-                  >
-                    {{ subFeaturePosts[1]?.title || "Unknown" }}
-                  </p>
-                </a>
+                  alt="{{ subFeaturePosts[1]?.title }}"
+                  class="absolute inset-0 w-full h-full object-cover"
+                />
               </div>
-            </div>
+              <div class="flex-grow min-w-0 p-3 sm:p-4">
+                <p class="font-semibold text-sm sm:text-base mb-1 line-clamp-2">
+                  {{ subFeaturePosts[1]?.title || "..." }}
+                </p>
+                <p class="text-xs text-gray-600 line-clamp-2 mb-1">
+                  {{
+                    subFeaturePosts[1]?.summary
+                      ? cutText(subFeaturePosts[1].summary, 15)
+                      : "..."
+                  }}
+                </p>
+                <p class="text-xs text-gray-500 hidden sm:block">
+                  {{
+                    subFeaturePosts[1]?.published_at
+                      ? formatDate(subFeaturePosts[1].published_at)
+                      : "..."
+                  }}
+                </p>
+              </div>
+            </a>
           </article>
         </div>
       </div>
     </section>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-      <!-- Latest News -->
       <section class="lg:col-span-2">
         <div
-          class="flex justify-between items-end mb-4 border-b-2 border-newsletter-bg-dark-alt pb-1"
+          class="flex justify-between items-end mb-4 border-b-2 border-gray-300 pb-1"
         >
-          <h4 class="font-body text-display-33 text-newsletter-bg-dark-alt">
+          <h4
+            class="font-semibold text-lg sm:text-xl text-newsletter-bg-dark-alt"
+          >
             Bài viết gần đây
           </h4>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <article
             *ngFor="let post of latestPosts"
-            class="bg-newsletter-card-bg rounded-none shadow-md overflow-hidden flex flex-col group"
+            class="bg-newsletter-card-bg border border-gray-200 overflow-hidden flex flex-col"
           >
             <a
               [routerLink]="['/post-detail-user', post.slug]"
               class="block overflow-hidden"
             >
               <img
-                [src]="post.thumbnail"
-                *ngIf="post.thumbnail"
-                alt="Latest news image"
-                class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
+                [src]="post.thumbnail || 'assets/images/placeholder.png'"
+                alt="{{ post.title }}"
+                class="w-full h-48 object-cover"
               />
             </a>
             <div class="p-4 flex flex-col flex-grow">
               <a [routerLink]="['/post-detail-user', post.slug]">
                 <p
-                  class="font-body font-bold text-display-20 mb-2 text-newsletter-black group-hover:text-newsletter-green flex-grow"
+                  class="font-bold text-display-20 mb-2 text-newsletter-black flex-grow line-clamp-3"
                 >
-                  {{ post.title }}
+                  {{ post.title || "..." }}
                 </p>
               </a>
               <div
-                class="font-meta text-meta-10 text-newsletter-gray-text mb-2 flex justify-between"
+                class="text-meta-10 text-newsletter-gray-text mb-2 flex justify-between"
               >
                 <span
-                  >Bởi {{ post.authors?.name || post.posts_user?.name }}</span
+                  >Bởi
+                  {{
+                    post.authors?.name || post.posts_user?.name || "..."
+                  }}</span
                 >
-                <span>{{ formatDate(post.published_at) }}</span>
+                <span>{{
+                  post.published_at ? formatDate(post.published_at) : "..."
+                }}</span>
               </div>
               <hr class="border-t-2 border-newsletter-border my-3" />
-
-              <p
-                class="font-body text-newsletter-green line-clamp-4 text-sm mb-3"
-              >
-                {{ post.summary }}
+              <p class="text-newsletter-green line-clamp-4 text-sm mb-3">
+                {{ post.summary || "..." }}
               </p>
             </div>
           </article>
         </div>
-        <div class="text-center mt-8">
+        <div class="text-center mt-6 sm:mt-8">
           <app-button>Xem thêm</app-button>
         </div>
       </section>
 
       <aside class="lg:col-span-1">
-        <div class="bg-newsletter-card-bg p-4 shadow-md rounded-lg mb-6">
-          <div class="flex justify-between items-center mb-3">
+        <div
+          class="bg-newsletter-card-bg p-3 sm:p-4 border border-gray-200 mb-6"
+        >
+          <div
+            class="flex justify-between items-center mb-3 pb-2 border-b border-newsletter-border"
+          >
             <p
-              class="font-body text-display-17 text-newsletter-bg-dark-alt !m-0"
+              class="text-base sm:text-display-17 text-newsletter-bg-dark-alt !m-0"
             >
-              Bài báo được lưu trữ
+              Bài viết đáng chú ý
             </p>
-            <app-button [variant]="'black'">Xem thêm</app-button>
           </div>
-          <!-- <hr class="border-t-2 border-newsletter-border mb-4" /> -->
           <div class="space-y-4">
             <article
               *ngFor="let post of archivedPosts"
-              class="border-t-2 pt-6 border-newsletter-border flex items-start space-x-15px group"
+              class="border-t-2 pt-4 border-newsletter-border flex items-start space-x-3"
             >
               <a
                 *ngIf="post.thumbnail"
                 [routerLink]="['/post-detail-user', post.slug]"
-                class="flex-shrink-0 block w-[140px] h-[120px] overflow-hidden rounded-none"
+                class="flex-shrink-0 block w-[120px] h-[90px] overflow-hidden border border-gray-100"
               >
                 <img
                   *ngIf="post.thumbnail"
                   [src]="post.thumbnail"
-                  alt="Trending
-                  post image"
-                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  alt="{{ post.title }}"
+                  class="w-full h-full object-cover"
                 />
               </a>
               <div class="flex-grow">
                 <a [routerLink]="['/post-detail-user', post.slug]">
                   <p
-                    class="font-body text-body-15 font-normal text-newsletter-bg-dark-alt group-hover:text-newsletter-green mb-10px line-clamp-3"
+                    class="text-sm font-medium text-newsletter-bg-dark-alt mb-1 line-clamp-3"
                   >
-                    {{ post.title }}
+                    {{ post.title || "..." }}
                   </p>
                 </a>
-                <p
-                  class="font-body text-meta-10 text-newsletter-green line-clamp-2 mb-10px"
-                >
-                  {{ post.summary }}
-                </p>
                 <div
-                  class="font-meta text-meta-9 text-newsletter-gray-text flex justify-between"
+                  class="text-xs text-newsletter-gray-text flex justify-between"
                 >
-                  <span>By {{ post.authors?.name || "Unknown" }}</span>
-                  <span>{{ formatDate(post.published_at) }}</span>
+                  <span>{{
+                    post.published_at ? formatDate(post.published_at) : "..."
+                  }}</span>
                 </div>
               </div>
             </article>
           </div>
         </div>
         <div
-          class="mt-6 bg-gray-200 p-4 rounded-lg text-center text-gray-500 sticky top-[88px]"
+          class="mt-6 bg-gray-200 p-4 text-center text-gray-500 text-sm sticky top-[calc(80px+60px)] md:top-[calc(100px+60px)]"
         >
           Advertisement
         </div>

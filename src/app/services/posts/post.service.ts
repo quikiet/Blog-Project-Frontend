@@ -1,10 +1,15 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 
 export interface Post {
   id?: number,
   title: string,
+
+  slug?: string, // slug rất quan trọng để tạo link
+
+  status?: string;
+
   content: string,
   summary?: string,
   thumbnail: string,
@@ -18,14 +23,16 @@ export interface Post {
     avatar: string | null;
     role: string;
   };
+  authors?: any; // Hoặc định nghĩa interface Author cụ thể
+  category?: any;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostService {
-  apiUrl = "https://tqkdomain.io.vn/public/api/posts";
-  // apiUrl = "http://127.0.0.1:8000/api/posts";
+  // apiUrl = "https://tqkdomain.io.vn/public/api/posts";
+  apiUrl = "http://127.0.0.1:8000/api/posts";
   constructor(private http: HttpClient) { }
 
   countPost(): Observable<number> {
@@ -138,10 +145,6 @@ export class PostService {
     return this.http.delete<Post>(`${this.apiUrl}/${slug}`, { headers });
   }
 
-  search(keyword: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/search?keyword=${keyword}`);
-  }
-
   recordView(postId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/${postId}/view`, {});
   }
@@ -152,6 +155,23 @@ export class PostService {
 
   getTotalView(): Observable<any> {
     return this.http.get(`${this.apiUrl}/total-view`);
+  }
+
+  search(keyword: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/search?keyword=${keyword}`);
+  }
+
+  searchPosts(keyword: string): Observable<Post[]> { // Đặt kiểu trả về là Post[]
+    // Backend dùng query param tên là 'keyword'
+    const params = new HttpParams().set('keyword', keyword);
+    // API endpoint là /api/posts/search
+    return this.http.get<Post[]>(`${this.apiUrl}/search`, { params }).pipe(
+      catchError(error => {
+        console.error("Lỗi khi tìm kiếm bài viết:", error);
+        // Trả về một observable lỗi để component có thể bắt
+        return throwError(() => new Error("Tìm kiếm thất bại. Vui lòng thử lại."));
+      })
+    );
   }
 
 }

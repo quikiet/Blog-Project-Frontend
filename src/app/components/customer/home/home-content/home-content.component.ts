@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Router, RouterLink } from '@angular/router';
 import { InputTextModule } from 'primeng/inputtext';
@@ -18,7 +18,7 @@ import { forkJoin } from 'rxjs';
   templateUrl: './home-content.component.html',
   styleUrl: './home-content.component.css'
 })
-export class HomeContentComponent implements OnInit {
+export class HomeContentComponent implements OnInit, OnDestroy {
   token = localStorage.getItem('token');
   userRole: string | null = null;
   username: string = '';
@@ -33,7 +33,7 @@ export class HomeContentComponent implements OnInit {
   latestPosts: any[] = [];
   trendingPosts: any[] = [];
   archivedPosts: any[] = [];
-
+  isMobileMenuOpen = false;
   constructor(
     private loginService: LoginService,
     private toastr: ToastrService,
@@ -240,5 +240,36 @@ export class HomeContentComponent implements OnInit {
     if (words.length <= wordLimit) return text;
 
     return words.slice(0, wordLimit).join(' ') + '...';
+  }
+
+
+  ngOnDestroy(): void {
+    if (this.isMobileMenuOpen) {
+      document.body.style.overflow = '';
+    }
+  }
+
+  // --- Mobile Menu Logic (Giữ nguyên) ---
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    if (this.isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }
+
+  closeMobileMenu(): void {
+    if (this.isMobileMenuOpen) {
+      this.isMobileMenuOpen = false;
+      document.body.style.overflow = '';
+    }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (window.innerWidth >= 768 && this.isMobileMenuOpen) {
+      this.closeMobileMenu();
+    }
   }
 }

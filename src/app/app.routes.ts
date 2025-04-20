@@ -23,6 +23,8 @@ import { filter } from 'rxjs';
 import { PageNotFould404Component } from './shared/page-not-fould-404/page-not-fould-404.component';
 import { ChartsComponent } from './components/admin/setting/charts/charts.component';
 import { ProfileManageComponent } from './components/customer/profile-manage/profile-manage.component';
+import { SearchResultsComponent } from './components/customer/search-results/search-results.component';
+import { CategoryPostsComponent } from './components/customer/category-posts/category-posts.component';
 
 export const routes: Routes = [
 
@@ -37,6 +39,17 @@ export const routes: Routes = [
             },
             { path: 'user-posts', component: UserPostsComponent, canActivate: [roleGuard], data: { role: 'author' } },
             { path: 'posts', component: PostsComponent, canActivate: [roleGuard], data: { role: 'author' } },
+            {
+                path: 'category/:slug', // Đường dẫn dạng /category/ten-danh-muc
+                component: CategoryPostsComponent // Trỏ đến component đã tạo
+                // Nếu muốn lazy load:
+                // loadComponent: () => import('./components/customer/category-posts/category-posts.component').then(m => m.CategoryPostsComponent)
+            },
+            { path: 'post-detail-user/:slug', component: PostDetailUserComponent },
+            {
+                path: 'search',
+                component: SearchResultsComponent
+            },
         ]
     },
 
@@ -61,7 +74,6 @@ export const routes: Routes = [
             { path: "**", component: PageNotFould404Component },
         ]
     },
-    { path: 'post-detail-user/:slug', component: PostDetailUserComponent },
     { path: 'post-detail/:slug', component: PostDetailComponent },
     { path: "**", component: PageNotFould404Component },
 

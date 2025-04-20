@@ -1,0 +1,166 @@
+<div *ngIf="isLoading" class="text-center py-10">
+  <app-loading></app-loading>
+  <p>Đang tìm kiếm...</p>
+</div>
+
+<div class="container mx-auto px-4 py-8 pt-20">
+  <h1
+    *ngIf="!isLoading && searchTerm"
+    class="text-3xl font-bold mb-6 pb-3 border-b border-gray-300 text-gray-800"
+  >
+    Kết quả tìm kiếm cho: "<span>{{ searchTerm }}</span
+    >"
+  </h1>
+  <h1 *ngIf="!isLoading && !searchTerm" class="text-xl text-gray-600 mb-6">
+    Vui lòng nhập từ khóa vào ô tìm kiếm phía trên.
+  </h1>
+
+  <div
+    *ngIf="!isLoading && error"
+    class="border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6"
+    role="alert"
+  >
+    <strong c lass="font-bold">Lỗi!</strong>
+    <span class="block sm:inline"> {{ error }}</span>
+  </div>
+
+  <div *ngIf="!isLoading && !error && searchTerm">
+    <div *ngIf="filteredResults.length > 0; else noResults">
+      <div class="mt-6 space-y-6">
+        <div *ngFor="let post of filteredResults">
+          <article
+            class="block lg:hidden bg-white border border-gray-200 shadow-sm overflow-hidden flex flex-col group transition-shadow hover:shadow-md"
+          >
+            <a
+              [routerLink]="['/post-detail-user', post?.slug]"
+              class="block aspect-video overflow-hidden"
+            >
+              <img
+                *ngIf="post?.thumbnail"
+                [src]="post.thumbnail"
+                [alt]="post?.title"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
+                loading="lazy"
+              />
+              <div
+                *ngIf="!post?.thumbnail"
+                class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400"
+              >
+                Ảnh đại diện
+              </div>
+            </a>
+            <div class="p-4 flex flex-col flex-grow">
+              <h3
+                class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2"
+              >
+                <a [routerLink]="['/post-detail-user', post?.slug]">{{
+                  post?.title || "Tiêu đề không có"
+                }}</a>
+              </h3>
+              <p
+                *ngIf="post?.summary"
+                class="text-gray-600 text-sm mb-3 line-clamp-3 flex-grow"
+              >
+                {{ post?.summary }}
+              </p>
+              <div
+                class="mt-auto pt-3 border-t border-gray-100 text-xs text-gray-500"
+              >
+                <span *ngIf="post.authors?.name">{{
+                  post.authors?.name ?? "Unknown Author"
+                }}</span>
+                <span *ngIf="!post.authors?.name && post.posts_user?.name">{{
+                  post.posts_user?.name
+                }}</span>
+                <span
+                  *ngIf="post.authors?.name || post.posts_user?.name"
+                  class="mx-1"
+                  >|</span
+                >
+
+                <span *ngIf="post.category?.name">{{
+                  post.category?.name
+                }}</span>
+                <span *ngIf="post.category?.name" class="mx-1">|</span>
+
+                <span *ngIf="post.published_at">{{
+                  post.published_at | date : "dd/MM/yyyy"
+                }}</span>
+              </div>
+            </div>
+          </article>
+
+          <article
+            class="hidden lg:flex items-start p-4 border shadow-sm hover:shadow-md space-x-4 bg-white group"
+          >
+            <a
+              [routerLink]="['/post-detail-user', post?.slug]"
+              class="flex-shrink-0 w-48 h-32 block overflow-hidden"
+            >
+              <img
+                *ngIf="post?.thumbnail"
+                [src]="post.thumbnail"
+                [alt]="post?.title"
+                class="w-full h-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
+              />
+              <div
+                *ngIf="!post?.thumbnail"
+                class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 text-sm"
+              >
+                Ảnh đại diện
+              </div>
+            </a>
+            <div class="flex-grow flex flex-col">
+              <h3
+                class="text-lg font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors line-clamp-2"
+              >
+                <a [routerLink]="['/post-detail-user', post?.slug]">{{
+                  post?.title || "Tiêu đề không có"
+                }}</a>
+              </h3>
+              <p
+                *ngIf="post?.summary"
+                class="text-sm text-gray-600 mb-2 line-clamp-3 flex-grow"
+              >
+                {{ post?.summary }}
+              </p>
+              <div class="mt-auto text-xs text-gray-500">
+                <span *ngIf="post.authors?.name">{{
+                  post.authors?.name ?? "Unknown Author"
+                }}</span>
+                <span *ngIf="!post.authors?.name && post.posts_user?.name">{{
+                  post.posts_user?.name
+                }}</span>
+                <span
+                  *ngIf="post.authors?.name || post.posts_user?.name"
+                  class="mx-1"
+                  >|</span
+                >
+
+                <span *ngIf="post.category?.name">{{
+                  post.category?.name
+                }}</span>
+                <span *ngIf="post.category?.name" class="mx-1">|</span>
+
+                <span *ngIf="post.published_at">{{
+                  post.published_at | date : "dd/MM/yyyy"
+                }}</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noResults>
+      <div class="text-center py-10">
+        <p class="text-gray-600">
+          Không tìm thấy bài viết nào (đã xuất bản) phù hợp với từ khóa "<span
+            class="font-semibold"
+            >{{ searchTerm }}</span
+          >".
+        </p>
+      </div>
+    </ng-template>
+  </div>
+</div>

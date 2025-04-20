@@ -38,6 +38,22 @@ export class HomeComponent implements OnInit {
   latestPosts: any[] = [];
   trendingPosts: any[] = [];
 
+  searchKeyword: string = ''; // <--- Thêm thuộc tính này
+
+  performSearch(): void {
+    const keyword = this.searchKeyword.trim();
+    if (keyword) {
+      console.log('Searching for:', keyword);
+      // Điều hướng đến trang kết quả, gửi keyword qua query params
+      this.router.navigate(['/search'], { queryParams: { keyword } });
+      // Optional: Xóa ô input sau khi tìm kiếm
+      // this.searchKeyword = '';
+    } else {
+      // Có thể thêm thông báo nếu người dùng không nhập gì
+      this.toastr.info('Vui lòng nhập từ khóa để tìm kiếm');
+    }
+  }
+
   constructor(
     private loginService: LoginService,
     private toastr: ToastrService,
