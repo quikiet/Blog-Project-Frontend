@@ -7,8 +7,8 @@ import { Observable } from 'rxjs';
 })
 export class UserService {
 
-  // apiUrl = "https://tqkdomain.io.vn/public/api/users";
-  apiUrl = "http://127.0.0.1:8000/api/users";
+  apiUrl = "https://tqkdomain.io.vn/public/api/users";
+  // apiUrl = "http://127.0.0.1:8000/api/users";
 
   constructor(private http: HttpClient) { }
 
