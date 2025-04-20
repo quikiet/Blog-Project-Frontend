@@ -36,5 +36,14 @@ export class UserService {
     return this.http.get<any>(`${this.apiUrl}/${id}/posts`, { params });
   }
 
+  //Khang
+
+  getCurrentUser(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+
+  deleteUserConfirm(id: number, password: string): Observable<any[]> {
+    return this.http.delete<any>(`${this.apiUrl}/confirm/${id}`, { body: { password: password } });
+  }
 
 }

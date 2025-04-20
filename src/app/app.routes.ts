@@ -22,10 +22,12 @@ import { PostDetailUserComponent } from './components/customer/post-detail-user/
 import { filter } from 'rxjs';
 import { PageNotFould404Component } from './shared/page-not-fould-404/page-not-fould-404.component';
 import { ChartsComponent } from './components/admin/setting/charts/charts.component';
+import { ProfileManageComponent } from './components/customer/profile-manage/profile-manage.component';
 
 export const routes: Routes = [
 
     { path: 'login', component: LoginComponent, canActivate: [isLoggedGuard] },
+    { path: 'profile', component: ProfileManageComponent },
     {
         path: '', component: HomeComponent, canActivate: [outDateLoginGuard],
         children: [
@@ -40,7 +42,7 @@ export const routes: Routes = [
 
     {
         path: 'admin', component: DashboardComponent,
-        canActivate: [roleGuard],
+        canActivate: [roleGuard, outDateLoginGuard],
         data: { role: 'admin' },
         children: [
             { path: '', redirectTo: 'settings', pathMatch: 'full' },
