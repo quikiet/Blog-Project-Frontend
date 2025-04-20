@@ -34,9 +34,10 @@
             header="Bộ lọc nâng cao"
             [(visible)]="filterMenu"
             position="right"
+            styleClass="!w-full lg:!w-[30rem]"
           >
             <div class="gap-5 flex text-left flex-col">
-              <p-datepicker
+              <!-- <p-datepicker
                 (onSelect)="filterByDate($event)"
                 dateFormat="yy-mm-dd"
                 placeholder="Tìm kiếm theo ngày"
@@ -46,6 +47,15 @@
                 inputId="icondisplay"
                 [readonlyInput]="true"
                 selectionMode="single"
+              /> -->
+              <p-datepicker
+                [(ngModel)]="rangeDates"
+                selectionMode="range"
+                dateFormat="yy-mm-dd"
+                placeholder="Lọc theo khoảng ngày"
+                [showIcon]="true"
+                [readonlyInput]="true"
+                (onSelect)="filterByDateRange()"
               />
               <div class="flex items-center">
                 Trạng thái
@@ -114,7 +124,7 @@
                     <p-dropdown
                       [options]="categories"
                       (onChange)="filter($event.value)"
-                      placeholder="Tác giả"
+                      placeholder="Danh mục"
                     >
                       <ng-template let-option #item>
                         <p-tag [value]="option.value" />

@@ -31,8 +31,8 @@ export interface Post {
   providedIn: 'root'
 })
 export class PostService {
-  // apiUrl = "https://tqkdomain.io.vn/public/api/posts";
-  apiUrl = "http://127.0.0.1:8000/api/posts";
+  apiUrl = "https://tqkdomain.io.vn/public/api/posts";
+  // apiUrl = "http://127.0.0.1:8000/api/posts";
   constructor(private http: HttpClient) { }
 
   countPost(): Observable<number> {
@@ -173,5 +173,15 @@ export class PostService {
       })
     );
   }
+
+  searchByDate(startDate: string, endDate: string): Observable<any[]> {
+    const params = new HttpParams()
+      .set('start_date', startDate)
+      .set('end_date', endDate);
+
+    return this.http.get<any[]>(`${this.apiUrl}/search-by-date`, { params });
+  }
+
+
 
 }

@@ -49,7 +49,8 @@ export class PostListComponent implements OnInit {
   loading: boolean = true;
   tags: any[] = [];
   filterType: string = 'all';
-
+  startDate: string = '';
+  endDate: string = '';
   @ViewChild('dt2') dt2!: Table; // Import từ Primeng
 
 
@@ -72,6 +73,8 @@ export class PostListComponent implements OnInit {
 
   clear(table: Table) {
     table.clear();
+    // this.rangeDates = [];
+    this.loadPosts();
   }
 
   searchGlobal(event: any) {
@@ -97,13 +100,13 @@ export class PostListComponent implements OnInit {
             .map(post => [post.posts_user?.id, { label: post.posts_user?.name, value: post.posts_user?.id }])
         ).values()
       );
-      // this.categories = Array.from(
-      //   new Map(
-      //     data
-      //       .filter(post => post.category)
-      //       .map(post => [post.category?.id, { label: post.category?.name, value: post.category?.id }])
-      //   ).values()
-      // );
+      this.categories = Array.from(
+        new Map(
+          data
+            .filter(post => post.category)
+            .map(post => [post.category?.id, { label: post.category?.name, value: post.category?.id }])
+        ).values()
+      );
       this.loading = false;
     });
 
@@ -143,8 +146,30 @@ export class PostListComponent implements OnInit {
   filterByDate(event: Date) {
     if (!event) return;
     const formattedDate = this.formatDate(event);
-    this.dt2.filter(formattedDate, 'published_at', 'equals');
+    this.dt2.filter(formattedDate, 'published_at', 'contains');
   }
+
+  rangeDates!: Date[];
+
+  filterByDateRange() {
+    if (!this.rangeDates || this.rangeDates.length !== 2) return;
+
+    const [start, end] = this.rangeDates;
+
+    const formattedStart = this.formatDate(start);
+    const formattedEnd = this.formatDate(end);
+    // console.log(formattedStart);
+    // console.log(formattedEnd);
+    this.postService.searchByDate(formattedStart, formattedEnd).subscribe((data) => {
+      this.posts = data;
+    })
+    // this.dt2.filter(
+    //   { start: formattedStart, end: formattedEnd },
+    //   'published_at',
+    //   'custom'
+    // );
+  }
+
 
   formatDate(date: Date): string {
     const year = date.getFullYear();
@@ -152,6 +177,21 @@ export class PostListComponent implements OnInit {
     const day = ('0' + date.getDate()).slice(-2);
     return `${year}-${month}-${day}`;
   }
+
+  customDateRangeFilter(value: any, filter: any): boolean {
+    if (!filter || !filter.start || !filter.end) return true;
+
+    const date = new Date(value);
+    const start = new Date(filter.start);
+    const end = new Date(filter.end);
+
+    date.setHours(0, 0, 0, 0);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+
+    return date >= start && date <= end;
+  }
+
 
 
 }

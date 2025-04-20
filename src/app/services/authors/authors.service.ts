@@ -7,8 +7,8 @@ import { catchError, map, Observable, throwError } from 'rxjs';
 })
 export class AuthorsService {
 
-  // apiUrl = "https://tqkdomain.io.vn/public/api/authors";
-  apiUrl = "http://127.0.0.1:8000/api/authors";
+  apiUrl = "https://tqkdomain.io.vn/public/api/authors";
+  // apiUrl = "http://127.0.0.1:8000/api/authors";
   constructor(private http: HttpClient) { }
 
   getAllAuthors(): Observable<any[]> {
