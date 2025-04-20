@@ -24,7 +24,7 @@ export class LoginService {
   getUser(): Observable<any> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.post(`${this.apiURL}/me`, {}, { headers });
+    return this.http.get(`${this.apiURL}/me`, { headers });
   }
 
   getRole() {
