@@ -6,8 +6,8 @@ import { catchError, Observable, throwError } from 'rxjs';
   providedIn: 'root'
 })
 export class RefusesService {
-  apiUrl = "https://tqkdomain.io.vn/public/api/refuses";
-  // apiUrl = "http://127.0.0.1:8000/api/refuses";
+  // apiUrl = "https://tqkdomain.io.vn/public/api/refuses";
+  apiUrl = "http://127.0.0.1:8000/api/refuses";
   constructor(private http: HttpClient) { }
 
   getAllRefuses(): Observable<any[]> {

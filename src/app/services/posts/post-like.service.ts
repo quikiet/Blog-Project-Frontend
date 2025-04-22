@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PostLikeService {
-  apiUrl = "https://tqkdomain.io.vn/public/api/post_likes";
-  // apiUrl = "http://127.0.0.1:8000/api/post_likes";
+  // apiUrl = "https://tqkdomain.io.vn/public/api/post_likes";
+  apiUrl = "http://127.0.0.1:8000/api/post_likes";
   constructor(private http: HttpClient) { }
 
   likePost(postId: number, userId: number): Observable<any> {

@@ -7,8 +7,8 @@ import { Observable } from 'rxjs';
 })
 export class UserService {
 
-  apiUrl = "https://tqkdomain.io.vn/public/api/users";
-  // apiUrl = "http://127.0.0.1:8000/api/users";
+  // apiUrl = "https://tqkdomain.io.vn/public/api/users";
+  apiUrl = "http://127.0.0.1:8000/api/users";
 
   constructor(private http: HttpClient) { }
 
@@ -28,15 +28,13 @@ export class UserService {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
 
-  getPostByUserId(id: number, page: number = 1, perPage: number = 10): Observable<any> {
+  getPostByUserId(id: number, page: number = 1, perPage: number = 3): Observable<any> {
     let params = new HttpParams()
       .set('page', page.toString())
       .set('per_page', perPage.toString());
 
     return this.http.get<any>(`${this.apiUrl}/${id}/posts`, { params });
   }
-
-  //Khang
 
   getCurrentUser(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);

@@ -28,11 +28,11 @@
     <div class="flex-1 flex flex-col justify-between">
       <!-- Tiêu đề và nút xem chi tiết -->
       <div class="flex justify-between items-start gap-4">
-        <h3
-          class="text-xl font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-200 line-clamp-2"
+        <h6
+          class="font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-200 line-clamp-2"
         >
           {{ post.title }}
-        </h3>
+        </h6>
         <a
           [routerLink]="['/post-detail', post.slug]"
           class="text-blue-500 hover:text-blue-700 transition-colors duration-200"
@@ -42,7 +42,7 @@
       </div>
 
       <!-- Tóm tắt -->
-      <p class="text-gray-600 mt-2 line-clamp-3">{{ post.summary }}</p>
+      <p class="text-gray-600 mt-2 line-clamp-3 text-sm">{{ post.summary }}</p>
 
       <!-- Trạng thái và ngày đăng -->
       <div class="mt-3 text-sm text-gray-500 flex flex-col gap-2">
@@ -80,6 +80,7 @@
   <p-paginator
     [rows]="perPage"
     [totalRecords]="totalPosts"
+    [first]="currentPage * perPage"
     (onPageChange)="onPageChange($event)"
   ></p-paginator>
 </div>

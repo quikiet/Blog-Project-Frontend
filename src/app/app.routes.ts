@@ -25,11 +25,20 @@ import { ChartsComponent } from './components/admin/setting/charts/charts.compon
 import { ProfileManageComponent } from './components/customer/profile-manage/profile-manage.component';
 import { SearchResultsComponent } from './components/customer/search-results/search-results.component';
 import { CategoryPostsComponent } from './components/customer/category-posts/category-posts.component';
+import { PersonalInfomationComponent } from './components/customer/profile-manage/personal-infomation/personal-infomation.component';
 
 export const routes: Routes = [
 
     { path: 'login', component: LoginComponent, canActivate: [isLoggedGuard] },
-    { path: 'profile', component: ProfileManageComponent },
+    {
+        path: 'profile', component: ProfileManageComponent, canActivate: [outDateLoginGuard],
+        children: [
+            { path: '', redirectTo: 'thong-tin-ca-nhan', pathMatch: 'full' },
+            { path: 'thong-tin-ca-nhan', component: PersonalInfomationComponent },
+            { path: 'user-posts', component: UserPostsComponent, canActivate: [roleGuard], data: { role: 'author' } },
+            { path: 'posts', component: PostsComponent, canActivate: [roleGuard], data: { role: 'author' } },
+        ]
+    },
     {
         path: '', component: HomeComponent, canActivate: [outDateLoginGuard],
         children: [
@@ -37,20 +46,16 @@ export const routes: Routes = [
                 path: '',
                 loadComponent: () => import('./components/customer/home/home-content/home-content.component').then(m => m.HomeContentComponent)
             },
-            { path: 'user-posts', component: UserPostsComponent, canActivate: [roleGuard], data: { role: 'author' } },
-            { path: 'posts', component: PostsComponent, canActivate: [roleGuard], data: { role: 'author' } },
-            {
-                path: 'category/:slug', // Đường dẫn dạng /category/ten-danh-muc
-                component: CategoryPostsComponent // Trỏ đến component đã tạo
-                // Nếu muốn lazy load:
-                // loadComponent: () => import('./components/customer/category-posts/category-posts.component').then(m => m.CategoryPostsComponent)
-            },
-            { path: 'post-detail-user/:slug', component: PostDetailUserComponent },
-            {
-                path: 'search',
-                component: SearchResultsComponent
-            },
         ]
+    },
+    {
+        path: 'category/:slug',
+        component: CategoryPostsComponent
+    },
+    { path: 'post-detail-user/:slug', component: PostDetailUserComponent },
+    {
+        path: 'search',
+        component: SearchResultsComponent
     },
 
     {

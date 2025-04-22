@@ -63,8 +63,8 @@ export interface RecentPost {
 })
 
 export class DashboardService {
-  // private apiUrl = 'http://127.0.0.1:8000/dashboard/stats';
-  apiUrl = "https://tqkdomain.io.vn/public/api/dashboard/stats";
+  private apiUrl = 'http://127.0.0.1:8000/dashboard/stats';
+  // apiUrl = "https://tqkdomain.io.vn/public/api/dashboard/stats";
 
   constructor(private http: HttpClient) { }
 

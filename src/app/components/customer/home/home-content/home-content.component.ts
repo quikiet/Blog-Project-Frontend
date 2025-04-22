@@ -11,10 +11,11 @@ import { CategoryService } from '../../../../services/category/category.service'
 import { PostService } from '../../../../services/posts/post.service';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { forkJoin } from 'rxjs';
+import { Skeleton } from 'primeng/skeleton';
 @Component({
   selector: 'app-home-content',
   standalone: true,
-  imports: [ButtonComponent, FormsModule, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, RouterLink, ButtonComponent],
+  imports: [Skeleton, ButtonComponent, FormsModule, InputGroupAddonModule, InputTextModule, ButtonModule, CommonModule, RouterLink, ButtonComponent],
   templateUrl: './home-content.component.html',
   styleUrl: './home-content.component.css'
 })

@@ -1,0 +1,292 @@
+<div class="bg-newsletter-bg-light p-5 lg:p-6">
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <h4 class="text-xl font-semibold text-gray-800" x-text="pageName">
+      Quản lý thông tin cá nhân
+    </h4>
+  </div>
+
+  <div
+    *ngIf="isLoading"
+    class="rounded-2xl border border-surface-200 p-6 bg-white"
+  >
+    <div class="flex mb-4">
+      <p-skeleton shape="circle" size="4rem" styleClass="mr-2" />
+      <div>
+        <p-skeleton width="10rem" styleClass="mb-2" />
+        <p-skeleton width="5rem" styleClass="mb-2" />
+        <p-skeleton height=".5rem" />
+      </div>
+    </div>
+    <p-skeleton width="100%" height="150px" />
+    <div class="flex justify-between mt-4">
+      <p-skeleton width="4rem" height="2rem" />
+      <p-skeleton width="4rem" height="2rem" />
+    </div>
+  </div>
+  <div
+    class="p-5 mb-6 border border-gray-200 rounded-2xl lg:p-6 bg-white"
+    *ngIf="!isLoading"
+  >
+    <div
+      class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between"
+    >
+      <div class="flex flex-col items-center w-full gap-6 xl:flex-row">
+        <div
+          class="w-20 h-20 overflow-hidden border border-gray-200 rounded-full"
+        >
+          <img [src]="users.avatar" [alt]="users.name" />
+        </div>
+        <div class="order-3 xl:order-2">
+          <p class="text-xl font-semibold text-gray-800 lg:mb-6">
+            {{ users.name }}
+          </p>
+
+          <div class="text-sm text-gray-500" [ngSwitch]="users.role">
+            <p *ngSwitchCase="'user'">Người dùng</p>
+            <p *ngSwitchCase="'admin'">Quản trị viên</p>
+            <p *ngSwitchCase="'author'">Tác giả/Biên tập viên</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="p-5 mb-6 border border-gray-200 rounded-2xl lg:p-6 bg-white"
+    *ngIf="!isLoading"
+  >
+    <div
+      class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between"
+    >
+      <div>
+        <p class="text-xl font-semibold text-gray-800 lg:mb-6">
+          Thông tin cá nhân
+        </p>
+
+        <div
+          class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32"
+        >
+          <div>
+            <p class="mb-2 text-xs leading-normal text-gray-500">
+              Tên người dùng
+            </p>
+            <p class="text-sm font-medium text-gray-800">
+              {{ users.name }}
+            </p>
+          </div>
+
+          <div>
+            <p class="mb-2 text-xs leading-normal text-gray-500">Địa chỉ</p>
+            <p class="text-sm font-medium text-gray-800">
+              {{ users.address }}
+            </p>
+          </div>
+
+          <div>
+            <p class="mb-2 text-xs leading-normal text-gray-500">
+              Địa chỉ Email
+            </p>
+            <p class="text-sm font-medium text-gray-800">
+              {{ users.email }}
+            </p>
+          </div>
+
+          <div>
+            <p class="mb-2 text-xs leading-normal text-gray-500">
+              Số điện thoại
+            </p>
+            <p class="text-sm font-medium text-gray-800">
+              {{ users.phone }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <button
+        class="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 lg:inline-flex lg:w-auto"
+        (click)="editUser(users)"
+        type="button"
+      >
+        <svg
+          class="fill-current"
+          width="18"
+          height="18"
+          viewBox="0 0 18 18"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M15.0911 2.78206C14.2125 1.90338 12.7878 1.90338 11.9092 2.78206L4.57524 10.116C4.26682 10.4244 4.0547 10.8158 3.96468 11.2426L3.31231 14.3352C3.25997 14.5833 3.33653 14.841 3.51583 15.0203C3.69512 15.1996 3.95286 15.2761 4.20096 15.2238L7.29355 14.5714C7.72031 14.4814 8.11172 14.2693 8.42013 13.9609L15.7541 6.62695C16.6327 5.74827 16.6327 4.32365 15.7541 3.44497L15.0911 2.78206ZM12.9698 3.84272C13.2627 3.54982 13.7376 3.54982 14.0305 3.84272L14.6934 4.50563C14.9863 4.79852 14.9863 5.2734 14.6934 5.56629L14.044 6.21573L12.3204 4.49215L12.9698 3.84272ZM11.2597 5.55281L5.6359 11.1766C5.53309 11.2794 5.46238 11.4099 5.43238 11.5522L5.01758 13.5185L6.98394 13.1037C7.1262 13.0737 7.25666 13.003 7.35947 12.9002L12.9833 7.27639L11.2597 5.55281Z"
+            fill=""
+          ></path>
+        </svg>
+        Edit
+      </button>
+    </div>
+  </div>
+  <p-dialog
+    header="Chỉnh sửa thông tin"
+    [modal]="true"
+    [(visible)]="isEditting"
+    [style]="{ width: '35rem' }"
+  >
+    <div>
+      <form class="mb-8 flex flex-col gap-4" *ngIf="isEditting">
+        <p-inputgroup>
+          <p-inputgroup-addon>
+            <i class="pi pi-user"></i>
+          </p-inputgroup-addon>
+          <input
+            [(ngModel)]="formData.name"
+            class="w-full border p-2 shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Nhập tên người dùng"
+            name="name"
+            required
+          />
+        </p-inputgroup>
+        <p-inputgroup>
+          <p-inputgroup-addon>
+            <i class="pi pi-envelope"></i>
+          </p-inputgroup-addon>
+          <input
+            pInputText
+            [(ngModel)]="formData.email"
+            class="w-full border p-2 shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="example@gmail.com"
+            name="email"
+            required
+          />
+        </p-inputgroup>
+
+        <p-inputgroup>
+          <p-inputgroup-addon>
+            <i class="pi pi-phone"></i>
+          </p-inputgroup-addon>
+          <input
+            pInputText
+            name="phone"
+            [(ngModel)]="formData.phone"
+            class="w-full border p-2 shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="09000..."
+          />
+        </p-inputgroup>
+        <p-inputgroup>
+          <p-inputgroup-addon>
+            <i class="pi pi-address-book"></i>
+          </p-inputgroup-addon>
+          <input
+            pInputText
+            name="address"
+            [(ngModel)]="formData.address"
+            class="w-full border p-2 shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="120 Nguyễn Quý Yêm,..."
+          />
+        </p-inputgroup>
+        <p-inputgroup>
+          <p-inputgroup-addon>
+            <i class="pi pi-key"></i>
+          </p-inputgroup-addon>
+          <input
+            pInputText
+            name="password"
+            [(ngModel)]="formData.password"
+            type="password"
+            class="w-full border p-2 shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Xác nhận mật khẩu"
+            required
+          />
+        </p-inputgroup>
+
+        <div>
+          <label class="block text-sm font-semibold mb-1 text-gray-700"
+            >🌄 Link ảnh đại diện:</label
+          >
+          <input
+            type="url"
+            [(ngModel)]="formData.avatar"
+            name="avatar"
+            placeholder="Nhập URL ảnh đại diện"
+            class="border border-gray-300 p-3 rounded-lg w-full shadow focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+
+        <div *ngIf="formData.avatar" class="mt-4">
+          <p class="text-sm font-medium text-gray-700 mb-2">
+            📷 Xem trước ảnh:
+          </p>
+          <img
+            [src]="formData.avatar"
+            class="max-w-[150px] max-h-[150px] rounded-lg shadow"
+          />
+        </div>
+      </form>
+    </div>
+    <div class="flex justify-end gap-2">
+      <p-button
+        label="Huỷ bỏ"
+        severity="secondary"
+        (click)="isEditting = false"
+      />
+      <p-button label="Lưu" type="submit" (onClick)="updateUser()" />
+    </div>
+  </p-dialog>
+  <div
+    class="mb-6 border border-gray-200 rounded-2xl lg:pb-0 pb-0 bg-white"
+    *ngIf="!isLoading"
+  >
+    <div
+      class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between lg:p-6 p-5"
+    >
+      <div>
+        <p class="text-xl font-semibold text-gray-800 lg:mb-6">Xoá tài khoản</p>
+        <div>
+          Sau khi xác nhận xoá tài khoản người dùng. Tài khoản sẽ bị xoá vĩnh
+          viễn khỏi trang.
+        </div>
+      </div>
+    </div>
+    <div class="bg-gray-100 py-2 text-end bg-opacity-75">
+      <button
+        class="flex w-full items-center mr-6 justify-center gap-2 border rounded-lg border-gray-300 bg-red-700 px-4 py-3 text-sm font-medium text-white shadow-theme-xs hover:bg-red-500 lg:inline-flex lg:w-auto"
+        (click)="initiateDelete()"
+      >
+        Xoá tài khoản cá nhân
+      </button>
+      <p-dialog
+        header="Xoá tài khoản cá nhân"
+        [(visible)]="isDeleteConfirmationVisible"
+        [style]="{ width: '25rem' }"
+      >
+        <div class="w-full">
+          <label for="username" class="block text-left pb-2"
+            >Xác nhận mật khẩu</label
+          >
+          <input
+            pInputText
+            class="w-full border p-2 shadow focus:outline-none focus:ring-2 focus:ring-red-400 mb-3"
+            id="username"
+            [(ngModel)]="deleteConfirmation.password"
+            name="password"
+            autocomplete="off"
+            [pAutoFocus]="true"
+            required
+          />
+        </div>
+        <div class="flex justify-end gap-2">
+          <p-button
+            label="Huỷ bỏ"
+            severity="secondary"
+            (click)="cancelDelete()"
+          />
+          <p-button
+            label="Xoá"
+            severity="danger"
+            (click)="confirmDeleteUser()"
+          />
+        </div>
+      </p-dialog>
+    </div>
+  </div>
+</div>

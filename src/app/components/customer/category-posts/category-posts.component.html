@@ -23,7 +23,7 @@
     <div *ngIf="posts.length > 0" class="mt-6 space-y-6">
       <div *ngFor="let post of posts">
         <article
-          class="block lg:hidden bg-white border border-gray-200 shadow-sm overflow-hidden flex flex-col group transition-shadow hover:shadow-md"
+          class="lg:hidden bg-white border border-gray-200 shadow-sm overflow-hidden flex flex-col group transition-shadow hover:shadow-md"
         >
           <a
             [routerLink]="['/post-detail-user', post?.slug]"
@@ -108,7 +108,7 @@
     </div>
 
     <div *ngIf="posts.length === 0" class="text-center py-16 text-gray-500">
-      <p>Chưa có bài viết nào trong danh mục "{{ categoryInfo?.name }}".</p>
+      <!-- <p>Chưa có bài viết nào trong danh mục "{{ categoryInfo?.name }}".</p> -->
       <a routerLink="/" class="mt-4 inline-block text-blue-600 hover:underline">
         Quay về Trang chủ
       </a>

@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class NotificationsService {
-  apiUrl = "https://tqkdomain.io.vn/public/api/notifications";
-  // apiUrl = "http://127.0.0.1:8000/api/notifications";
+  // apiUrl = "https://tqkdomain.io.vn/public/api/notifications";
+  apiUrl = "http://127.0.0.1:8000/api/notifications";
 
   constructor(private http: HttpClient) { }
 

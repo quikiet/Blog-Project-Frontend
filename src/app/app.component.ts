@@ -4,13 +4,14 @@ import { DashboardComponent } from "./components/admin/dashboard/dashboard.compo
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { Skeleton } from 'primeng/skeleton';
 
 import AOS from 'aos';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, FormsModule, RouterLink, RouterLinkActive, DashboardComponent],
+  imports: [Skeleton, RouterOutlet, CommonModule, FormsModule, RouterLink, RouterLinkActive, DashboardComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

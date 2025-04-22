@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class StatisticsService {
-  // private apiUrl = 'http://127.0.0.1:8000/api/dashboard/stats'; // Thay bằng URL API thực tế
-  apiUrl = "https://tqkdomain.io.vn/public/api/dashboard/stats";
+  private apiUrl = 'http://127.0.0.1:8000/api/dashboard/stats'; // Thay bằng URL API thực tế
+  // apiUrl = "https://tqkdomain.io.vn/public/api/dashboard/stats";
 
   constructor(private http: HttpClient) { }
 

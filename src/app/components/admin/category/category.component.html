@@ -167,7 +167,11 @@
         >
           Sửa
         </app-button>
-        <app-button variant="primary" (clicked)="deleteModal(element.slug)">
+        <app-button
+          variant="primary"
+          (clicked)="deleteModal(element.slug)"
+          [disabled]="element.categories_posts_count > 0"
+        >
           Xoá
         </app-button>
         <app-modal-submit-delete

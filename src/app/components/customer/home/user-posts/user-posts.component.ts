@@ -20,8 +20,8 @@ export class UserPostsComponent implements OnInit {
   user_posts: any[] = [];
   userId: number | null = null;
   isLoading = true;
-  currentPage: number = 1;
-  perPage: number = 10;
+  currentPage: number = 0;
+  perPage: number = 3;
   tags: any[] = [];
   totalPosts: number = 0;
   constructor(
@@ -58,7 +58,7 @@ export class UserPostsComponent implements OnInit {
     this.userService.getPostByUserId(this.userId, page, this.perPage).subscribe({
       next: (res: any) => {
         this.user_posts = res.data || [];
-        this.currentPage = res.current_page;
+        this.currentPage = res.current_page - 1;
         this.totalPosts = res.total;
         this.perPage = res.per_page;
         this.isLoading = false;
@@ -71,7 +71,7 @@ export class UserPostsComponent implements OnInit {
   }
 
   onPageChange(event: any) {
-    this.currentPage = event.page + 1; // PrimeNG paginator bắt đầu từ 0
+    this.currentPage = event.page + 1;
     this.perPage = event.rows;
     this.getUserPosts(this.currentPage);
   }

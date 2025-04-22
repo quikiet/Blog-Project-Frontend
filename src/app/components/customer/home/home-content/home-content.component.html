@@ -207,14 +207,6 @@
             </div>
             <ul class="space-y-1 text-gray-300 text-sm">
               <li><a class="block py-1">Hồ sơ</a></li>
-              <li *ngIf="userRole === 'author'">
-                <a
-                  routerLink="/user-posts"
-                  (click)="closeMobileMenu()"
-                  class="block py-1"
-                  >Bài viết của tôi</a
-                >
-              </li>
               <li *ngIf="userRole === 'admin'">
                 <a
                   routerLink="/admin"
@@ -277,38 +269,50 @@
     >
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 md:p-6">
         <div class="bg-white flex flex-col gap-4 md:gap-6">
-          <article class="relative h-[250px] sm:h-[300px] md:h-[350px] w-full">
+          <p-skeleton height="350px" width="100%" *ngIf="isLoading" />
+          <article
+            class="relative h-[250px] sm:h-[300px] md:h-[350px] w-full"
+            *ngIf="!isLoading"
+          >
             <div
               class="absolute inset-0 bg-cover bg-center"
               [style.backgroundImage]="
-                featurePost?.thumbnail
-                  ? 'url(' + featurePost.thumbnail + ')'
+                trendingPosts[0]?.thumbnail
+                  ? 'url(' + trendingPosts[0].thumbnail + ')'
                   : 'url(assets/images/placeholder_large.png)'
               "
             ></div>
             <div class="absolute inset-0 bg-black/60"></div>
             <a
-              [routerLink]="['/post-detail-user', featurePost?.slug]"
+              [routerLink]="['/post-detail-user', trendingPosts[0]?.slug]"
               class="absolute bottom-0 left-0 p-4 md:p-6 text-newsletter-offwhite block w-full z-10"
             >
               <p
                 class="text-base sm:text-lg md:text-xl mb-1 sm:mb-2 line-clamp-3"
               >
-                {{ featurePost?.title || "..." }}
+                {{ trendingPosts[0]?.title || "..." }}
               </p>
               <div class="text-xs sm:text-meta-10">
-                Bởi {{ featurePost?.authors?.name || "..." }} |
+                Bởi
                 {{
-                  featurePost?.published_at
-                    ? formatDate(featurePost.published_at)
+                  trendingPosts[0]?.authors?.name ||
+                    trendingPosts[0]?.posts_user?.name
+                }}
+                |
+                {{
+                  trendingPosts[0]?.published_at
+                    ? formatDate(trendingPosts[0].published_at)
                     : "..."
                 }}
               </div>
             </a>
           </article>
           <article class="relative">
+            <p-skeleton *ngIf="isLoading" width="100%" />
+
             <a
-              [routerLink]="['/post-detail-user', featurePost?.slug]"
+              *ngIf="!isLoading"
+              [routerLink]="['/post-detail-user', trendingPosts[1]?.slug]"
               class="text-newsletter-black block bg-gray-50 p-3 sm:p-4 md:bg-transparent md:p-0"
             >
               <div
@@ -318,17 +322,20 @@
                   <p
                     class="font-semibold text-sm sm:text-base mb-1 line-clamp-2"
                   >
-                    {{ featurePost?.title || "..." }}
+                    {{ trendingPosts[1]?.title || "..." }}
                   </p>
                   <div class="text-xs sm:text-sm text-gray-600 line-clamp-2">
-                    {{ featurePost?.description || "..." }}
+                    {{
+                      cutText(trendingPosts[1]?.description, 20) ||
+                        cutText(trendingPosts[1]?.content, 20)
+                    }}
                   </div>
                 </div>
                 <div
                   class="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-cover bg-center border border-gray-100"
                   [style.backgroundImage]="
-                    featurePost?.thumbnail
-                      ? 'url(' + featurePost.thumbnail + ')'
+                    trendingPosts[1]?.thumbnail
+                      ? 'url(' + trendingPosts[1].thumbnail + ')'
                       : 'url(assets/images/placeholder.png)'
                   "
                 ></div>
@@ -337,38 +344,55 @@
           </article>
         </div>
         <div class="md:col-start-2 flex flex-col gap-4 md:gap-6">
+          <p-skeleton *ngIf="isLoading" height="231px" />
           <article
+            *ngIf="!isLoading"
             class="relative h-[231px] bg-black text-newsletter-offwhite border-b border-gray-700 flex-shrink-0"
           >
             <div
               [style.backgroundImage]="
-                subFeaturePosts[0]?.thumbnail
-                  ? 'url(' + subFeaturePosts[0].thumbnail + ')'
+                trendingPosts[2]?.thumbnail
+                  ? 'url(' + trendingPosts[2].thumbnail + ')'
                   : 'url(assets/images/placeholder.png)'
               "
               class="absolute inset-0 bg-cover bg-center opacity-40 z-0"
             ></div>
             <a
-              [routerLink]="['/post-detail-user', subFeaturePosts[0]?.slug]"
+              [routerLink]="['/post-detail-user', trendingPosts[2]?.slug]"
               class="relative z-10 p-4 flex flex-col justify-end h-full"
             >
               <p class="font-bold text-display-20 mb-1">
-                {{ subFeaturePosts[0]?.title || "..." }}
+                {{ trendingPosts[2]?.title || "..." }}
               </p>
               <p class="text-newsletter-gray-light line-clamp-3 text-sm">
                 {{
-                  subFeaturePosts[0]?.summary
-                    ? cutText(subFeaturePosts[0].summary, 20)
+                  trendingPosts[2]?.summary
+                    ? cutText(trendingPosts[2].summary, 20)
                     : "..."
                 }}
               </p>
+              <div class="text-xs sm:text-meta-10">
+                Bởi
+                {{
+                  trendingPosts[2]?.authors?.name ||
+                    trendingPosts[2]?.posts_user?.name
+                }}
+                |
+                {{
+                  trendingPosts[2]?.published_at
+                    ? formatDate(trendingPosts[2].published_at)
+                    : "..."
+                }}
+              </div>
             </a>
           </article>
+          <p-skeleton *ngIf="isLoading" height="200px" />
           <article
+            *ngIf="!isLoading"
             class="relative bg-white md:text-black flex-1 min-h-0 border border-gray-200"
           >
             <a
-              [routerLink]="['/post-detail-user', subFeaturePosts[1]?.slug]"
+              [routerLink]="['/post-detail-user', subFeaturePosts[0]?.slug]"
               class="flex items-stretch gap-4 h-full"
             >
               <div
@@ -376,31 +400,37 @@
               >
                 <img
                   [src]="
-                    subFeaturePosts[1]?.thumbnail ||
+                    subFeaturePosts[0]?.thumbnail ||
                     'assets/images/placeholder_small.png'
                   "
-                  alt="{{ subFeaturePosts[1]?.title }}"
+                  alt="{{ subFeaturePosts[0]?.title }}"
                   class="absolute inset-0 w-full h-full object-cover"
                 />
               </div>
               <div class="flex-grow min-w-0 p-3 sm:p-4">
                 <p class="font-semibold text-sm sm:text-base mb-1 line-clamp-2">
-                  {{ subFeaturePosts[1]?.title || "..." }}
+                  {{ subFeaturePosts[0]?.title || "..." }}
                 </p>
                 <p class="text-xs text-gray-600 line-clamp-2 mb-1">
                   {{
-                    subFeaturePosts[1]?.summary
-                      ? cutText(subFeaturePosts[1].summary, 15)
+                    subFeaturePosts[0]?.summary
+                      ? cutText(subFeaturePosts[0].summary, 15)
                       : "..."
                   }}
                 </p>
-                <p class="text-xs text-gray-500 hidden sm:block">
+                <div class="text-xs sm:text-meta-10">
+                  Bởi
                   {{
-                    subFeaturePosts[1]?.published_at
-                      ? formatDate(subFeaturePosts[1].published_at)
+                    subFeaturePosts[0]?.authors?.name ||
+                      subFeaturePosts[0]?.posts_user?.name
+                  }}
+                  |
+                  {{
+                    subFeaturePosts[0]?.published_at
+                      ? formatDate(subFeaturePosts[0].published_at)
                       : "..."
                   }}
-                </p>
+                </div>
               </div>
             </a>
           </article>
@@ -413,11 +443,11 @@
         <div
           class="flex justify-between items-end mb-4 border-b-2 border-gray-300 pb-1"
         >
-          <h4
+          <h6
             class="font-semibold text-lg sm:text-xl text-newsletter-bg-dark-alt"
           >
             Bài viết gần đây
-          </h4>
+          </h6>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <article
@@ -462,6 +492,7 @@
             </div>
           </article>
         </div>
+        <p-skeleton width="100%" styleClass="mb-2" *ngIf="isLoading" />
         <div class="text-center mt-6 sm:mt-8">
           <app-button>Xem thêm</app-button>
         </div>
@@ -481,6 +512,7 @@
             </p>
           </div>
           <div class="space-y-4">
+            <p-skeleton width="100%" styleClass="mb-2" *ngIf="isLoading" />
             <article
               *ngFor="let post of archivedPosts"
               class="border-t-2 pt-4 border-newsletter-border flex items-start space-x-3"

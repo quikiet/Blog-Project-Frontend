@@ -9,7 +9,8 @@ import { Observable } from 'rxjs';
 export class UploadService {
   private cloudName = cloudinaryConfig.cloudName;
   private uploadPreset = cloudinaryConfig.uploadPreset;
-  apiUrl = "https://tqkdomain.io.vn/public/api";
+  // apiUrl = "https://tqkdomain.io.vn/public/api";
+  apiUrl = 'http://127.0.0.1:8000/api/';
 
 
   constructor(private http: HttpClient) { }
