@@ -37,6 +37,7 @@ export const routes: Routes = [
             { path: 'thong-tin-ca-nhan', component: PersonalInfomationComponent },
             { path: 'user-posts', component: UserPostsComponent, canActivate: [roleGuard], data: { role: 'author' } },
             { path: 'posts', component: PostsComponent, canActivate: [roleGuard], data: { role: 'author' } },
+
         ]
     },
     {
@@ -46,17 +47,19 @@ export const routes: Routes = [
                 path: '',
                 loadComponent: () => import('./components/customer/home/home-content/home-content.component').then(m => m.HomeContentComponent)
             },
+            {
+                path: 'category/:slug',
+                component: CategoryPostsComponent
+            },
+            {
+                path: 'search',
+                component: SearchResultsComponent
+            },
         ]
     },
-    {
-        path: 'category/:slug',
-        component: CategoryPostsComponent
-    },
+
     { path: 'post-detail-user/:slug', component: PostDetailUserComponent },
-    {
-        path: 'search',
-        component: SearchResultsComponent
-    },
+
 
     {
         path: 'admin', component: DashboardComponent,

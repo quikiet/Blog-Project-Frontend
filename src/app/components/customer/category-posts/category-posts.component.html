@@ -1,9 +1,9 @@
-<div class="container mx-auto px-4 py-8 min-h-[calc(100vh-200px)]">
+<div class="container mx-auto px-4 pb-10 min-h-[calc(100vh-200px)]">
   <div *ngIf="isLoading" class="flex justify-center items-center py-20">
     <app-loading></app-loading>
   </div>
 
-  <div *ngIf="!isLoading && errorMessage" class="text-center py-20">
+  <div *ngIf="!isLoading && errorMessage" class="text-center py-10">
     <p class="text-red-600 text-lg">{{ errorMessage }}</p>
     <a
       routerLink="/"
@@ -14,11 +14,11 @@
   </div>
 
   <div class="pt-10" *ngIf="!isLoading && !errorMessage && categoryInfo">
-    <h1
-      class="text-3xl md:text-4xl font-bold mb-6 pb-3 border-b border-gray-300 text-gray-800"
+    <h6
+      class="text-3xl md:text-4xl font-bold mb-6 pb-3 border-b border-gray-300 text-white"
     >
       Danh mục: {{ categoryInfo.name }}
-    </h1>
+    </h6>
 
     <div *ngIf="posts.length > 0" class="mt-6 space-y-6">
       <div *ngFor="let post of posts">
@@ -27,30 +27,24 @@
         >
           <a
             [routerLink]="['/post-detail-user', post?.slug]"
+            *ngIf="post?.thumbnail"
             class="block aspect-video overflow-hidden"
           >
             <img
-              *ngIf="post?.thumbnail"
               [src]="post.thumbnail"
               [alt]="post?.title"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
               loading="lazy"
             />
-            <div
-              *ngIf="!post?.thumbnail"
-              class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400"
-            >
-              Ảnh đại diện
-            </div>
           </a>
           <div class="p-4 flex flex-col flex-grow">
-            <h3
-              class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2"
+            <p
+              class="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2"
             >
               <a [routerLink]="['/post-detail-user', post?.slug]">{{
                 post?.title || "..."
               }}</a>
-            </h3>
+            </p>
             <p
               *ngIf="post?.summary"
               class="text-gray-600 text-sm mb-3 line-clamp-3 flex-grow"
@@ -60,7 +54,7 @@
             <div
               class="mt-auto pt-3 border-t border-gray-100 text-xs text-gray-500"
             >
-              <span>{{ formatDate(post?.published_at) }}</span>
+              {{ post.published_at | relativeTime }}
             </div>
           </div>
         </article>
@@ -69,30 +63,24 @@
           class="hidden lg:flex items-start p-4 border shadow-sm hover:shadow-md space-x-4 bg-white"
         >
           <a
+            *ngIf="post?.thumbnail"
             [routerLink]="['/post-detail-user', post?.slug]"
             class="flex-shrink-0 w-48 h-32 block overflow-hidden"
           >
             <img
-              *ngIf="post?.thumbnail"
               [src]="post.thumbnail"
               [alt]="post?.title"
               class="w-full h-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
             />
-            <div
-              *ngIf="!post?.thumbnail"
-              class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 text-sm"
-            >
-              Ảnh đại diện
-            </div>
           </a>
           <div class="flex-grow flex flex-col">
-            <h3
-              class="text-lg font-semibold text-gray-900 mb-1 hover:text-blue-600 transition-colors line-clamp-2"
+            <p
+              class="font-semibold text-gray-900 mb-1 hover:text-blue-600 transition-colors line-clamp-2"
             >
               <a [routerLink]="['/post-detail-user', post?.slug]">{{
                 post?.title || "..."
               }}</a>
-            </h3>
+            </p>
             <p
               *ngIf="post?.summary"
               class="text-sm text-gray-600 mb-2 line-clamp-3"
@@ -100,7 +88,7 @@
               {{ cutText(post?.summary, 40) }}
             </p>
             <div class="mt-auto text-xs text-gray-500">
-              <span>{{ formatDate(post?.published_at) }}</span>
+              {{ post.published_at | relativeTime }}
             </div>
           </div>
         </article>
@@ -108,7 +96,7 @@
     </div>
 
     <div *ngIf="posts.length === 0" class="text-center py-16 text-gray-500">
-      <!-- <p>Chưa có bài viết nào trong danh mục "{{ categoryInfo?.name }}".</p> -->
+      <p>Chưa có bài viết nào trong danh mục "{{ categoryInfo?.name }}".</p>
       <a routerLink="/" class="mt-4 inline-block text-blue-600 hover:underline">
         Quay về Trang chủ
       </a>

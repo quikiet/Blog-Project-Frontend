@@ -51,21 +51,32 @@
             >
             <ul class="list-none p-0 m-0 flex flex-col gap-4">
               <li *ngFor="let deleteAuthor of deletedAuthors">
-                <div class="flex items-center gap-2">
-                  <img [src]="deleteAuthor.avatar" style="width: 42px" />
-                  <div>
-                    <span class="font-medium">{{ deleteAuthor.name }}</span>
-                    <div class="text-sm text-muted-color">
-                      {{ deleteAuthor.email }}
+                <div class="flex items-center justify-between gap-2 pr-2">
+                  <div class="flex items-center gap-3">
+                    <img [src]="deleteAuthor.avatar" style="width: 42px" />
+                    <div>
+                      <span class="font-medium">{{ deleteAuthor.name }}</span>
+                      <div class="text-sm text-muted-color">
+                        {{ deleteAuthor.email }}
+                      </div>
                     </div>
                   </div>
-                  <a
-                    class="flex items-center gap-2 text-muted-color ml-auto text-sm text-blue-500 cursor-pointer hover:text-blue-700 hover:font-semibold"
-                    (click)="restoreAuthor(deleteAuthor.slug)"
-                  >
-                    <span class="text-xs">Khôi phục</span>
-                    <i class="pi pi-undo"></i>
-                  </a>
+                  <div class="flex flex-col gap-2 justify-between items-center">
+                    <a
+                      class="flex items-center gap-2 text-muted-color ml-auto text-sm text-blue-500 cursor-pointer hover:text-blue-700 hover:font-semibold"
+                      (click)="restoreAuthor(deleteAuthor.slug)"
+                    >
+                      <span class="text-xs">Khôi phục</span>
+                      <i class="pi pi-undo"></i>
+                    </a>
+                    <a
+                      class="flex items-center gap-2 text-muted-color ml-auto text-sm text-red-500 cursor-pointer hover:text-red-700 hover:font-semibold"
+                      (click)="forceDeleteAuthor(deleteAuthor.slug)"
+                    >
+                      <span class="text-xs">Xoá vĩnh viễn</span>
+                      <i class="pi pi-trash"></i>
+                    </a>
+                  </div>
                 </div>
                 <p-divider class="m-0" />
               </li>

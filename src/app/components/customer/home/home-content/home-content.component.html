@@ -82,16 +82,6 @@
                       >Hồ sơ</a
                     >
                   </li>
-                  <li class="py-1" *ngIf="userRole === 'author'">
-                    <a routerLink="/user-posts" class="text-sm block px-2 py-1"
-                      >Bài viết của tôi</a
-                    >
-                  </li>
-                  <li class="py-1" *ngIf="userRole === 'author'">
-                    <a routerLink="/posts" class="text-sm block px-2 py-1"
-                      >Đăng bài</a
-                    >
-                  </li>
                   <li class="py-1" *ngIf="userRole === 'admin'">
                     <a routerLink="/admin" class="text-sm block px-2 py-1"
                       >Trang quản trị</a
@@ -325,10 +315,7 @@
                     {{ trendingPosts[1]?.title || "..." }}
                   </p>
                   <div class="text-xs sm:text-sm text-gray-600 line-clamp-2">
-                    {{
-                      cutText(trendingPosts[1]?.description, 20) ||
-                        cutText(trendingPosts[1]?.content, 20)
-                    }}
+                    {{ cutText(trendingPosts[1]?.description, 20) }}
                   </div>
                 </div>
                 <div

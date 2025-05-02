@@ -428,4 +428,16 @@ export class AuthorsComponent implements OnInit {
     });
   }
 
+  forceDeleteAuthor(slug: string) {
+    this.authorServices.forceDeleteAuthor(slug).subscribe({
+      next: (res) => {
+        this.messageService.add({ severity: 'success', summary: 'Thành công', detail: res.message });
+        this.loadAuthorData();
+        this.showDeletedAuthor();
+      }, error: (error) => {
+        this.messageService.add({ severity: 'error', summary: 'Thất bại', detail: 'Lỗi: ' + error.error?.error });
+      }
+    });
+  }
+
 }

@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { CategoryService, Category } from '../../../services/category/category.service'; // Chỉ cần ../../../
 import { Post } from '../../../services/posts/post.service';              // Chỉ cần ../../../
 import { LoadingComponent } from "../../../shared/loading/loading.component";
+import { RelativeTimePipe } from '../../../pipe/relative-time.pipe';
 interface CategoryWithPosts extends Category {
   // !!! QUAN TRỌNG: Đảm bảo tên thuộc tính này khớp với tên quan hệ trong Model Category.php
   categories_posts: Post[]; // Hoặc 'posts: Post[];' nếu tên quan hệ là 'posts'
@@ -17,7 +18,7 @@ interface CategoryWithPosts extends Category {
   standalone: true,
   imports: [CommonModule,
     RouterLink,
-    LoadingComponent,],
+    LoadingComponent, RelativeTimePipe],
   templateUrl: './category-posts.component.html',
   styleUrl: './category-posts.component.css'
 })
@@ -46,19 +47,10 @@ export class CategoryPostsComponent implements OnInit, OnDestroy {
         this.categoryInfo = null;
 
         if (slug) {
-          console.log('--- Slug exists, attempting to call API... ---');
-          // --- SỬA LỖI TYPE 'SUBSCRIPTION' IS NOT GENERIC ---
-          // Gọi service. Service method nên trả về Observable<CategoryWithPosts>
-          // Nếu service method trả về Observable<any> hoặc Observable<Category[]>,
-          // chúng ta sẽ xử lý kiểu trong subscribe. Không ép kiểu 'as Subscription<...>' ở đây.
-          // Chúng ta sẽ giả định service trả về đúng kiểu Observable<CategoryWithPosts> hoặc tương tự
           return this.categoryService.getPostsByCategory(slug);
-          // --- KẾT THÚC SỬA LỖI ---
         } else {
-          console.log('--- Slug NOT found or is null/empty ---');
-          this.errorMessage = "Không tìm thấy slug danh mục trong địa chỉ URL.";
+          this.errorMessage = "Không có bài viết";
           this.isLoading = false;
-          // Trả về một Observable rỗng để pipe tiếp tục nhưng không phát ra giá trị
           return of(null); // Sử dụng 'of' từ RxJS để tạo Observable từ giá trị null
         }
       })

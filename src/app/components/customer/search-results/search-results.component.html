@@ -4,13 +4,13 @@
 </div>
 
 <div class="container mx-auto px-4 py-8 pt-20">
-  <h1
+  <h6
     *ngIf="!isLoading && searchTerm"
-    class="text-3xl font-bold mb-6 pb-3 border-b border-gray-300 text-gray-800"
+    class="text-3xl font-bold mb-6 pb-3 border-b border-gray-300 text-white"
   >
     Kết quả tìm kiếm cho: "<span>{{ searchTerm }}</span
     >"
-  </h1>
+  </h6>
   <h1 *ngIf="!isLoading && !searchTerm" class="text-xl text-gray-600 mb-6">
     Vui lòng nhập từ khóa vào ô tìm kiếm phía trên.
   </h1>
@@ -29,34 +29,28 @@
       <div class="mt-6 space-y-6">
         <div *ngFor="let post of filteredResults">
           <article
-            class="block lg:hidden bg-white border border-gray-200 shadow-sm overflow-hidden flex flex-col group transition-shadow hover:shadow-md"
+            class="lg:hidden bg-white border border-gray-200 shadow-sm overflow-hidden flex flex-col group transition-shadow hover:shadow-md"
           >
             <a
               [routerLink]="['/post-detail-user', post?.slug]"
+              *ngIf="post?.thumbnail"
               class="block aspect-video overflow-hidden"
             >
               <img
-                *ngIf="post?.thumbnail"
                 [src]="post.thumbnail"
                 [alt]="post?.title"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
                 loading="lazy"
               />
-              <div
-                *ngIf="!post?.thumbnail"
-                class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400"
-              >
-                Ảnh đại diện
-              </div>
             </a>
             <div class="p-4 flex flex-col flex-grow">
-              <h3
+              <p
                 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2"
               >
                 <a [routerLink]="['/post-detail-user', post?.slug]">{{
                   post?.title || "Tiêu đề không có"
                 }}</a>
-              </h3>
+              </p>
               <p
                 *ngIf="post?.summary"
                 class="text-gray-600 text-sm mb-3 line-clamp-3 flex-grow"
@@ -95,29 +89,23 @@
           >
             <a
               [routerLink]="['/post-detail-user', post?.slug]"
+              *ngIf="post?.thumbnail"
               class="flex-shrink-0 w-48 h-32 block overflow-hidden"
             >
               <img
-                *ngIf="post?.thumbnail"
                 [src]="post.thumbnail"
                 [alt]="post?.title"
                 class="w-full h-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
               />
-              <div
-                *ngIf="!post?.thumbnail"
-                class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 text-sm"
-              >
-                Ảnh đại diện
-              </div>
             </a>
             <div class="flex-grow flex flex-col">
-              <h3
+              <p
                 class="text-lg font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors line-clamp-2"
               >
                 <a [routerLink]="['/post-detail-user', post?.slug]">{{
                   post?.title || "Tiêu đề không có"
                 }}</a>
-              </h3>
+              </p>
               <p
                 *ngIf="post?.summary"
                 class="text-sm text-gray-600 mb-2 line-clamp-3 flex-grow"

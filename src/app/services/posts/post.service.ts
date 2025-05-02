@@ -13,7 +13,7 @@ export interface Post {
   content: string,
   summary?: string,
   thumbnail: string,
-  published_at?: string | Date,
+  published_at: '',
   category_id: number,
   user_id: number,
   posts_user?: {
@@ -159,19 +159,6 @@ export class PostService {
 
   search(keyword: string): Observable<any> {
     return this.http.get(`${this.apiUrl}/search?keyword=${keyword}`);
-  }
-
-  searchPosts(keyword: string): Observable<Post[]> { // Đặt kiểu trả về là Post[]
-    // Backend dùng query param tên là 'keyword'
-    const params = new HttpParams().set('keyword', keyword);
-    // API endpoint là /api/posts/search
-    return this.http.get<Post[]>(`${this.apiUrl}/search`, { params }).pipe(
-      catchError(error => {
-        console.error("Lỗi khi tìm kiếm bài viết:", error);
-        // Trả về một observable lỗi để component có thể bắt
-        return throwError(() => new Error("Tìm kiếm thất bại. Vui lòng thử lại."));
-      })
-    );
   }
 
   searchByDate(startDate: string, endDate: string): Observable<any[]> {
